@@ -323,6 +323,63 @@ footer{
   background:var(--ink);
 }
 
+/* ============================================================
+   音乐播放按钮 —— 悬浮在右下角
+   ============================================================ */
+#music-toggle{
+  position:fixed; right:28px; bottom:28px; z-index:200;
+  width:56px; height:56px; border-radius:50%;
+  background:var(--ink); border:1px solid var(--charcoal);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.25);
+  transition:border-color 0.3s ease;
+}
+#music-toggle:hover{ border-color:var(--accent-gold); }
+
+#music-toggle .ring{
+  position:absolute; inset:-4px; border-radius:50%;
+  border:1px solid var(--accent-gold);
+  opacity:0; transform:scale(0.85);
+  transition:opacity 0.3s ease;
+}
+#music-toggle.playing .ring{
+  opacity:1;
+  animation: pulse-ring 1.8s ease-out infinite;
+}
+@keyframes pulse-ring{
+  0%{ transform:scale(0.85); opacity:0.8; }
+  100%{ transform:scale(1.35); opacity:0; }
+}
+
+/* 三条小音波，播放时跳动，暂停时保持静止 */
+#music-toggle .bars{ display:flex; align-items:flex-end; gap:3px; height:16px; }
+#music-toggle .bars span{
+  width:3px; background:var(--fog); border-radius:1px;
+  height:6px;
+  transition:background 0.3s ease;
+}
+#music-toggle.playing .bars span{ background:var(--accent-gold); }
+#music-toggle.playing .bars span:nth-child(1){ animation:bar1 1.1s ease-in-out infinite; }
+#music-toggle.playing .bars span:nth-child(2){ animation:bar2 0.9s ease-in-out infinite; }
+#music-toggle.playing .bars span:nth-child(3){ animation:bar3 1.3s ease-in-out infinite; }
+@keyframes bar1{ 0%,100%{ height:6px; } 50%{ height:16px; } }
+@keyframes bar2{ 0%,100%{ height:10px; } 50%{ height:4px; } }
+@keyframes bar3{ 0%,100%{ height:6px; } 50%{ height:14px; } }
+
+#music-toggle .label{
+  position:absolute; right:66px; top:50%; transform:translateY(-50%);
+  font-family:var(--font-mono); font-size:0.68rem; color:var(--white);
+  background:var(--ink); padding:6px 10px; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:opacity 0.3s ease;
+}
+#music-toggle:hover .label{ opacity:1; }
+
+@media (max-width:640px){
+  #music-toggle{ right:18px; bottom:18px; width:50px; height:50px; }
+  #music-toggle .label{ display:none; }
+}
+
 </style>
 </head>
 <body>
@@ -488,6 +545,19 @@ footer{
 
 <footer>© 2026 林 · 保留所有权利</footer>
 
+<!-- ============================================================
+     背景音乐 —— 把 src 换成你自己的音频文件路径
+     ============================================================ -->
+<audio id="bg-music" loop preload="none">
+  <source src="music/background.mp3" type="audio/mpeg">
+</audio>
+
+<button id="music-toggle" type="button" aria-label="播放音乐">
+  <span class="ring"></span>
+  <span class="bars"><span></span><span></span><span></span></span>
+  <span class="label">播放音乐</span>
+</button>
+
 <script>
 // 开场动画结束后关闭 loader
 (function(){
@@ -498,6 +568,41 @@ footer{
     loader.classList.add('closing');
     setTimeout(function(){ loader.style.display = 'none'; }, 900);
   }, delay);
+})();
+
+// 音乐播放/暂停切换
+(function(){
+  var btn = document.getElementById('music-toggle');
+  var audio = document.getElementById('bg-music');
+  var label = btn.querySelector('.label');
+  var autoStarted = false;
+
+  function startPlaying(){
+    if(autoStarted) return;
+    audio.play().then(function(){
+      autoStarted = true;
+      btn.classList.add('playing');
+      label.textContent = '暂停音乐';
+    }).catch(function(){
+      // 浏览器拒绝了播放请求，静默失败，等用户手动点按钮
+    });
+  }
+
+  function stopPlaying(){
+    audio.pause();
+    btn.classList.remove('playing');
+    label.textContent = '播放音乐';
+  }
+
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(audio.paused){ startPlaying(); } else { stopPlaying(); }
+  });
+
+  // 用户在页面上第一次点击/滚动/按键时，自动开始播放
+  ['click','touchstart','keydown','scroll'].forEach(function(evt){
+    window.addEventListener(evt, startPlaying, { once:true, passive:true });
+  });
 })();
 </script>
 
