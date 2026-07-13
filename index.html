@@ -577,6 +577,8 @@ footer{
   var label = btn.querySelector('.label');
   var autoStarted = false;
 
+  audio.volume = 0.35; // 音量大小，范围 0（静音）~ 1（最大），自己调这个数字
+
   function startPlaying(){
     if(autoStarted) return;
     audio.play().then(function(){
