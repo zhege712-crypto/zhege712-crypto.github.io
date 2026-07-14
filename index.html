@@ -244,6 +244,23 @@ section{ padding:130px 0; position:relative; }
 .video-grid{
   display:grid; grid-template-columns:repeat(2,1fr); gap:24px;
 }
+.video-embed{
+  position:relative; aspect-ratio:16/9; overflow:hidden;
+  background:var(--ink);
+}
+.embed-caption{
+  margin-top:14px;
+}
+.embed-caption h3{
+  font-family:var(--font-display); font-weight:500; font-size:1.1rem;
+  color:var(--ink);
+}
+.embed-caption span{
+  font-family:var(--font-mono); font-size:0.7rem; color:var(--steel);
+}
+.video-embed iframe{
+  position:absolute; inset:0; width:100%; height:100%; border:0;
+}
 .video-card{
   background:var(--ink); color:var(--white); aspect-ratio:16/9;
   position:relative; overflow:hidden; display:flex; align-items:flex-end;
@@ -420,7 +437,7 @@ footer{
   <div class="wrap">
     <div class="hero-eyebrow">视觉创作者 · 摄影 / 影像 / 写作</div>
     <h1>用镜头显影<br><em>被忽略的</em>颜色。</h1>
-    <p class="hero-desc">我拍照片，剪视频，也写字。这里收录了我近年来的一部分创作 —— 大多数时候世界是灰色的，直到你愿意多看一眼。</p>
+    <p class="hero-desc">to remember</p>
   </div>
   <div class="hero-scroll"><div class="line"></div>向下滚动</div>
 </section>
@@ -441,29 +458,32 @@ footer{
     <div class="gallery">
       <!-- ⚠️ 下面的图片是占位图，替换方法见文末说明 -->
       <div class="gallery-item">
-        <img src="https://picsum.photos/id/1015/900/650" alt="作品一">
-        <div class="gallery-caption"><div class="cap-title">河谷 · 清晨</div><div class="cap-meta">2024 · 系列一</div></div>
+        <img src="file:///E:/my%20photo/20251130/_V4A6919.jpg" alt="作品一">
+        <div class="gallery-caption"><div class="cap-title">南京·红山</div><div class="cap-meta">2025.11.30</div></div>
       </div>
       <div class="gallery-item">
-        <img src="https://picsum.photos/id/1025/600/800" alt="作品二">
-        <div class="gallery-caption"><div class="cap-title">街角</div><div class="cap-meta">2024 · 系列二</div></div>
+        <img src="file:///E:/my%20photo/hk/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/20251130/_V4A9177-1.jpg" alt="作品二">
+        <div class="gallery-caption"><div class="cap-title">中国·香港</div><div class="cap-meta">2026.01</div></div>
       </div>
       <div class="gallery-item">
-        <img src="https://picsum.photos/id/1035/600/800" alt="作品三">
-        <div class="gallery-caption"><div class="cap-title">静物</div><div class="cap-meta">2023</div></div>
+        <img src="file:///E:/my%20photo/hk/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/20251130/_V4A9375-1.jpg" alt="作品三">
+        <div class="gallery-caption"><div class="cap-title">中国·香港</div><div class="cap-meta">2026.01</div></div>
       </div>
       <div class="gallery-item">
-        <img src="https://picsum.photos/id/1043/600/600" alt="作品四">
-        <div class="gallery-caption"><div class="cap-title">无题</div><div class="cap-meta">2023</div></div>
+        <img src="file:///E:/my%20photo/5V4A1495-%E5%B7%B2%E5%A2%9E%E5%BC%BA-NR.JPG" alt="作品四">
+        <div class="gallery-caption"><div class="cap-title">中国·西安</div><div class="cap-meta">2025.08</div></div>
       </div>
       <div class="gallery-item">
-        <img src="https://picsum.photos/id/1050/600/600" alt="作品五">
-        <div class="gallery-caption"><div class="cap-title">旅途</div><div class="cap-meta">2022</div></div>
+        <img src="file:///E:/my%20photo/20260218/20251130/_V4A9905-1.jpg" alt="作品五">
+        <div class="gallery-caption"><div class="cap-title">中国·徐州</div><div class="cap-meta">2026.02</div></div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ============================================================
+     视频
+     ============================================================ -->
 <!-- ============================================================
      视频
      ============================================================ -->
@@ -478,15 +498,35 @@ footer{
     </div>
 
     <div class="video-grid">
-      <!-- ⚠️ 用 <a href> 包裹整张卡片，指向你的 YouTube / B站 链接 -->
-      <a class="video-card" href="#" target="_blank">
-        <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-        <div class="video-info"><h3>短片《显影》</h3><span>04:12 · 2024</span></div>
-      </a>
-      <a class="video-card" href="#" target="_blank">
-        <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-        <div class="video-info"><h3>城市纪录片段</h3><span>07:45 · 2023</span></div>
-      </a>
+      <!-- ⚠️ 嵌入式：直接在网页里播放，不跳转 -->
+      <div>
+        <div class="video-embed">
+          <iframe
+            src="https://player.bilibili.com/player.html?bvid=BV1KGphe1EMa&page=1&high_quality=1&danmaku=0"
+            scrolling="no"
+            allowfullscreen="true">
+          </iframe>
+        </div>
+        <div class="embed-caption">
+          <h3>EDU YAMERO</h3>
+          <span>2024</span>
+        </div>
+      </div>
+
+      <!-- ⚠️ 第二个视频：把 bvid= 后面换成你的第二个视频的 BV 号 -->
+      <div>
+        <div class="video-embed">
+          <iframe
+            src="https://www.bilibili.com/video/BV148411o7An?vd_source=096273be89ac1eda31484946376ea0c5"
+            scrolling="no"
+            allowfullscreen="true">
+          </iframe>
+        </div>
+        <div class="embed-caption">
+          <h3>我推的天一</h3>
+          <span>2023</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -507,17 +547,17 @@ footer{
     <div class="article-list">
       <a class="article-row" href="#">
         <span class="a-date">2024.06</span>
-        <h3>为什么黑白照片反而更真实</h3>
+        <h3>to be</h3>
         <span class="a-tag">随笔</span>
       </a>
       <a class="article-row" href="#">
         <span class="a-date">2024.02</span>
-        <h3>一次失败的拍摄，和它教会我的事</h3>
+        <h3>to be</h3>
         <span class="a-tag">创作笔记</span>
       </a>
       <a class="article-row" href="#">
         <span class="a-date">2023.11</span>
-        <h3>关于剪辑节奏的十个想法</h3>
+        <h3> to be</h3>
         <span class="a-tag">影像</span>
       </a>
     </div>
@@ -530,10 +570,7 @@ footer{
 <section id="about" class="about">
   <div class="wrap">
     <div>
-      <h2>如果你的项目<br>需要一点<span>颜色</span>，<br>找我聊聊。</h2>
-    </div>
-    <div>
-      <p>我是一名独立创作者，专注于摄影、短片与文字。接受商业拍摄、合作项目与约稿。</p>
+      <p>the end ?</p>
       <div class="contact-list">
         <a href="mailto:you@example.com">→ you@example.com</a>
         <a href="#" target="_blank">→ Instagram</a>
@@ -543,7 +580,7 @@ footer{
   </div>
 </section>
 
-<footer>© 2026 林 · 保留所有权利</footer>
+<footer>© 2026 水告示阳 · 保留所有权利</footer>
 
 <!-- ============================================================
      背景音乐 —— 把 src 换成你自己的音频文件路径
@@ -577,7 +614,7 @@ footer{
   var label = btn.querySelector('.label');
   var autoStarted = false;
 
-  audio.volume = 0.05; // 音量大小，范围 0（静音）~ 1（最大），自己调这个数字
+  audio.volume = 0.35; // 音量大小，范围 0（静音）~ 1（最大），自己调这个数字
 
   function startPlaying(){
     if(autoStarted) return;
