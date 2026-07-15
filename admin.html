@@ -58,6 +58,18 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
   background:#fff6e6; border:1px solid var(--accent-gold); padding:16px 18px;
   font-size:0.85rem; color:var(--charcoal); margin-bottom:24px; line-height:1.6;
 }
+
+.manage-item{
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  padding:12px 0; border-bottom:1px solid var(--paper-2);
+}
+.manage-item .mi-info{ font-size:0.88rem; }
+.manage-item .mi-date{ font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); display:block; margin-top:2px; }
+.manage-item .mi-del{
+  margin-top:0; padding:7px 14px; font-size:0.7rem;
+  background:transparent; color:var(--accent-red); border:1px solid var(--accent-red);
+}
+.manage-item .mi-del:hover{ background:var(--accent-red); color:var(--white); }
 </style>
 </head>
 <body>
@@ -108,6 +120,14 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 
     <button id="publish-btn">发布</button>
     <div class="status" id="status"></div>
+  </div>
+
+  <div class="panel">
+    <h2>③ 管理已发布内容</h2>
+    <div class="hint" style="margin-top:0;">填好上面①的仓库信息和密钥后，这里会自动列出所有已发布的诗，点删除即可移除（配图也会一并删除）。</div>
+    <div id="poem-manage-list" style="margin-top:16px;"></div>
+    <button id="refresh-list-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
+    <div class="status" id="manage-status"></div>
   </div>
 </div>
 
@@ -242,6 +262,7 @@ els.btn.addEventListener('click', async function(){
     els.title.value = '';
     els.content.value = '';
     els.image.value = '';
+    loadManageList();
 
   } catch(err){
     setStatus('✗ 出错了：' + err.message, 'err');
@@ -249,6 +270,125 @@ els.btn.addEventListener('click', async function(){
     els.btn.disabled = false;
   }
 });
+
+// ============================================================
+// 管理已发布内容：列出 + 删除
+// ============================================================
+var manageListEl = document.getElementById('poem-manage-list');
+var manageStatusEl = document.getElementById('manage-status');
+
+function setManageStatus(text, type){
+  manageStatusEl.textContent = text;
+  manageStatusEl.className = 'status show ' + type;
+}
+
+async function loadManageList(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  if(!owner || !repo || !token){
+    manageListEl.innerHTML = '<div class="hint">先填好①的仓库信息和密钥</div>';
+    return;
+  }
+  manageListEl.innerHTML = '<div class="hint">加载中…</div>';
+  try{
+    var res = await ghRequest('poems/poems.json', {}, owner, repo, token);
+    if(!res.ok){ throw new Error('找不到 poems.json'); }
+    var fileData = await res.json();
+    var decoded = decodeURIComponent(escape(atob(fileData.content)));
+    var poems = JSON.parse(decoded);
+
+    if(poems.length === 0){
+      manageListEl.innerHTML = '<div class="hint">目前没有已发布的诗</div>';
+      return;
+    }
+
+    poems.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+
+    manageListEl.innerHTML = '';
+    poems.forEach(function(p){
+      var row = document.createElement('div');
+      row.className = 'manage-item';
+      row.innerHTML =
+        '<div class="mi-info">' + escapeHtml(p.title) + '<span class="mi-date">' + p.date + '</span></div>' +
+        '<button class="mi-del" type="button">删除</button>';
+      row.querySelector('.mi-del').addEventListener('click', function(){
+        deletePoem(p.id);
+      });
+      manageListEl.appendChild(row);
+    });
+
+  } catch(err){
+    manageListEl.innerHTML = '<div class="hint">加载失败：' + err.message + '</div>';
+  }
+}
+
+function escapeHtml(s){
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+async function deletePoem(id){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+
+  if(!confirm('确定要删除这首诗吗？此操作不可撤销。')) return;
+
+  setManageStatus('删除中…', 'loading');
+  try{
+    var getRes = await ghRequest('poems/poems.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 poems.json 失败'); }
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var decoded = decodeURIComponent(escape(atob(fileData.content)));
+    var poems = JSON.parse(decoded);
+
+    var target = poems.find(function(p){ return p.id === id; });
+    var remaining = poems.filter(function(p){ return p.id !== id; });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(remaining, null, 2))));
+    var putRes = await ghRequest('poems/poems.json', {
+      method: 'PUT',
+      body: JSON.stringify({
+        message: '删除诗歌: ' + (target ? target.title : id),
+        content: newContentB64,
+        sha: sha
+      })
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 poems.json 失败'); }
+
+    // 顺手把配图也删掉，避免留下没人用的图片文件
+    if(target && target.image){
+      var imgGetRes = await ghRequest(target.image, {}, owner, repo, token);
+      if(imgGetRes.ok){
+        var imgData = await imgGetRes.json();
+        await ghRequest(target.image, {
+          method: 'DELETE',
+          body: JSON.stringify({
+            message: '删除诗歌配图: ' + (target.title || id),
+            sha: imgData.sha
+          })
+        }, owner, repo, token);
+      }
+    }
+
+    setManageStatus('✓ 已删除', 'ok');
+    loadManageList();
+
+  } catch(err){
+    setManageStatus('✗ 删除失败：' + err.message, 'err');
+  }
+}
+
+document.getElementById('refresh-list-btn').addEventListener('click', loadManageList);
+
+// 页面打开、且已有记住的密钥时，自动加载一次列表
+if(els.owner.value && els.repo.value && els.token.value){
+  loadManageList();
+}
+
 </script>
 </body>
 </html>
