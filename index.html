@@ -246,7 +246,7 @@ section{ padding:130px 0; position:relative; }
 }
 .video-embed{
   position:relative; aspect-ratio:16/9; overflow:hidden;
-  background:var(--ink);
+  background:var(--ink); cursor:pointer;
 }
 .embed-caption{
   margin-top:14px;
@@ -498,14 +498,10 @@ footer{
     </div>
 
     <div class="video-grid">
-      <!-- ⚠️ 嵌入式：直接在网页里播放，不跳转 -->
+      <!-- ⚠️ 点击封面才加载播放器，不会自动播放 -->
       <div>
-        <div class="video-embed">
-          <iframe
-            src="https://player.bilibili.com/player.html?bvid=BV1KGphe1EMa&page=1&high_quality=1&danmaku=0"
-            scrolling="no"
-            allowfullscreen="true">
-          </iframe>
+        <div class="video-embed" data-bvid="BV1KGphe1EMa">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
         </div>
         <div class="embed-caption">
           <h3>EDU YAMERO</h3>
@@ -513,14 +509,9 @@ footer{
         </div>
       </div>
 
-      <!-- ⚠️ 第二个视频：把 bvid= 后面换成你的第二个视频的 BV 号 -->
       <div>
-        <div class="video-embed">
-          <iframe
-            src="https://player.bilibili.com/player.html?bvid=BV148411o7An&page=1&high_quality=1&danmaku=0"
-            scrolling="no"
-            allowfullscreen="true">
-          </iframe>
+        <div class="video-embed" data-bvid="BV148411o7An">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
         </div>
         <div class="embed-caption">
           <h3>我推的天一</h3>
@@ -607,7 +598,22 @@ footer{
   }, delay);
 })();
 
-// 音乐播放/暂停切换
+// 视频封面：点击后才真正加载播放器（避免自动播放）
+(function(){
+  document.querySelectorAll('.video-embed').forEach(function(box){
+    box.addEventListener('click', function(){
+      var bvid = box.getAttribute('data-bvid');
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://player.bilibili.com/player.html?bvid=' + bvid + '&page=1&high_quality=1&danmaku=0&autoplay=1';
+      iframe.scrolling = 'no';
+      iframe.allowFullscreen = true;
+      iframe.style.border = '0';
+      box.innerHTML = '';
+      box.style.cursor = 'default';
+      box.appendChild(iframe);
+    }, { once:true });
+  });
+})();
 (function(){
   var btn = document.getElementById('music-toggle');
   var audio = document.getElementById('bg-music');
