@@ -352,6 +352,36 @@ footer{
   box-shadow:0 6px 20px rgba(0,0,0,0.25);
   transition:border-color 0.3s ease;
 }
+
+/* ============================================================
+   侧边分栏导航
+   ============================================================ */
+.side-nav{
+  position:fixed; left:24px; top:120px; z-index:150;
+  width:168px;
+  background:var(--white); border:1px solid var(--paper-2);
+  padding:10px; box-shadow:0 10px 30px rgba(28,28,27,0.06);
+}
+.side-nav a{
+  display:flex; align-items:center; gap:12px;
+  padding:11px 12px; border-radius:2px;
+  font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal);
+  transition:background 0.25s ease, color 0.25s ease;
+}
+.side-nav a:hover{ background:var(--paper-2); }
+.side-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; }
+.side-nav a svg{ width:17px; height:17px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.6; }
+.side-nav a .badge{
+  margin-left:auto; font-family:var(--font-mono); font-size:0.65rem;
+  background:var(--paper); color:var(--steel);
+  border-radius:50%; width:20px; height:20px;
+  display:flex; align-items:center; justify-content:center;
+}
+.side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
+
+@media (max-width:1180px){
+  .side-nav{ display:none; } /* 窄屏幕先隐藏，避免挤压排版 */
+}
 #music-toggle:hover{ border-color:var(--accent-gold); }
 
 #music-toggle .ring{
@@ -429,6 +459,33 @@ footer{
     </nav>
   </div>
 </header>
+
+<!-- ============================================================
+     侧边分栏导航
+     ============================================================ -->
+<nav class="side-nav">
+  <a href="index.html" class="active">
+    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+    首页
+  </a>
+  <a href="#work">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    作品
+  </a>
+  <a href="poems.html">
+    <svg viewBox="0 0 24 24"><path d="M20 4L9 15l-5 1 1-5L16 0z"/><path d="M3 21h18"/></svg>
+    诗歌漂流
+    <span class="badge" id="poem-count">·</span>
+  </a>
+  <a href="#writing">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
+    文章
+  </a>
+  <a href="#about">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    关于
+  </a>
+</nav>
 
 <!-- ============================================================
      Hero
@@ -596,6 +653,15 @@ footer{
     loader.classList.add('closing');
     setTimeout(function(){ loader.style.display = 'none'; }, 900);
   }, delay);
+})();
+
+// 侧边导航：读取诗歌数量显示在徽标上
+(function(){
+  var badge = document.getElementById('poem-count');
+  if(!badge) return;
+  fetch('poems/poems.json').then(function(r){ return r.json(); }).then(function(list){
+    badge.textContent = list.length;
+  }).catch(function(){ badge.textContent = '0'; });
 })();
 
 // 视频封面：点击后才真正加载播放器（避免自动播放）

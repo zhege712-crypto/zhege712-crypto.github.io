@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>发布后台（私人使用）</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c1c1b; --charcoal:#373735; --steel:#74736f; --fog:#b9b7b0;
+  --paper:#eceae5; --paper-2:#e0ddd6; --white:#faf9f6;
+  --accent-red:#e0393e; --accent-gold:#e8a33d; --accent-cobalt:#2f5fa8;
+  --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'Space Mono',monospace;
+}
+*{ box-sizing:border-box; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); margin:0; padding:40px 20px 100px; }
+.wrap{ max-width:640px; margin:0 auto; }
+h1{ font-family:var(--font-display); font-weight:500; font-size:1.8rem; margin-bottom:6px; }
+.sub{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); margin-bottom:36px; }
+
+.panel{ background:var(--white); border:1px solid var(--paper-2); padding:26px; margin-bottom:24px; }
+.panel h2{ font-family:var(--font-display); font-weight:500; font-size:1.1rem; margin-bottom:16px; }
+
+label{ display:block; font-family:var(--font-mono); font-size:0.72rem; color:var(--steel); margin:16px 0 6px; text-transform:uppercase; letter-spacing:0.05em; }
+label:first-of-type{ margin-top:0; }
+input[type=text], input[type=password], input[type=date], textarea{
+  width:100%; padding:11px 12px; border:1px solid var(--paper-2); background:var(--paper);
+  font-family:var(--font-body); font-size:0.95rem; color:var(--ink);
+}
+textarea{ min-height:160px; resize:vertical; font-family:var(--font-body); line-height:1.6; }
+input[type=file]{ font-family:var(--font-mono); font-size:0.8rem; }
+
+.row{ display:flex; gap:14px; }
+.row > div{ flex:1; }
+
+button{
+  margin-top:22px; padding:13px 22px; border:none; cursor:pointer;
+  font-family:var(--font-mono); font-size:0.8rem; letter-spacing:0.05em;
+  background:var(--ink); color:var(--white); transition:background 0.25s ease;
+}
+button:hover{ background:var(--accent-red); }
+button:disabled{ background:var(--fog); cursor:not-allowed; }
+
+.hint{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); margin-top:8px; line-height:1.6; }
+.hint a{ color:var(--accent-cobalt); }
+
+.status{
+  margin-top:18px; padding:12px 14px; font-family:var(--font-mono); font-size:0.78rem;
+  display:none;
+}
+.status.show{ display:block; }
+.status.ok{ background:#e6f2e8; color:#2b6b3a; }
+.status.err{ background:#f7e6e6; color:var(--accent-red); }
+.status.loading{ background:var(--paper-2); color:var(--charcoal); }
+
+.warn-box{
+  background:#fff6e6; border:1px solid var(--accent-gold); padding:16px 18px;
+  font-size:0.85rem; color:var(--charcoal); margin-bottom:24px; line-height:1.6;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>诗歌漂流 · 发布后台</h1>
+  <div class="sub">这是你私人使用的页面，没有链接到网站导航里，但网址是公开可访问的，别把这个链接分享给别人。</div>
+
+  <div class="warn-box">
+    ⚠️ 密钥（Token）具有修改你仓库内容的权限，请不要在公共/他人电脑上勾选"记住密钥"，也不要把密钥截图发给任何人（包括我）。
+  </div>
+
+  <div class="panel">
+    <h2>① 仓库与密钥设置</h2>
+    <label>GitHub 用户名（仓库所有者）</label>
+    <input type="text" id="gh-owner" placeholder="例如 zhege712-crypto">
+    <label>仓库名</label>
+    <input type="text" id="gh-repo" placeholder="例如 zhege712-crypto.github.io">
+    <label>Personal Access Token</label>
+    <input type="password" id="gh-token" placeholder="ghp_ 开头的一长串字符">
+    <label style="display:flex; align-items:center; gap:8px; text-transform:none; font-size:0.82rem; color:var(--charcoal);">
+      <input type="checkbox" id="remember" style="width:auto;"> 在这台设备上记住（下次不用重新输入）
+    </label>
+    <div class="hint">
+      还没有密钥？去 GitHub → 头像 → Settings → Developer settings → Personal access tokens →
+      Fine-grained tokens → Generate new token。<br>
+      Repository access 选 "Only select repositories" 只勾你的网站仓库；
+      Permissions 里把 <b>Contents</b> 设为 <b>Read and write</b>，其他保持默认即可。
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>② 写一首诗 / 一段图文</h2>
+    <div class="row">
+      <div>
+        <label>标题</label>
+        <input type="text" id="p-title" placeholder="给这首诗起个名字">
+      </div>
+      <div>
+        <label>日期</label>
+        <input type="date" id="p-date">
+      </div>
+    </div>
+    <label>正文</label>
+    <textarea id="p-content" placeholder="在这里写诗，换行会保留"></textarea>
+    <label>配图（可选）</label>
+    <input type="file" id="p-image" accept="image/*">
+    <div class="hint">图片会被上传到仓库的 photos/poems/ 文件夹下。</div>
+
+    <button id="publish-btn">发布</button>
+    <div class="status" id="status"></div>
+  </div>
+</div>
+
+<script>
+var els = {
+  owner: document.getElementById('gh-owner'),
+  repo: document.getElementById('gh-repo'),
+  token: document.getElementById('gh-token'),
+  remember: document.getElementById('remember'),
+  title: document.getElementById('p-title'),
+  date: document.getElementById('p-date'),
+  content: document.getElementById('p-content'),
+  image: document.getElementById('p-image'),
+  btn: document.getElementById('publish-btn'),
+  status: document.getElementById('status')
+};
+
+// 页面打开时，如果之前记住过，就自动填入
+(function(){
+  var saved = localStorage.getItem('gh_admin_creds');
+  if(saved){
+    try{
+      var c = JSON.parse(saved);
+      els.owner.value = c.owner || '';
+      els.repo.value = c.repo || '';
+      els.token.value = c.token || '';
+      els.remember.checked = true;
+    }catch(e){}
+  }
+  els.date.value = new Date().toISOString().slice(0,10);
+})();
+
+function setStatus(text, type){
+  els.status.textContent = text;
+  els.status.className = 'status show ' + type;
+}
+
+function fileToBase64(file){
+  return new Promise(function(resolve, reject){
+    var reader = new FileReader();
+    reader.onload = function(){ resolve(reader.result.split(',')[1]); };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function ghRequest(path, options, owner, repo, token){
+  return fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, Object.assign({
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github+json'
+    }
+  }, options));
+}
+
+els.btn.addEventListener('click', async function(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  var title = els.title.value.trim();
+  var date = els.date.value;
+  var content = els.content.value.trim();
+  var file = els.image.files[0];
+
+  if(!owner || !repo || !token){ setStatus('请先填写仓库信息和密钥', 'err'); return; }
+  if(!title || !content){ setStatus('标题和正文不能为空', 'err'); return; }
+
+  els.btn.disabled = true;
+  setStatus('发布中，请稍候…', 'loading');
+
+  try{
+    if(els.remember.checked){
+      localStorage.setItem('gh_admin_creds', JSON.stringify({owner:owner, repo:repo, token:token}));
+    } else {
+      localStorage.removeItem('gh_admin_creds');
+    }
+
+    var imagePath = null;
+
+    // 第一步：如果选了图片，先上传图片
+    if(file){
+      var base64 = await fileToBase64(file);
+      var safeName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      imagePath = 'photos/poems/' + safeName;
+      var imgRes = await ghRequest(imagePath, {
+        method: 'PUT',
+        body: JSON.stringify({
+          message: '发布诗歌配图: ' + title,
+          content: base64
+        })
+      }, owner, repo, token);
+      if(!imgRes.ok){ throw new Error('图片上传失败：' + (await imgRes.text())); }
+    }
+
+    // 第二步：读取现有的 poems.json（拿到 sha 才能更新）
+    var sha = null;
+    var poems = [];
+    var getRes = await ghRequest('poems/poems.json', {}, owner, repo, token);
+    if(getRes.ok){
+      var fileData = await getRes.json();
+      sha = fileData.sha;
+      var decoded = decodeURIComponent(escape(atob(fileData.content)));
+      poems = JSON.parse(decoded);
+    } else if(getRes.status !== 404){
+      throw new Error('读取 poems.json 失败');
+    }
+
+    // 第三步：追加新诗歌
+    poems.push({
+      id: String(Date.now()),
+      title: title,
+      date: date,
+      content: content,
+      image: imagePath
+    });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(poems, null, 2))));
+    var putBody = {
+      message: '发布新诗: ' + title,
+      content: newContentB64
+    };
+    if(sha){ putBody.sha = sha; }
+
+    var putRes = await ghRequest('poems/poems.json', {
+      method: 'PUT',
+      body: JSON.stringify(putBody)
+    }, owner, repo, token);
+
+    if(!putRes.ok){ throw new Error('保存 poems.json 失败：' + (await putRes.text())); }
+
+    setStatus('✓ 发布成功！大约1分钟后刷新诗歌漂流页面就能看到。', 'ok');
+    els.title.value = '';
+    els.content.value = '';
+    els.image.value = '';
+
+  } catch(err){
+    setStatus('✗ 出错了：' + err.message, 'err');
+  } finally {
+    els.btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
