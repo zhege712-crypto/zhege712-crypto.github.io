@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>诗歌漂流 / Poem's Yesterday</title>
+<title>视频 / 伞</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -41,34 +41,24 @@ nav.top-nav a:hover::after{ width:100%; }
 .side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
 @media (max-width:1180px){ .side-nav{ display:none; } }
 
-.poem-hero{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding-top:100px; }
-.poem-hero .eyebrow{ font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent-red); margin-bottom:18px; }
-.poem-hero h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2.6rem, 7vw, 5rem); line-height:1.1; max-width:760px; }
-.poem-hero p{ margin-top:26px; max-width:480px; color:var(--charcoal); font-size:1.02rem; }
+.page-head{ padding:150px 0 60px; }
+.section-num{ font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-red); letter-spacing:0.1em; margin-bottom:10px; display:block; }
+.page-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2rem,5vw,3.2rem); }
+.page-note{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); margin-top:16px; }
 
-.poem-stats{ display:flex; gap:40px; margin-top:44px; }
-.poem-stats div{ font-family:var(--font-mono); }
-.poem-stats .num{ font-size:1.8rem; color:var(--ink); display:block; }
-.poem-stats .label{ font-size:0.7rem; color:var(--steel); letter-spacing:0.05em; }
-
-.poem-actions{ display:flex; gap:16px; margin-top:44px; flex-wrap:wrap; }
-.btn{
-  font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.05em;
-  padding:14px 26px; display:inline-flex; align-items:center; gap:8px;
-  transition:background 0.3s ease, color 0.3s ease;
-}
-.btn-primary{ background:var(--ink); color:var(--white); }
-.btn-primary:hover{ background:var(--accent-red); }
-.btn-outline{ border:1px solid var(--charcoal); color:var(--ink); }
-.btn-outline:hover{ background:var(--charcoal); color:var(--white); }
-
-.submit-note{
-  max-width:640px; margin:0 0 130px; padding:26px 28px; background:var(--white);
-  border:1px solid var(--paper-2); font-size:0.9rem; color:var(--charcoal); line-height:1.8;
-}
-.submit-note b{ color:var(--ink); }
+.video-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:24px; padding-bottom:140px; }
+.video-embed{ position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--ink); cursor:pointer; }
+.video-embed iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.embed-caption{ margin-top:14px; }
+.embed-caption h3{ font-family:var(--font-display); font-weight:500; font-size:1.1rem; color:var(--ink); }
+.embed-caption span{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); }
+.play-btn{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px; border-radius:50%; border:1px solid rgba(255,255,255,0.5); display:flex; align-items:center; justify-content:center; transition:transform 0.3s ease, background 0.3s ease; }
+.video-embed:hover .play-btn{ transform:translate(-50%,-50%) scale(1.1); background:rgba(255,255,255,0.1); }
+.play-btn svg{ width:16px; height:16px; fill:var(--white); margin-left:2px; }
+@media (max-width:820px){ .video-grid{ grid-template-columns:1fr; } }
 
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+
 
 </style>
 </head>
@@ -97,7 +87,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     作品
   </a>
-  <a href="video.html">
+  <a href="video.html" class="active">
     <svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="1"/><path d="M17 9l4-2v10l-4-2z"/></svg>
     视频
   </a>
@@ -109,7 +99,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
     关于
   </a>
-  <a href="poems.html" class="active">
+  <a href="poems.html">
     <svg viewBox="0 0 24 24"><path d="M20 4L9 15l-5 1 1-5L16 0z"/><path d="M3 21h18"/></svg>
     诗歌漂流
     <span class="badge" id="poem-count">·</span>
@@ -117,57 +107,61 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </nav>
 
 <div class="wrap">
-  <div class="poem-hero">
-    <div class="eyebrow">Poem's Yesterday</div>
-    <h1>诗歌漂流</h1>
-    <p>把一句话放进瓶子，让它漂到某个陌生人手上。这里收录我写的诗，也接受你投来的文字与图像。</p>
-
-    <div class="poem-stats">
-      <div><span class="num" id="stat-count">–</span><span class="label">已发布</span></div>
-      <div><span class="num" id="stat-latest">–</span><span class="label">最近更新</span></div>
-    </div>
-
-    <div class="poem-actions">
-      <a class="btn btn-primary" href="poems-catalog.html">查看目录 →</a>
-      <a class="btn btn-outline" id="submit-link" href="#" target="_blank">我要投稿 ↗</a>
-    </div>
+  <div class="page-head">
+    <span class="section-num">02 — 影像</span>
+    <h1>视频</h1>
+    <p class="page-note">点击封面才加载播放器，不会自动播放</p>
   </div>
 
-  <div class="submit-note">
-    <b>投稿说明：</b>点击"我要投稿"会跳转到 GitHub，需要用你的 GitHub 账号登录后发帖（这一步等同于"注册/登录"）。
-    请按格式填写：标题、正文，图片可以直接拖进帖子里上传。提交后我会看到，
-    <b>审核通过</b>的内容会被搬运到诗歌漂流目录里正式展示；没有通过或还在等待的，不会出现在目录页。
+  <div class="video-grid">
+    <div>
+      <div class="video-embed" data-bvid="BV1KGphe1EMa">
+        <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="embed-caption">
+        <h3>EDU YAMERO</h3>
+        <span>2024</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="video-embed" data-bvid="BV148411o7An">
+        <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="embed-caption">
+        <h3>我推的天一</h3>
+        <span>2023</span>
+      </div>
+    </div>
   </div>
 </div>
 
-<footer>© 2026 · 诗歌漂流</footer>
+<footer>© 2026 水告示阳 · 保留所有权利</footer>
+
 
 <script>
 (function(){
   var badge = document.getElementById('poem-count');
-  var statCount = document.getElementById('stat-count');
-  var statLatest = document.getElementById('stat-latest');
+  if(!badge) return;
   fetch('poems/poems.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(list){
     badge.textContent = list.length;
-    statCount.textContent = list.length;
-    if(list.length){
-      var latest = list.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); })[0];
-      statLatest.textContent = latest.date;
-    } else {
-      statLatest.textContent = '—';
-    }
-  }).catch(function(){
-    badge.textContent = '0'; statCount.textContent = '0'; statLatest.textContent = '—';
-  });
-
-  // ⚠️ 把下面 owner/repo 换成你自己的，投稿链接才会指对地方
-  var owner = 'zhege712-crypto';
-  var repo = 'zhege712-crypto.github.io';
-  var title = encodeURIComponent('【投稿】我的诗');
-  var body = encodeURIComponent('标题：\n\n正文：\n\n（可以把图片直接拖进这个输入框上传）');
-  document.getElementById('submit-link').href =
-    'https://github.com/' + owner + '/' + repo + '/discussions/new/choose';
+  }).catch(function(){ badge.textContent = '0'; });
 })();
+
+document.querySelectorAll('.video-embed').forEach(function(box){
+  box.addEventListener('click', function(){
+    var bvid = box.getAttribute('data-bvid');
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://player.bilibili.com/player.html?bvid=' + bvid + '&page=1&high_quality=1&danmaku=0&autoplay=1';
+    iframe.scrolling = 'no';
+    iframe.allowFullscreen = true;
+    iframe.style.border = '0';
+    box.innerHTML = '';
+    box.style.cursor = 'default';
+    box.appendChild(iframe);
+  }, { once:true });
+});
+
 </script>
 
 </body>

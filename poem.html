@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>诗歌漂流</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c1c1b; --charcoal:#373735; --steel:#74736f; --fog:#b9b7b0;
+  --paper:#eceae5; --paper-2:#e0ddd6; --white:#faf9f6;
+  --accent-red:#e0393e; --accent-cobalt:#2f5fa8; --accent-gold:#e8a33d;
+  --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'Space Mono',monospace;
+  --maxw:680px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.7; }
+a{ color:inherit; text-decoration:none; }
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+
+header{ padding:26px 0; border-bottom:1px solid var(--paper-2); }
+header .wrap{ max-width:960px; display:flex; justify-content:space-between; align-items:center; }
+.logo{ font-family:var(--font-display); font-weight:600; }
+.back-link{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); }
+.back-link:hover{ color:var(--accent-red); }
+
+.poem-detail{ padding:70px 0 20px; }
+.poem-meta{ font-family:var(--font-mono); font-size:0.72rem; color:var(--steel); margin-bottom:16px; }
+.poem-title{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:34px; }
+.poem-content{ white-space:pre-line; font-size:1.08rem; color:var(--charcoal); }
+.poem-image{ margin-top:32px; }
+.poem-image img{ width:100%; filter:grayscale(1); transition:filter 0.6s ease; }
+.poem-image img:hover{ filter:grayscale(0); }
+
+.empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:80px 0; }
+
+.comments-section{ padding:60px 0 100px; margin-top:50px; border-top:1px solid var(--paper-2); }
+.comments-section h2{ font-family:var(--font-display); font-weight:500; font-size:1.2rem; margin-bottom:24px; }
+
+footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo">诗歌漂流</div>
+    <a class="back-link" href="poems-catalog.html">← 返回目录</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="poem-detail" id="poem-detail">
+    <div class="empty-state">加载中…</div>
+  </div>
+</div>
+
+<div class="wrap comments-section" id="comments-wrap" style="display:none;">
+  <h2>留言</h2>
+  <div id="giscus-container"></div>
+</div>
+
+<footer>© 2026 · 诗歌漂流</footer>
+
+<script>
+function getParam(name){
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+var id = getParam('id');
+
+fetch('poems/poems.json?t=' + Date.now())
+  .then(function(r){ return r.json(); })
+  .then(function(poems){
+    var poem = poems.find(function(p){ return p.id === id; });
+    var detail = document.getElementById('poem-detail');
+
+    if(!poem){
+      detail.innerHTML = '<div class="empty-state">没找到这首诗，可能已被删除。</div>';
+      return;
+    }
+
+    document.title = poem.title + ' · 诗歌漂流';
+    var img = poem.image ? '<div class="poem-image"><img src="' + poem.image + '" alt="' + poem.title + '"></div>' : '';
+    detail.innerHTML =
+      '<div class="poem-meta">' + poem.date + '</div>' +
+      '<div class="poem-title">' + poem.title + '</div>' +
+      '<div class="poem-content">' + poem.content + '</div>' +
+      img;
+
+    // 每首诗单独一个留言区（用诗的 id 区分，不会混在一起）
+    document.getElementById('comments-wrap').style.display = 'block';
+    var script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', 'zhege712-crypto/zhege712-crypto.github.io');
+    script.setAttribute('data-repo-id', 'R_kgDOTWw-Ew');
+    script.setAttribute('data-category', 'Announcements');
+    script.setAttribute('data-category-id', 'DIC_kwDOTWw-E84DBOn-');
+    script.setAttribute('data-mapping', 'specific');
+    script.setAttribute('data-term', 'poem-' + poem.id);
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'bottom');
+    script.setAttribute('data-theme', 'light');
+    script.setAttribute('data-lang', 'zh-CN');
+    script.crossOrigin = 'anonymous';
+    script.async = true;
+    document.getElementById('giscus-container').appendChild(script);
+  })
+  .catch(function(){
+    document.getElementById('poem-detail').innerHTML = '<div class="empty-state">加载失败，检查 poems/poems.json 是否存在。</div>';
+  });
+</script>
+
+</body>
+</html>
