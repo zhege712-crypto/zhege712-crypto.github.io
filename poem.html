@@ -91,7 +91,7 @@ fetch('poems/poems.json?t=' + Date.now())
     document.title = poem.title + ' · 诗歌漂流'; // 仅影响标签页标题，不涉及网页渲染，安全
     var img = poem.image ? '<div class="poem-image"><img src="' + escapeHtml(poem.image) + '" alt="' + escapeHtml(poem.title) + '"></div>' : '';
     detail.innerHTML =
-      '<div class="poem-meta">' + escapeHtml(poem.date) + '</div>' +
+      '<div class="poem-meta">' + escapeHtml(poem.date) + (poem.series ? ' · ' + escapeHtml(poem.series) : '') + '</div>' +
       '<div class="poem-title">' + escapeHtml(poem.title) + '</div>' +
       '<div class="poem-content">' + escapeHtml(poem.content) + '</div>' +
       img;

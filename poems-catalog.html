@@ -30,7 +30,10 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
 .eyebrow{ font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.2em; color:var(--accent-red); text-transform:uppercase; margin-bottom:12px; }
 .page-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.8rem,5vw,2.6rem); }
 
-.catalog-list{ border-top:1px solid var(--fog); padding-bottom:120px; }
+.series-block{ margin-bottom:50px; }
+.series-block h2{ font-family:var(--font-display); font-weight:500; font-size:1.25rem; margin:36px 0 4px; color:var(--accent-red); }
+.series-block:first-child h2{ margin-top:0; }
+.catalog-list{ padding-bottom:120px; }
 .catalog-row{
   display:grid; grid-template-columns:90px 1fr auto; gap:20px; align-items:baseline;
   padding:22px 0; border-bottom:1px solid var(--fog); transition:padding-left 0.3s ease;
@@ -84,13 +87,26 @@ fetch('poems/poems.json?t=' + Date.now())
       return;
     }
     poems.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
-    list.innerHTML = poems.map(function(p){
-      return '' +
-        '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
-          '<span class="c-date">' + escapeHtml(p.date) + '</span>' +
-          '<h3>' + escapeHtml(p.title) + '</h3>' +
-          '<span class="c-arrow">阅读 →</span>' +
-        '</a>';
+
+    // 按序列分组，未标注序列的归到"未分类"
+    var groups = {};
+    var order = [];
+    poems.forEach(function(p){
+      var s = p.series || '未分类';
+      if(!groups[s]){ groups[s] = []; order.push(s); }
+      groups[s].push(p);
+    });
+
+    list.innerHTML = order.map(function(series){
+      var rows = groups[series].map(function(p){
+        return '' +
+          '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
+            '<span class="c-date">' + escapeHtml(p.date) + '</span>' +
+            '<h3>' + escapeHtml(p.title) + '</h3>' +
+            '<span class="c-arrow">阅读 →</span>' +
+          '</a>';
+      }).join('');
+      return '<div class="series-block"><h2>' + escapeHtml(series) + '</h2>' + rows + '</div>';
     }).join('');
   })
   .catch(function(){
