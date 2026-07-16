@@ -126,6 +126,13 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <script>
 (function(){
   var wrap = document.getElementById('gallery-wrap');
+
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = String(s == null ? '' : s);
+    return d.innerHTML;
+  }
+
   fetch('photos/photos.json?t=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(photos){
@@ -145,11 +152,11 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
         var items = groups[cat].map(function(p){
           return '' +
             '<div class="gallery-item">' +
-              '<img src="' + p.image + '" alt="' + p.title + '">' +
-              '<div class="gallery-caption"><div class="cap-title">' + p.title + '</div><div class="cap-meta">' + p.date + '</div></div>' +
+              '<img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.title) + '">' +
+              '<div class="gallery-caption"><div class="cap-title">' + escapeHtml(p.title) + '</div><div class="cap-meta">' + escapeHtml(p.date) + '</div></div>' +
             '</div>';
         }).join('');
-        return '<div class="category-block"><h2>' + cat + '</h2><div class="gallery">' + items + '</div></div>';
+        return '<div class="category-block"><h2>' + escapeHtml(cat) + '</h2><div class="gallery">' + items + '</div></div>';
       }).join('');
     })
     .catch(function(){

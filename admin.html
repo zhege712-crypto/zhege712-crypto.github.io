@@ -358,7 +358,7 @@ async function loadManageList(){
       var row = document.createElement('div');
       row.className = 'manage-item';
       row.innerHTML =
-        '<div class="mi-info">' + escapeHtml(p.title) + '<span class="mi-date">' + p.date + '</span></div>' +
+        '<div class="mi-info">' + escapeHtml(p.title) + '<span class="mi-date">' + escapeHtml(p.date) + '</span></div>' +
         '<button class="mi-del" type="button">删除</button>';
       row.querySelector('.mi-del').addEventListener('click', function(){
         deletePoem(p.id);
@@ -541,15 +541,15 @@ async function loadPhotoManageList(){
 
     // 分类建议列表
     var cats = Array.from(new Set(photos.map(function(p){ return p.category || '未分类'; })));
-    categoryListEl.innerHTML = cats.map(function(c){ return '<option value="' + c + '">'; }).join('');
+    categoryListEl.innerHTML = cats.map(function(c){ return '<option value="' + escapeHtml(c) + '">'; }).join('');
 
     photoListEl.innerHTML = '';
     photos.forEach(function(p){
       var row = document.createElement('div');
       row.className = 'photo-item';
       row.innerHTML =
-        '<img src="' + p.image + '" alt="">' +
-        '<div class="pi-title">' + escapeHtml(p.title) + '<span class="pi-date">' + p.date + '</span></div>' +
+        '<img src="' + escapeHtml(p.image) + '" alt="">' +
+        '<div class="pi-title">' + escapeHtml(p.title) + '<span class="pi-date">' + escapeHtml(p.date) + '</span></div>' +
         '<input type="text" class="pi-cat" value="' + escapeHtml(p.category || '未分类') + '">' +
         '<button class="pi-save" type="button">保存</button>' +
         '<button class="pi-del" type="button">删除</button>';

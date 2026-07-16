@@ -69,6 +69,12 @@ function getParam(name){
   return new URLSearchParams(window.location.search).get(name);
 }
 
+function escapeHtml(s){
+  var d = document.createElement('div');
+  d.textContent = String(s == null ? '' : s);
+  return d.innerHTML;
+}
+
 var id = getParam('id');
 
 fetch('poems/poems.json?t=' + Date.now())
@@ -82,12 +88,12 @@ fetch('poems/poems.json?t=' + Date.now())
       return;
     }
 
-    document.title = poem.title + ' · 诗歌漂流';
-    var img = poem.image ? '<div class="poem-image"><img src="' + poem.image + '" alt="' + poem.title + '"></div>' : '';
+    document.title = poem.title + ' · 诗歌漂流'; // 仅影响标签页标题，不涉及网页渲染，安全
+    var img = poem.image ? '<div class="poem-image"><img src="' + escapeHtml(poem.image) + '" alt="' + escapeHtml(poem.title) + '"></div>' : '';
     detail.innerHTML =
-      '<div class="poem-meta">' + poem.date + '</div>' +
-      '<div class="poem-title">' + poem.title + '</div>' +
-      '<div class="poem-content">' + poem.content + '</div>' +
+      '<div class="poem-meta">' + escapeHtml(poem.date) + '</div>' +
+      '<div class="poem-title">' + escapeHtml(poem.title) + '</div>' +
+      '<div class="poem-content">' + escapeHtml(poem.content) + '</div>' +
       img;
 
     // 每首诗单独一个留言区（用诗的 id 区分，不会混在一起）
