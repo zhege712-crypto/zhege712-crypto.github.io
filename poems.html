@@ -68,6 +68,11 @@ nav.top-nav a:hover::after{ width:100%; }
 }
 .submit-note b{ color:var(--ink); }
 
+/* 希腊回纹装饰 */
+.greek-divider{ width:120px; height:12px; color:var(--fog); margin:28px 0; display:block; }
+.greek-divider.gold{ color:var(--accent-gold); }
+.laurel{ width:36px; height:36px; color:var(--accent-gold); opacity:0.85; }
+
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 
 </style>
@@ -118,9 +123,24 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <div class="wrap">
   <div class="poem-hero">
+    <svg class="laurel" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.3">
+      <path d="M20 6C14 12 12 20 15 30" stroke-linecap="round"/>
+      <path d="M20 6C26 12 28 20 25 30" stroke-linecap="round"/>
+      <path d="M15 10c-2 0-3 1-3 1s1 2 3 2" stroke-linecap="round"/>
+      <path d="M14 15c-2 0-3 1-3 1s1 2 3 2" stroke-linecap="round"/>
+      <path d="M14 20c-2 0-3 1-3 1s1 2 3 2" stroke-linecap="round"/>
+      <path d="M25 10c2 0 3 1 3 1s-1 2-3 2" stroke-linecap="round"/>
+      <path d="M26 15c2 0 3 1 3 1s-1 2-3 2" stroke-linecap="round"/>
+      <path d="M26 20c2 0 3 1 3 1s-1 2-3 2" stroke-linecap="round"/>
+    </svg>
     <div class="eyebrow">Poem's Odyssey</div>
     <h1>诗歌漂流</h1>
-    <p>Είθε, αφού ξεπεράσουμε την οργή του Ποσειδώνα, να συγκεντρωθούμε σε έναν τόπο γαλήνης.</p>
+
+    <svg class="greek-divider" viewBox="0 0 120 12" fill="none" stroke="currentColor" stroke-width="1.2">
+      <path d="M0 6 H10 V0 H20 V12 H30 V0 H40 V12 H50 V0 H60 V12 H70 V0 H80 V12 H90 V0 H100 V12 H110 V0 H120"/>
+    </svg>
+
+    <p>把一句话放进瓶子，让它漂到某个陌生人手上。这里收录我写的诗，也接受你投来的文字与图像。</p>
 
     <div class="poem-stats">
       <div><span class="num" id="stat-count">–</span><span class="label">已发布</span></div>
