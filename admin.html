@@ -131,8 +131,8 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <label>序列（可选）</label>
     <input type="text" id="p-series" placeholder="例如：序列1 / 无题集 / 城市漫游" list="p-series-list">
     <datalist id="p-series-list"></datalist>
-    <label>配图（可选）</label>
-    <input type="file" id="p-image" accept="image/*">
+    <label>配图（可选，可一次选多张）</label>
+    <input type="file" id="p-image" accept="image/*" multiple>
     <div class="hint">图片会被上传到仓库的 photos/poems/ 文件夹下。</div>
 
     <button id="publish-btn">发布</button>
@@ -245,7 +245,7 @@ els.btn.addEventListener('click', async function(){
   var date = els.date.value;
   var content = els.content.value.trim();
   var series = els.series.value.trim() || '未分类';
-  var file = els.image.files[0];
+  var files = Array.from(els.image.files || []);
 
   if(!owner || !repo || !token){ setStatus('请先填写仓库信息和密钥', 'err'); return; }
   if(!title || !content){ setStatus('标题和正文不能为空', 'err'); return; }
@@ -260,22 +260,27 @@ els.btn.addEventListener('click', async function(){
       localStorage.removeItem('gh_admin_creds');
     }
 
-    var imagePath = null;
+    var imagePaths = [];
 
-    // 第一步：如果选了图片，先上传图片
-    if(file){
-      var base64 = await fileToBase64(file);
-      var safeName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
-      imagePath = 'photos/poems/' + safeName;
-      var imgRes = await ghRequest(imagePath, {
+    // 第一步：如果选了图片，依次上传每一张
+    for(var i = 0; i < files.length; i++){
+      var f = files[i];
+      setStatus('上传图片 ' + (i+1) + '/' + files.length + ' …', 'loading');
+      var base64 = await fileToBase64(f);
+      var safeName = Date.now() + '-' + i + '-' + f.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      var imgPath = 'photos/poems/' + safeName;
+      var imgRes = await ghRequest(imgPath, {
         method: 'PUT',
         body: JSON.stringify({
-          message: '发布诗歌配图: ' + title,
+          message: '发布诗歌配图: ' + title + ' (' + (i+1) + '/' + files.length + ')',
           content: base64
         })
       }, owner, repo, token);
-      if(!imgRes.ok){ throw new Error('图片上传失败：' + (await imgRes.text())); }
+      if(!imgRes.ok){ throw new Error('第 ' + (i+1) + ' 张图片上传失败：' + (await imgRes.text())); }
+      imagePaths.push(imgPath);
     }
+
+    setStatus('保存诗歌信息…', 'loading');
 
     // 第二步：读取现有的 poems.json（拿到 sha 才能更新）
     var sha = null;
@@ -297,7 +302,7 @@ els.btn.addEventListener('click', async function(){
       date: date,
       content: content,
       series: series,
-      image: imagePath
+      images: imagePaths
     });
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(poems, null, 2))));
@@ -461,12 +466,19 @@ async function deletePoem(id){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('更新 poems.json 失败'); }
 
-    // 顺手把配图也删掉，避免留下没人用的图片文件
-    if(target && target.image){
-      var imgGetRes = await ghRequest(target.image, {}, owner, repo, token);
+    // 顺手把配图也删掉，避免留下没人用的图片文件（新数据是images数组，兼容旧数据的单个image字段）
+    var imagesToDelete = [];
+    if(target){
+      if(Array.isArray(target.images)) imagesToDelete = imagesToDelete.concat(target.images);
+      if(target.image) imagesToDelete.push(target.image);
+    }
+    for(var i = 0; i < imagesToDelete.length; i++){
+      var imgPath = imagesToDelete[i];
+      if(!imgPath) continue;
+      var imgGetRes = await ghRequest(imgPath, {}, owner, repo, token);
       if(imgGetRes.ok){
         var imgData = await imgGetRes.json();
-        await ghRequest(target.image, {
+        await ghRequest(imgPath, {
           method: 'DELETE',
           body: JSON.stringify({
             message: '删除诗歌配图: ' + (target.title || id),

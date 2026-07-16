@@ -91,7 +91,11 @@ fetch('poems/poems.json?t=' + Date.now())
     }
 
     document.title = poem.title + ' · 诗歌漂流'; // 仅影响标签页标题，不涉及网页渲染，安全
-    var img = poem.image ? '<div class="poem-image"><img src="' + escapeHtml(poem.image) + '" alt="' + escapeHtml(poem.title) + '"></div>' : '';
+    var imgList = Array.isArray(poem.images) ? poem.images.slice() : [];
+    if(poem.image) imgList.push(poem.image); // 兼容旧数据里的单图字段
+    var img = imgList.map(function(src){
+      return '<div class="poem-image"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(poem.title) + '"></div>';
+    }).join('');
     detail.innerHTML =
       '<div class="poem-meta">' + escapeHtml(poem.date) + (poem.series ? ' · ' + escapeHtml(poem.series) : '') + '</div>' +
       '<div class="poem-title">' + escapeHtml(poem.title) + '</div>' +
