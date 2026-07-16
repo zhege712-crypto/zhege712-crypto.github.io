@@ -31,8 +31,23 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
 .poem-title{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:34px; }
 .poem-content{ white-space:pre-line; font-size:1.08rem; color:var(--charcoal); }
 .poem-image{ margin-top:32px; }
-.poem-image img{ width:100%; filter:grayscale(1); transition:filter 0.6s ease; }
+.poem-image img{ width:100%; filter:grayscale(1); transition:filter 0.6s ease; cursor:zoom-in; }
 .poem-image img:hover{ filter:grayscale(0); }
+
+.lightbox{
+  position:fixed; inset:0; z-index:500; background:rgba(28,28,27,0.94);
+  display:none; align-items:center; justify-content:center; padding:50px;
+  cursor:zoom-out;
+}
+.lightbox.active{ display:flex; }
+.lightbox img{ max-width:100%; max-height:100%; object-fit:contain; filter:none; }
+.lightbox-close{
+  position:fixed; top:26px; right:32px; z-index:501;
+  font-family:var(--font-mono); font-size:0.75rem; color:var(--white);
+  border:1px solid rgba(255,255,255,0.3); padding:8px 14px; cursor:pointer;
+  background:transparent;
+}
+.lightbox-close:hover{ border-color:var(--accent-gold); color:var(--accent-gold); }
 
 .empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:80px 0; }
 
@@ -66,7 +81,38 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <footer>© 2026 · 诗歌漂流</footer>
 
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" type="button">关闭 ✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <script>
+(function(){
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+
+  function openLightbox(src, alt){
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || '';
+    lightbox.classList.add('active');
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('active');
+    lightboxImg.src = '';
+  }
+
+  document.addEventListener('click', function(e){
+    var img = e.target.closest('.poem-image img');
+    if(img){ openLightbox(img.src, img.alt); return; }
+    if(lightbox.classList.contains('active') && lightbox.contains(e.target)){
+      closeLightbox();
+    }
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeLightbox();
+  });
+})();
+
 function getParam(name){
   return new URLSearchParams(window.location.search).get(name);
 }
