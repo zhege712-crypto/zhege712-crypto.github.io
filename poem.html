@@ -57,9 +57,37 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
 .greek-divider{ width:100px; height:10px; color:var(--fog); margin:22px 0; display:block; }
 
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+
+/* 玻璃质感阅读进度条 */
+.reading-progress{
+  position:fixed; top:0; left:0; right:0; height:4px; z-index:600;
+  background:rgba(255,255,255,0.25); backdrop-filter:blur(6px);
+}
+.reading-progress-bar{
+  height:100%; width:0%; background:linear-gradient(90deg, var(--accent-cobalt), var(--accent-red), var(--accent-gold));
+  transition:width 0.1s linear;
+}
+.back-to-top{
+  position:fixed; right:24px; bottom:24px; z-index:200;
+  width:48px; height:48px; border-radius:50%;
+  background:rgba(250,249,246,0.5); backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.7);
+  box-shadow:0 8px 24px rgba(28,28,27,0.12), inset 0 1px 0 rgba(255,255,255,0.6);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  opacity:0; pointer-events:none; transform:translateY(10px);
+  transition:opacity 0.3s ease, transform 0.3s ease;
+}
+.back-to-top.show{ opacity:1; pointer-events:auto; transform:translateY(0); }
+.back-to-top svg{ width:16px; height:16px; stroke:var(--ink); fill:none; stroke-width:2; }
 </style>
 </head>
 <body>
+
+<div class="reading-progress"><div class="reading-progress-bar" id="progress-bar"></div></div>
+
+<button class="back-to-top" id="back-to-top" type="button" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
 
 <header>
   <div class="wrap">
@@ -87,6 +115,25 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </div>
 
 <script>
+(function(){
+  var bar = document.getElementById('progress-bar');
+  var backBtn = document.getElementById('back-to-top');
+
+  function updateProgress(){
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    bar.style.width = pct + '%';
+    if(scrollTop > 400){ backBtn.classList.add('show'); } else { backBtn.classList.remove('show'); }
+  }
+  window.addEventListener('scroll', updateProgress, { passive:true });
+  updateProgress();
+
+  backBtn.addEventListener('click', function(){
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
+})();
+
 (function(){
   var lightbox = document.getElementById('lightbox');
   var lightboxImg = document.getElementById('lightbox-img');

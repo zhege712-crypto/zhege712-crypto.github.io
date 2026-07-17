@@ -46,8 +46,14 @@ nav.top-nav a:hover::after{ width:100%; }
 .poem-hero h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2.6rem, 7vw, 5rem); line-height:1.1; max-width:760px; }
 .poem-hero p{ margin-top:26px; max-width:480px; color:var(--charcoal); font-size:1.02rem; }
 
-.poem-stats{ display:flex; gap:40px; margin-top:44px; }
-.poem-stats div{ font-family:var(--font-mono); }
+.poem-stats{
+  display:flex; gap:2px; margin-top:44px; width:fit-content;
+  background:rgba(255,255,255,0.4); backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.6); border-radius:8px; overflow:hidden;
+  box-shadow:0 8px 28px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.poem-stats div{ font-family:var(--font-mono); padding:18px 28px; transition:background 0.3s ease; }
+.poem-stats div:hover{ background:rgba(255,255,255,0.5); }
 .poem-stats .num{ font-size:1.8rem; color:var(--ink); display:block; }
 .poem-stats .label{ font-size:0.7rem; color:var(--steel); letter-spacing:0.05em; }
 
@@ -59,8 +65,11 @@ nav.top-nav a:hover::after{ width:100%; }
 }
 .btn-primary{ background:var(--ink); color:var(--white); }
 .btn-primary:hover{ background:var(--accent-red); }
-.btn-outline{ border:1px solid var(--charcoal); color:var(--ink); }
-.btn-outline:hover{ background:var(--charcoal); color:var(--white); }
+.btn-outline{
+  border:1px solid rgba(255,255,255,0.7); color:var(--ink);
+  background:rgba(255,255,255,0.35); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+.btn-outline:hover{ background:var(--charcoal); color:var(--white); border-color:var(--charcoal); }
 
 .submit-note{
   max-width:640px; margin:0 0 130px; padding:26px 28px; background:var(--white);
@@ -163,13 +172,25 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <footer>© 2026 · 诗歌漂流</footer>
 
 <script>
+function countUpTo(el, target, duration){
+  if(target === 0){ el.textContent = '0'; return; }
+  var start = performance.now();
+  function tick(now){
+    var progress = Math.min((now - start) / duration, 1);
+    var eased = 1 - Math.pow(1 - progress, 3); // ease-out
+    el.textContent = Math.round(eased * target);
+    if(progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 (function(){
   var badge = document.getElementById('poem-count');
   var statCount = document.getElementById('stat-count');
   var statLatest = document.getElementById('stat-latest');
   fetch('poems/poems.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(list){
     badge.textContent = list.length;
-    statCount.textContent = list.length;
+    countUpTo(statCount, list.length, 900);
     if(list.length){
       var latest = list.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); })[0];
       statLatest.textContent = latest.date;
