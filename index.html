@@ -103,18 +103,10 @@ nav.top-nav a:hover::after{ width:100%; }
 /* 入口卡片 */
 .entry-grid{ padding:0 0 140px; display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--paper-2); }
 .entry-card{
-  position:relative; overflow:hidden;
   background:var(--paper); padding:44px 32px; min-height:220px;
   display:flex; flex-direction:column; justify-content:space-between;
   transition:background 0.35s ease, color 0.35s ease;
 }
-.entry-card::before{
-  content:''; position:absolute; top:0; left:-60%; width:40%; height:100%;
-  background:linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
-  transform:skewX(-20deg); pointer-events:none;
-  transition:left 0.7s ease;
-}
-.entry-card:hover::before{ left:130%; }
 .entry-card:hover{ background:var(--ink); color:var(--white); }
 .entry-num{ font-family:var(--font-mono); font-size:0.7rem; color:var(--accent-red); letter-spacing:0.1em; }
 .entry-card h3{ font-family:var(--font-display); font-weight:500; font-size:1.6rem; margin-top:auto; }

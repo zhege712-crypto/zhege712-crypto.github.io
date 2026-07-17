@@ -172,25 +172,13 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <footer>© 2026 · 诗歌漂流</footer>
 
 <script>
-function countUpTo(el, target, duration){
-  if(target === 0){ el.textContent = '0'; return; }
-  var start = performance.now();
-  function tick(now){
-    var progress = Math.min((now - start) / duration, 1);
-    var eased = 1 - Math.pow(1 - progress, 3); // ease-out
-    el.textContent = Math.round(eased * target);
-    if(progress < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-
 (function(){
   var badge = document.getElementById('poem-count');
   var statCount = document.getElementById('stat-count');
   var statLatest = document.getElementById('stat-latest');
   fetch('poems/poems.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(list){
     badge.textContent = list.length;
-    countUpTo(statCount, list.length, 900);
+    statCount.textContent = list.length;
     if(list.length){
       var latest = list.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); })[0];
       statLatest.textContent = latest.date;
