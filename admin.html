@@ -71,6 +71,19 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 }
 .manage-item .mi-series{ width:130px; padding:7px 10px; font-size:0.78rem; }
 .manage-item .mi-save{ margin-top:0; padding:7px 14px; font-size:0.7rem; }
+.manage-item .mi-edit{ margin-top:0; padding:7px 14px; font-size:0.7rem; background:var(--accent-cobalt); }
+
+.mi-edit-form{
+  background:var(--paper); border:1px solid var(--paper-2); padding:16px 18px;
+  margin:-6px 0 10px;
+}
+.mi-edit-form label{ margin:12px 0 5px; }
+.mi-edit-form label:first-child{ margin-top:0; }
+.mi-edit-form textarea{ min-height:110px; }
+.mi-edit-form .row{ display:flex; gap:12px; }
+.mi-edit-form .row > div{ flex:1; }
+.mi-edit-form .mi-f-save{ margin-top:16px; padding:10px 18px; font-size:0.72rem; }
+.mi-edit-form .mi-f-cancel{ margin-top:16px; padding:10px 18px; font-size:0.72rem; }
 .manage-item .mi-del:hover{ background:var(--accent-red); color:var(--white); }
 
 .photo-item{
@@ -131,6 +144,8 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <label>序列（可选）</label>
     <input type="text" id="p-series" placeholder="例如：序列1 / 无题集 / 城市漫游" list="p-series-list">
     <datalist id="p-series-list"></datalist>
+    <label>作者</label>
+    <input type="text" id="p-author" placeholder="署名">
     <label>配图（可选，可一次选多张）</label>
     <input type="file" id="p-image" accept="image/*" multiple>
     <div class="hint">图片会被上传到仓库的 photos/poems/ 文件夹下。</div>
@@ -187,6 +202,7 @@ var els = {
   date: document.getElementById('p-date'),
   content: document.getElementById('p-content'),
   series: document.getElementById('p-series'),
+  author: document.getElementById('p-author'),
   image: document.getElementById('p-image'),
   btn: document.getElementById('publish-btn'),
   status: document.getElementById('status'),
@@ -212,6 +228,7 @@ var els = {
   }
   els.date.value = new Date().toISOString().slice(0,10);
   els.phDate.value = new Date().toISOString().slice(0,10);
+  els.author.value = '水告示阳'; // 默认署名，写投稿人的名字就把这里改掉
 })();
 
 function setStatus(text, type){
@@ -245,6 +262,7 @@ els.btn.addEventListener('click', async function(){
   var date = els.date.value;
   var content = els.content.value.trim();
   var series = els.series.value.trim() || '未分类';
+  var author = els.author.value.trim() || '匿名';
   var files = Array.from(els.image.files || []);
 
   if(!owner || !repo || !token){ setStatus('请先填写仓库信息和密钥', 'err'); return; }
@@ -302,6 +320,7 @@ els.btn.addEventListener('click', async function(){
       date: date,
       content: content,
       series: series,
+      author: author,
       images: imagePaths
     });
 
@@ -372,17 +391,47 @@ async function loadManageList(){
       var row = document.createElement('div');
       row.className = 'manage-item';
       row.innerHTML =
-        '<div class="mi-info">' + escapeHtml(p.title) + '<span class="mi-date">' + escapeHtml(p.date) + '</span></div>' +
-        '<input type="text" class="mi-series" value="' + escapeHtml(p.series || '未分类') + '" list="p-series-list">' +
-        '<button class="mi-save" type="button">保存</button>' +
+        '<div class="mi-info">' + escapeHtml(p.title) +
+          '<span class="mi-date">' + escapeHtml(p.date) + (p.author ? ' · ' + escapeHtml(p.author) : '') + '</span>' +
+        '</div>' +
+        '<button class="mi-edit" type="button">编辑</button>' +
         '<button class="mi-del" type="button">删除</button>';
-      row.querySelector('.mi-save').addEventListener('click', function(){
-        savePoemSeries(p.id, row.querySelector('.mi-series').value.trim() || '未分类');
+
+      var form = document.createElement('div');
+      form.className = 'mi-edit-form';
+      form.style.display = 'none';
+      form.innerHTML =
+        '<label>标题</label><input type="text" class="mi-f-title" value="' + escapeHtml(p.title) + '">' +
+        '<div class="row">' +
+          '<div><label>日期</label><input type="date" class="mi-f-date" value="' + escapeHtml(p.date) + '"></div>' +
+          '<div><label>作者</label><input type="text" class="mi-f-author" value="' + escapeHtml(p.author || '') + '"></div>' +
+        '</div>' +
+        '<label>序列</label><input type="text" class="mi-f-series" value="' + escapeHtml(p.series || '未分类') + '" list="p-series-list">' +
+        '<label>正文</label><textarea class="mi-f-content">' + escapeHtml(p.content) + '</textarea>' +
+        '<button class="mi-f-save" type="button">保存修改</button>' +
+        '<button class="mi-f-cancel" type="button" style="background:var(--charcoal);">取消</button>';
+
+      row.querySelector('.mi-edit').addEventListener('click', function(){
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      });
+      form.querySelector('.mi-f-cancel').addEventListener('click', function(){
+        form.style.display = 'none';
+      });
+      form.querySelector('.mi-f-save').addEventListener('click', function(){
+        saveFullPoem(p.id, {
+          title: form.querySelector('.mi-f-title').value.trim(),
+          date: form.querySelector('.mi-f-date').value,
+          author: form.querySelector('.mi-f-author').value.trim() || '匿名',
+          series: form.querySelector('.mi-f-series').value.trim() || '未分类',
+          content: form.querySelector('.mi-f-content').value.trim()
+        });
       });
       row.querySelector('.mi-del').addEventListener('click', function(){
         deletePoem(p.id);
       });
+
       manageListEl.appendChild(row);
+      manageListEl.appendChild(form);
     });
 
     // 顺手更新序列建议列表
@@ -401,10 +450,12 @@ function escapeHtml(s){
   return d.innerHTML;
 }
 
-async function savePoemSeries(id, newSeries){
+async function saveFullPoem(id, fields){
   var owner = els.owner.value.trim();
   var repo = els.repo.value.trim();
   var token = els.token.value.trim();
+
+  if(!fields.title || !fields.content){ setManageStatus('✗ 标题和正文不能为空', 'err'); return; }
 
   setManageStatus('保存中…', 'loading');
   try{
@@ -415,13 +466,19 @@ async function savePoemSeries(id, newSeries){
     var poems = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
 
     var target = poems.find(function(p){ return p.id === id; });
-    if(target){ target.series = newSeries; }
+    if(target){
+      target.title = fields.title;
+      target.date = fields.date;
+      target.author = fields.author;
+      target.series = fields.series;
+      target.content = fields.content;
+    }
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(poems, null, 2))));
     var putRes = await ghRequest('poems/poems.json', {
       method: 'PUT',
       body: JSON.stringify({
-        message: '调整诗歌序列: ' + (target ? target.title : id),
+        message: '修改诗歌: ' + (target ? target.title : id),
         content: newContentB64,
         sha: sha
       })

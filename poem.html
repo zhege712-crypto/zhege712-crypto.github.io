@@ -143,7 +143,7 @@ fetch('poems/poems.json?t=' + Date.now())
       return '<div class="poem-image"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(poem.title) + '"></div>';
     }).join('');
     detail.innerHTML =
-      '<div class="poem-meta">' + escapeHtml(poem.date) + (poem.series ? ' · ' + escapeHtml(poem.series) : '') + '</div>' +
+      '<div class="poem-meta">' + (poem.author ? escapeHtml(poem.author) + ' · ' : '') + escapeHtml(poem.date) + (poem.series ? ' · ' + escapeHtml(poem.series) : '') + '</div>' +
       '<div class="poem-title">' + escapeHtml(poem.title) + '</div>' +
       '<svg class="greek-divider" viewBox="0 0 100 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 5 H8 V0 H16 V10 H24 V0 H32 V10 H40 V0 H48 V10 H56 V0 H64 V10 H72 V0 H80 V10 H88 V0 H100"/></svg>' +
       '<div class="poem-content">' + escapeHtml(poem.content) + '</div>' +

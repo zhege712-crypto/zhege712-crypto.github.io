@@ -46,6 +46,20 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
 
 .empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:60px 0; }
 
+.search-box{
+  margin:36px 0 10px; position:relative;
+}
+.search-box input{
+  width:100%; padding:13px 16px 13px 40px; border:1px solid var(--paper-2);
+  background:var(--white); font-family:var(--font-body); font-size:0.92rem; color:var(--ink);
+}
+.search-box input:focus{ outline:none; border-color:var(--accent-red); }
+.search-box svg{
+  position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  width:16px; height:16px; stroke:var(--steel); fill:none; stroke-width:1.6;
+}
+.search-hint{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); margin-top:8px; }
+
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 
 .greek-divider{ width:100px; height:10px; color:var(--fog); margin:16px 0 6px; display:block; }
@@ -69,6 +83,12 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     </svg>
   </div>
 
+  <div class="search-box">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" id="search-input" placeholder="搜索标题、正文关键字或作者…">
+  </div>
+  <div class="search-hint" id="search-hint"></div>
+
   <div class="catalog-list" id="catalog-list">
     <div class="empty-state">加载中…</div>
   </div>
@@ -83,39 +103,71 @@ function escapeHtml(s){
   return d.innerHTML;
 }
 
+var allPoems = [];
+var listEl = document.getElementById('catalog-list');
+var hintEl = document.getElementById('search-hint');
+
+function renderCatalog(poems){
+  if(!poems || poems.length === 0){
+    listEl.innerHTML = '<div class="empty-state">没有匹配的诗。</div>';
+    return;
+  }
+  poems = poems.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+
+  // 按序列分组，未标注序列的归到"未分类"
+  var groups = {};
+  var order = [];
+  poems.forEach(function(p){
+    var s = p.series || '未分类';
+    if(!groups[s]){ groups[s] = []; order.push(s); }
+    groups[s].push(p);
+  });
+
+  listEl.innerHTML = order.map(function(series){
+    var rows = groups[series].map(function(p){
+      return '' +
+        '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
+          '<span class="c-date">' + escapeHtml(p.date) + (p.author ? '<br>' + escapeHtml(p.author) : '') + '</span>' +
+          '<h3>' + escapeHtml(p.title) + '</h3>' +
+          '<span class="c-arrow">阅读 →</span>' +
+        '</a>';
+    }).join('');
+    return '<div class="series-block"><h2>' + escapeHtml(series) + '</h2>' + rows + '</div>';
+  }).join('');
+}
+
+function doSearch(query){
+  query = query.trim().toLowerCase();
+  if(!query){
+    hintEl.textContent = '';
+    renderCatalog(allPoems);
+    return;
+  }
+  var matched = allPoems.filter(function(p){
+    return (p.title || '').toLowerCase().indexOf(query) !== -1 ||
+           (p.content || '').toLowerCase().indexOf(query) !== -1 ||
+           (p.author || '').toLowerCase().indexOf(query) !== -1;
+  });
+  hintEl.textContent = '找到 ' + matched.length + ' 首';
+  renderCatalog(matched);
+}
+
+document.getElementById('search-input').addEventListener('input', function(e){
+  doSearch(e.target.value);
+});
+
 fetch('poems/poems.json?t=' + Date.now())
   .then(function(r){ return r.json(); })
   .then(function(poems){
-    var list = document.getElementById('catalog-list');
-    if(!poems || poems.length === 0){
-      list.innerHTML = '<div class="empty-state">暂时还没有诗，敬请期待。</div>';
+    allPoems = poems || [];
+    if(allPoems.length === 0){
+      listEl.innerHTML = '<div class="empty-state">暂时还没有诗，敬请期待。</div>';
       return;
     }
-    poems.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
-
-    // 按序列分组，未标注序列的归到"未分类"
-    var groups = {};
-    var order = [];
-    poems.forEach(function(p){
-      var s = p.series || '未分类';
-      if(!groups[s]){ groups[s] = []; order.push(s); }
-      groups[s].push(p);
-    });
-
-    list.innerHTML = order.map(function(series){
-      var rows = groups[series].map(function(p){
-        return '' +
-          '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
-            '<span class="c-date">' + escapeHtml(p.date) + '</span>' +
-            '<h3>' + escapeHtml(p.title) + '</h3>' +
-            '<span class="c-arrow">阅读 →</span>' +
-          '</a>';
-      }).join('');
-      return '<div class="series-block"><h2>' + escapeHtml(series) + '</h2>' + rows + '</div>';
-    }).join('');
+    renderCatalog(allPoems);
   })
   .catch(function(){
-    document.getElementById('catalog-list').innerHTML = '<div class="empty-state">目录加载失败，检查 poems/poems.json 是否存在。</div>';
+    listEl.innerHTML = '<div class="empty-state">目录加载失败，检查 poems/poems.json 是否存在。</div>';
   });
 </script>
 
