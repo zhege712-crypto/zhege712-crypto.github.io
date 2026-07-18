@@ -55,7 +55,7 @@ img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
-/* ---------- 推开门开幕动画 ---------- */
+/* ---------- 推开门开幕动画（交互版） ---------- */
 #door-loader {
   position: fixed;
   inset: 0;
@@ -68,6 +68,9 @@ a{ color:inherit; text-decoration:none; }
   transition: opacity 0.8s ease, visibility 0.8s ease;
   opacity: 1;
   visibility: visible;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 #door-loader.closing {
   opacity: 0;
@@ -84,18 +87,26 @@ a{ color:inherit; text-decoration:none; }
   flex-direction: column;
   align-items: center;
   gap: 28px;
+  pointer-events: none;
+}
+.door-scene .door-frame {
+  pointer-events: auto;
 }
 
 /* 门框 */
 .door-frame {
   position: relative;
-  width: 320px;
-  height: 400px;
+  width: 340px;
+  height: 420px;
   border: 4px solid #1c1c1b;
   background: #1c1c1b;
   border-radius: 2px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   transform-style: preserve-3d;
+  cursor: grab;
+}
+.door-frame:active {
+  cursor: grabbing;
 }
 
 /* 回纹装饰带（门楣） */
@@ -112,6 +123,7 @@ a{ color:inherit; text-decoration:none; }
   align-items: center;
   justify-content: center;
   padding: 0 4px;
+  pointer-events: none;
 }
 .meander-wrap svg {
   width: 100%;
@@ -121,76 +133,98 @@ a{ color:inherit; text-decoration:none; }
   fill: none;
 }
 
-/* 门板 */
-.door-panel {
+/* 门板容器 */
+.door-panel-wrap {
   position: absolute;
   top: 4px;
   bottom: 4px;
   width: calc(50% - 2px);
-  background: #f5f0e8;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  transition: filter 0.3s ease;
 }
-.door-left {
+.door-left-wrap {
   left: 4px;
   transform-origin: left center;
-  animation: doorOpenLeft 1.8s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+  cursor: ew-resize;
 }
-.door-right {
+.door-right-wrap {
   right: 4px;
   transform-origin: right center;
-  animation: doorOpenRight 1.8s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
-}
-.door-left .door-panel { border-radius: 2px 0 0 2px; }
-.door-right .door-panel { border-radius: 0 2px 2px 0; }
-
-@keyframes doorOpenLeft {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(-68deg); }
-}
-@keyframes doorOpenRight {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(68deg); }
+  cursor: ew-resize;
 }
 
-/* 门板上的 L 形装饰（构成主义 + 回纹简化） */
+/* 门板主体 */
+.door-panel {
+  width: 100%;
+  height: 100%;
+  background: #f5f0e8;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
+  transition: box-shadow 0.3s ease;
+}
+.door-left-wrap .door-panel {
+  border-radius: 2px 0 0 2px;
+}
+.door-right-wrap .door-panel {
+  border-radius: 0 2px 2px 0;
+}
+
+/* 拖拽时门板的视觉反馈 */
+.door-panel-wrap.dragging .door-panel {
+  box-shadow: inset 0 0 0 2px var(--accent-gold), 0 0 30px rgba(232, 163, 61, 0.15);
+}
+.door-panel-wrap.dragging {
+  filter: brightness(1.02);
+}
+
+/* 门板上的 L 形装饰 */
 .door-panel .l-shape {
   position: absolute;
-  top: 28%;
+  top: 26%;
   width: 48%;
-  height: 44%;
+  height: 48%;
   border: 3px solid #1c1c1b;
   border-right: none;
   border-bottom: none;
   opacity: 0.85;
+  transition: border-color 0.3s ease;
 }
-.door-left .l-shape {
-  right: 18%;
+.door-left-wrap .l-shape {
+  right: 16%;
 }
-.door-right .l-shape {
-  left: 18%;
+.door-right-wrap .l-shape {
+  left: 16%;
   transform: scaleX(-1);
 }
+.door-panel-wrap.dragging .l-shape {
+  border-color: var(--accent-gold);
+}
 
-/* 门把手（金色） */
+/* 门把手 */
 .door-panel .handle {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--accent-gold);
-  top: 52%;
+  top: 50%;
+  transform: translateY(-50%);
   box-shadow: 0 0 0 3px #1c1c1b, 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.door-left .handle {
+.door-left-wrap .handle {
   right: 14%;
 }
-.door-right .handle {
+.door-right-wrap .handle {
   left: 14%;
 }
+.door-panel-wrap.dragging .handle {
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 0 0 4px var(--accent-gold), 0 4px 20px rgba(232, 163, 61, 0.4);
+}
 
-/* 门缝光效（开门后显现） */
+/* 门缝光效 */
 .door-glow {
   position: absolute;
   top: 10%;
@@ -200,16 +234,36 @@ a{ color:inherit; text-decoration:none; }
   height: 80%;
   background: var(--accent-gold);
   opacity: 0;
-  animation: glowReveal 1.2s ease 1.2s forwards;
   border-radius: 2px;
-  filter: blur(2px);
+  filter: blur(3px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
 }
-@keyframes glowReveal {
-  0%   { opacity: 0; transform: translateX(-50%) scaleY(0.3); }
-  100% { opacity: 0.5; transform: translateX(-50%) scaleY(1); }
+.door-glow.active {
+  opacity: 0.5;
 }
 
-/* 底部文字 */
+/* 交互提示（推门引导） */
+.door-hint {
+  position: absolute;
+  bottom: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(185, 183, 176, 0.5);
+  white-space: nowrap;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+  opacity: 1;
+}
+.door-hint.hidden {
+  opacity: 0;
+}
+
+/* 底部主文字 */
 .door-caption {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -217,17 +271,39 @@ a{ color:inherit; text-decoration:none; }
   text-transform: uppercase;
   color: #b9b7b0;
   opacity: 0;
-  animation: captionFade 0.8s ease 1.6s forwards;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
 }
-@keyframes captionFade {
-  to { opacity: 1; }
+.door-caption.show {
+  opacity: 1;
+}
+
+/* 自动开门倒计时指示器 */
+.door-timer {
+  position: absolute;
+  bottom: -52px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  pointer-events: none;
+}
+.door-timer .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(185, 183, 176, 0.2);
+  transition: background 0.4s ease;
+}
+.door-timer .dot.active {
+  background: var(--accent-gold);
 }
 
 /* 移动端适配 */
 @media (max-width: 640px) {
   .door-frame {
-    width: 220px;
-    height: 280px;
+    width: 240px;
+    height: 300px;
   }
   .meander-wrap {
     top: -18px;
@@ -238,17 +314,27 @@ a{ color:inherit; text-decoration:none; }
   }
   .door-panel .l-shape {
     border-width: 2px;
+    top: 28%;
+    width: 44%;
+    height: 44%;
   }
   .door-panel .handle {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
   }
   .door-caption {
     font-size: 0.6rem;
   }
+  .door-hint {
+    font-size: 0.5rem;
+    bottom: -32px;
+  }
+  .door-timer {
+    bottom: -44px;
+  }
 }
 
-/* ---------- 原有样式（保留） ---------- */
+/* ---------- 原有样式（保持不变） ---------- */
 
 header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
 header .wrap{ display:flex; justify-content:space-between; align-items:center; }
@@ -274,7 +360,6 @@ nav.top-nav a:hover::after{ width:100%; }
 .side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
 @media (max-width:1180px){ .side-nav{ display:none; } }
 
-/* 主题切换器（侧边） */
 .side-theme{
   position:fixed; left:24px; bottom:100px; z-index:150;
   display:flex; flex-direction:column; align-items:center; gap:6px;
@@ -356,11 +441,11 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </head>
 <body>
 
-<!-- ===== 推开门开幕动画 ===== -->
+<!-- ===== 推开门开幕动画（交互版） ===== -->
 <div id="door-loader">
   <div class="door-scene">
-    <div class="door-frame">
-      <!-- 回纹装饰（门楣） -->
+    <div class="door-frame" id="door-frame">
+      <!-- 回纹装饰 -->
       <div class="meander-wrap">
         <svg viewBox="0 0 300 14" stroke="currentColor" stroke-width="1.6" fill="none">
           <path d="M0,7 L8,7 L8,0 L16,0 L16,7 L24,7 L24,0 L32,0 L32,7 L40,7 L40,0 L48,0 L48,7 L56,7 L56,0 L64,0 L64,7 L72,7 L72,0 L80,0 L80,7 L88,7 L88,0 L96,0 L96,7 L104,7 L104,0 L112,0 L112,7 L120,7 L120,0 L128,0 L128,7 L136,7 L136,0 L144,0 L144,7 L152,7 L152,0 L160,0 L160,7 L168,7 L168,0 L176,0 L176,7 L184,7 L184,0 L192,0 L192,7 L200,7 L200,0 L208,0 L208,7 L216,7 L216,0 L224,0 L224,7 L232,7 L232,0 L240,0 L240,7 L248,7 L248,0 L256,0 L256,7 L264,7 L264,0 L272,0 L272,7 L280,7 L280,0 L288,0 L288,7 L296,7 L296,0 L300,0"/>
@@ -369,7 +454,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       </div>
 
       <!-- 左门 -->
-      <div class="door-left">
+      <div class="door-panel-wrap door-left-wrap" id="door-left">
         <div class="door-panel">
           <div class="l-shape"></div>
           <div class="handle"></div>
@@ -377,7 +462,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       </div>
 
       <!-- 右门 -->
-      <div class="door-right">
+      <div class="door-panel-wrap door-right-wrap" id="door-right">
         <div class="door-panel">
           <div class="l-shape"></div>
           <div class="handle"></div>
@@ -385,9 +470,20 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       </div>
 
       <!-- 门缝光效 -->
-      <div class="door-glow"></div>
+      <div class="door-glow" id="door-glow"></div>
+
+      <!-- 交互提示 -->
+      <div class="door-hint" id="door-hint">⇆ 拖拽开门</div>
+
+      <!-- 倒计时指示 -->
+      <div class="door-timer" id="door-timer">
+        <span class="dot active" data-i="0"></span>
+        <span class="dot" data-i="1"></span>
+        <span class="dot" data-i="2"></span>
+      </div>
     </div>
-    <div class="door-caption">—— 推开 ——</div>
+
+    <div class="door-caption" id="door-caption">—— 推开 ——</div>
   </div>
 </div>
 
@@ -520,37 +616,245 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </button>
 
 <script>
-// ===== 推开门动画控制（仅首次访问） =====
+// ============================================================
+// 推开门交互逻辑（拖拽 + 点击 + 自动）
+// ============================================================
 (function(){
   var loader = document.getElementById('door-loader');
+  var frame = document.getElementById('door-frame');
+  var leftWrap = document.getElementById('door-left');
+  var rightWrap = document.getElementById('door-right');
+  var glow = document.getElementById('door-glow');
+  var caption = document.getElementById('door-caption');
+  var hint = document.getElementById('door-hint');
+  var dots = document.querySelectorAll('#door-timer .dot');
+
   if(!loader) return;
 
-  // 如果本次会话已经播放过，直接跳过
-  if(sessionStorage.getItem('door_intro_shown')){
+  // ===== 状态管理 =====
+  var isOpen = false;
+  var isClosing = false;
+  var isDragging = false;
+  var autoTimer = null;
+  var dragTarget = null; // 'left' or 'right'
+  var startX = 0;
+  var currentAngle = 0;
+  var MAX_ANGLE = 68;
+  var THRESHOLD = 22;
+
+  // ===== DOM 引用 =====
+  var leftPanel = leftWrap.querySelector('.door-panel');
+  var rightPanel = rightWrap.querySelector('.door-panel');
+
+  // ===== 核心：更新门角度 =====
+  function setDoorAngle(side, angle) {
+    angle = Math.max(0, Math.min(MAX_ANGLE, angle));
+    var el = side === 'left' ? leftWrap : rightWrap;
+    var rot = side === 'left' ? -angle : angle;
+    el.style.transform = 'rotateY(' + rot + 'deg)';
+    if (side === 'left') currentAngle = angle;
+
+    // 光效随开门角度变化
+    var glowIntensity = Math.min(0.5, angle / MAX_ANGLE * 0.7);
+    glow.style.opacity = glowIntensity;
+    if (angle > 5) {
+      glow.classList.add('active');
+    } else {
+      glow.classList.remove('active');
+    }
+
+    // 门完全打开时显示 caption
+    if (angle > MAX_ANGLE * 0.85) {
+      caption.classList.add('show');
+      hint.classList.add('hidden');
+    } else {
+      caption.classList.remove('show');
+    }
+  }
+
+  function getDoorAngle(side) {
+    var el = side === 'left' ? leftWrap : rightWrap;
+    var transform = el.style.transform || '';
+    var match = transform.match(/rotateY\(([\d.-]+)deg\)/);
+    if (match) {
+      var val = parseFloat(match[1]);
+      return side === 'left' ? Math.abs(val) : Math.abs(val);
+    }
+    return 0;
+  }
+
+  // ===== 开门 / 关门 =====
+  function openDoor() {
+    if (isOpen) return;
+    isOpen = true;
+    clearTimeout(autoTimer);
+    setDoorAngle('left', MAX_ANGLE);
+    setDoorAngle('right', MAX_ANGLE);
+    glow.style.opacity = '0.5';
+    glow.classList.add('active');
+    caption.classList.add('show');
+    hint.classList.add('hidden');
+    dots.forEach(function(d){ d.classList.remove('active'); });
+    // 延迟关闭 loader
+    setTimeout(function(){
+      if (!isClosing) {
+        isClosing = true;
+        loader.classList.add('closing');
+        setTimeout(function(){ loader.style.display = 'none'; }, 800);
+      }
+    }, 600);
+  }
+
+  function closeDoor() {
+    if (isOpen) return;
+    setDoorAngle('left', 0);
+    setDoorAngle('right', 0);
+    glow.style.opacity = '0';
+    glow.classList.remove('active');
+    caption.classList.remove('show');
+    hint.classList.remove('hidden');
+  }
+
+  // ===== 倒计时自动开门 =====
+  function startAutoTimer() {
+    if (isOpen) return;
+    var countdown = 0;
+    dots.forEach(function(d, i){
+      d.classList.remove('active');
+      if (i === 0) d.classList.add('active');
+    });
+    clearTimeout(autoTimer);
+    autoTimer = setTimeout(function tick(){
+      if (isOpen || isDragging) return;
+      countdown++;
+      dots.forEach(function(d, i){
+        d.classList.toggle('active', i <= countdown);
+      });
+      if (countdown >= 2) {
+        openDoor();
+        return;
+      }
+      autoTimer = setTimeout(tick, 800);
+    }, 800);
+  }
+
+  function resetAutoTimer() {
+    clearTimeout(autoTimer);
+    if (!isOpen) startAutoTimer();
+  }
+
+  // ===== 拖拽逻辑 =====
+  function getPointerX(e) {
+    return e.type.indexOf('touch') === 0 ? e.touches[0].clientX : e.clientX;
+  }
+
+  function onDragStart(e) {
+    if (isOpen) return;
+    e.preventDefault();
+    var el = e.currentTarget;
+    var side = el === leftWrap ? 'left' : 'right';
+    dragTarget = side;
+    isDragging = true;
+    var pt = getPointerX(e);
+    startX = pt;
+    el.classList.add('dragging');
+    clearTimeout(autoTimer);
+    // 提示淡化
+    hint.style.opacity = '0.3';
+  }
+
+  function onDragMove(e) {
+    if (!isDragging || !dragTarget) return;
+    e.preventDefault();
+    var pt = getPointerX(e);
+    var delta = pt - startX;
+    // 左门：向右拖打开；右门：向左拖打开
+    var dir = dragTarget === 'left' ? 1 : -1;
+    var rawAngle = delta * 0.8 * dir;
+    var clampedAngle = Math.max(0, Math.min(MAX_ANGLE, rawAngle));
+    setDoorAngle(dragTarget, clampedAngle);
+    // 对称打开另一扇门
+    if (clampedAngle > 0) {
+      var otherSide = dragTarget === 'left' ? 'right' : 'left';
+      var otherAngle = getDoorAngle(otherSide);
+      // 让另一扇门跟随，但不超过当前值太多（模拟联动）
+      var targetOther = Math.min(clampedAngle, otherAngle + 2);
+      if (targetOther > 0) {
+        setDoorAngle(otherSide, targetOther);
+      }
+    }
+  }
+
+  function onDragEnd(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    if (dragTarget) {
+      var el = dragTarget === 'left' ? leftWrap : rightWrap;
+      el.classList.remove('dragging');
+      var angle = getDoorAngle(dragTarget);
+      if (angle > THRESHOLD) {
+        openDoor();
+      } else {
+        closeDoor();
+        resetAutoTimer();
+      }
+      dragTarget = null;
+      hint.style.opacity = '1';
+    }
+  }
+
+  // ===== 点击开门（快捷操作） =====
+  function onClickDoor(e) {
+    if (isOpen) return;
+    // 防止点击触发拖拽结束
+    if (isDragging) return;
+    openDoor();
+  }
+
+  // ===== 绑定事件 =====
+  // 鼠标事件
+  leftWrap.addEventListener('mousedown', onDragStart);
+  rightWrap.addEventListener('mousedown', onDragStart);
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('mouseup', onDragEnd);
+
+  // 触摸事件
+  leftWrap.addEventListener('touchstart', onDragStart, { passive: false });
+  rightWrap.addEventListener('touchstart', onDragStart, { passive: false });
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('touchend', onDragEnd);
+
+  // 点击开门（整个门框点击）
+  frame.addEventListener('click', onClickDoor);
+
+  // ===== 初始化 =====
+  // 检查是否应该显示
+  if (sessionStorage.getItem('door_intro_shown')) {
     loader.classList.add('skip');
     return;
   }
-
-  // 标记本次会话已播放
   sessionStorage.setItem('door_intro_shown', '1');
 
-  // 如果用户偏好减少动画，直接跳过
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     loader.classList.add('skip');
     return;
   }
 
-  // 门打开动画约 1.8s，加上文字显现和光效，在 2.6s 后开始淡出
-  setTimeout(function(){
-    loader.classList.add('closing');
-    setTimeout(function(){
-      loader.style.display = 'none';
-    }, 800);
-  }, 2600);
+  // 启动自动开门倒计时
+  startAutoTimer();
+
+  // 小技巧：如果用户没有交互，但门已经开了一部分，松开后自动完成
+  // 在拖拽结束后已经处理了
+
+  // ===== 暴露开门方法给调试 =====
+  window.__openDoor = openDoor;
+
 })();
 
-// ===== 诗歌数量徽标 =====
+// ============================================================
+// 原有功能（诗歌数量、音乐、主题切换）
+// ============================================================
+
 (function(){
   var badge = document.getElementById('poem-count');
   if(!badge) return;
@@ -559,7 +863,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   }).catch(function(){ badge.textContent = '0'; });
 })();
 
-// ===== 音乐播放器 =====
 (function(){
   var btn = document.getElementById('music-toggle');
   var audio = document.getElementById('bg-music');
@@ -588,7 +891,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   });
 })();
 
-// ===== 主题切换 =====
 (function(){
   var btns = document.querySelectorAll('#theme-side .theme-btn');
   if(!btns.length) return;
