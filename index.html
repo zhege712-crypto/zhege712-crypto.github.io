@@ -55,7 +55,7 @@ img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
-/* ---------- 推开门开幕动画（交互版） ---------- */
+/* ---------- 推开门开幕动画 ---------- */
 #door-loader {
   position: fixed;
   inset: 0;
@@ -93,7 +93,6 @@ a{ color:inherit; text-decoration:none; }
   pointer-events: auto;
 }
 
-/* 门框 */
 .door-frame {
   position: relative;
   width: 340px;
@@ -105,11 +104,8 @@ a{ color:inherit; text-decoration:none; }
   transform-style: preserve-3d;
   cursor: grab;
 }
-.door-frame:active {
-  cursor: grabbing;
-}
+.door-frame:active { cursor: grabbing; }
 
-/* 回纹装饰带（门楣） */
 .meander-wrap {
   position: absolute;
   top: -24px;
@@ -133,7 +129,6 @@ a{ color:inherit; text-decoration:none; }
   fill: none;
 }
 
-/* 门板容器 */
 .door-panel-wrap {
   position: absolute;
   top: 4px;
@@ -154,7 +149,6 @@ a{ color:inherit; text-decoration:none; }
   cursor: ew-resize;
 }
 
-/* 门板主体 */
 .door-panel {
   width: 100%;
   height: 100%;
@@ -163,22 +157,14 @@ a{ color:inherit; text-decoration:none; }
   position: relative;
   transition: box-shadow 0.3s ease;
 }
-.door-left-wrap .door-panel {
-  border-radius: 2px 0 0 2px;
-}
-.door-right-wrap .door-panel {
-  border-radius: 0 2px 2px 0;
-}
+.door-left-wrap .door-panel { border-radius: 2px 0 0 2px; }
+.door-right-wrap .door-panel { border-radius: 0 2px 2px 0; }
 
-/* 拖拽时门板的视觉反馈 */
 .door-panel-wrap.dragging .door-panel {
   box-shadow: inset 0 0 0 2px var(--accent-gold), 0 0 30px rgba(232, 163, 61, 0.15);
 }
-.door-panel-wrap.dragging {
-  filter: brightness(1.02);
-}
+.door-panel-wrap.dragging { filter: brightness(1.02); }
 
-/* 门板上的 L 形装饰 */
 .door-panel .l-shape {
   position: absolute;
   top: 26%;
@@ -190,18 +176,10 @@ a{ color:inherit; text-decoration:none; }
   opacity: 0.85;
   transition: border-color 0.3s ease;
 }
-.door-left-wrap .l-shape {
-  right: 16%;
-}
-.door-right-wrap .l-shape {
-  left: 16%;
-  transform: scaleX(-1);
-}
-.door-panel-wrap.dragging .l-shape {
-  border-color: var(--accent-gold);
-}
+.door-left-wrap .l-shape { right: 16%; }
+.door-right-wrap .l-shape { left: 16%; transform: scaleX(-1); }
+.door-panel-wrap.dragging .l-shape { border-color: var(--accent-gold); }
 
-/* 门把手 */
 .door-panel .handle {
   position: absolute;
   width: 14px;
@@ -213,18 +191,13 @@ a{ color:inherit; text-decoration:none; }
   box-shadow: 0 0 0 3px #1c1c1b, 0 4px 12px rgba(0,0,0,0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.door-left-wrap .handle {
-  right: 14%;
-}
-.door-right-wrap .handle {
-  left: 14%;
-}
+.door-left-wrap .handle { right: 14%; }
+.door-right-wrap .handle { left: 14%; }
 .door-panel-wrap.dragging .handle {
   transform: translateY(-50%) scale(1.15);
   box-shadow: 0 0 0 4px var(--accent-gold), 0 4px 20px rgba(232, 163, 61, 0.4);
 }
 
-/* 门缝光效 */
 .door-glow {
   position: absolute;
   top: 10%;
@@ -236,14 +209,11 @@ a{ color:inherit; text-decoration:none; }
   opacity: 0;
   border-radius: 2px;
   filter: blur(3px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.6s ease;
   pointer-events: none;
 }
-.door-glow.active {
-  opacity: 0.5;
-}
+.door-glow.active { opacity: 0.5; }
 
-/* 交互提示（推门引导） */
 .door-hint {
   position: absolute;
   bottom: -38px;
@@ -259,11 +229,8 @@ a{ color:inherit; text-decoration:none; }
   pointer-events: none;
   opacity: 1;
 }
-.door-hint.hidden {
-  opacity: 0;
-}
+.door-hint.hidden { opacity: 0; }
 
-/* 底部主文字 */
 .door-caption {
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -274,11 +241,8 @@ a{ color:inherit; text-decoration:none; }
   transition: opacity 0.6s ease;
   pointer-events: none;
 }
-.door-caption.show {
-  opacity: 1;
-}
+.door-caption.show { opacity: 1; }
 
-/* 自动开门倒计时指示器 */
 .door-timer {
   position: absolute;
   bottom: -52px;
@@ -295,46 +259,182 @@ a{ color:inherit; text-decoration:none; }
   background: rgba(185, 183, 176, 0.2);
   transition: background 0.4s ease;
 }
-.door-timer .dot.active {
-  background: var(--accent-gold);
-}
+.door-timer .dot.active { background: var(--accent-gold); }
 
-/* 移动端适配 */
 @media (max-width: 640px) {
-  .door-frame {
-    width: 240px;
-    height: 300px;
+  .door-frame { width: 240px; height: 300px; }
+  .meander-wrap { top: -18px; height: 16px; }
+  .meander-wrap svg { height: 10px; }
+  .door-panel .l-shape { border-width: 2px; top: 28%; width: 44%; height: 44%; }
+  .door-panel .handle { width: 10px; height: 10px; }
+  .door-caption { font-size: 0.6rem; }
+  .door-hint { font-size: 0.5rem; bottom: -32px; }
+  .door-timer { bottom: -44px; }
+}
+
+/* ============================================================
+   飞鸟 + 文字显现 + 飘落物动画（开门后触发）
+   ============================================================ */
+
+/* 飞鸟容器 */
+.bird-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.bird-container.active {
+  opacity: 1;
+}
+
+/* 飞鸟 SVG */
+.bird-svg {
+  position: absolute;
+  width: 80px;
+  height: 50px;
+  top: 22%;
+  right: -20%;
+  opacity: 0;
+  transform: translate(0, 0) scale(0.8);
+  transition: none;
+}
+.bird-svg .wing {
+  transition: transform 0.15s ease;
+  transform-origin: center center;
+}
+.bird-svg .wing-up {
+  transform: rotate(-8deg);
+}
+.bird-svg .wing-down {
+  transform: rotate(12deg);
+}
+
+/* 飞鸟飞行路径 —— 使用 Web Animations API 或 CSS */
+.bird-flying {
+  animation: birdFly 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes birdFly {
+  0% {
+    right: -20%;
+    top: 22%;
+    opacity: 0;
+    transform: translate(0, 0) scale(0.8) rotate(2deg);
   }
-  .meander-wrap {
-    top: -18px;
-    height: 16px;
+  8% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
   }
-  .meander-wrap svg {
-    height: 10px;
+  25% {
+    right: 55%;
+    top: 18%;
+    transform: translate(0, -20px) scale(1.05) rotate(-3deg);
   }
-  .door-panel .l-shape {
-    border-width: 2px;
-    top: 28%;
-    width: 44%;
-    height: 44%;
+  45% {
+    right: 70%;
+    top: 24%;
+    transform: translate(0, 5px) scale(1) rotate(2deg);
   }
-  .door-panel .handle {
-    width: 10px;
-    height: 10px;
+  65% {
+    right: 85%;
+    top: 16%;
+    transform: translate(0, -15px) scale(1.02) rotate(-2deg);
   }
-  .door-caption {
-    font-size: 0.6rem;
+  85% {
+    right: 105%;
+    top: 22%;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
   }
-  .door-hint {
-    font-size: 0.5rem;
-    bottom: -32px;
-  }
-  .door-timer {
-    bottom: -44px;
+  100% {
+    right: 120%;
+    top: 20%;
+    transform: translate(0, 0) scale(0.9) rotate(3deg);
+    opacity: 0;
   }
 }
 
-/* ---------- 原有样式（保持不变） ---------- */
+/* 飞鸟翅膀扇动 */
+@keyframes wingFlap {
+  0%, 100% { transform: rotate(-12deg); }
+  50% { transform: rotate(16deg); }
+}
+.bird-flying .wing {
+  animation: wingFlap 0.25s ease-in-out infinite;
+}
+
+/* 标题文字 —— 逐字显现 */
+.hero h1 .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.hero h1 .char.reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero h1 .char.delay-1 { transition-delay: 0.05s; }
+.hero h1 .char.delay-2 { transition-delay: 0.10s; }
+.hero h1 .char.delay-3 { transition-delay: 0.15s; }
+.hero h1 .char.delay-4 { transition-delay: 0.20s; }
+.hero h1 .char.delay-5 { transition-delay: 0.25s; }
+.hero h1 .char.delay-6 { transition-delay: 0.30s; }
+.hero h1 .char.delay-7 { transition-delay: 0.35s; }
+.hero h1 .char.delay-8 { transition-delay: 0.40s; }
+.hero h1 .char.delay-9 { transition-delay: 0.45s; }
+.hero h1 .char.delay-10 { transition-delay: 0.50s; }
+.hero h1 .char.delay-11 { transition-delay: 0.55s; }
+.hero h1 .char.delay-12 { transition-delay: 0.60s; }
+.hero h1 .char.delay-13 { transition-delay: 0.65s; }
+.hero h1 .char.delay-14 { transition-delay: 0.70s; }
+.hero h1 .char.delay-15 { transition-delay: 0.75s; }
+.hero h1 .char.delay-16 { transition-delay: 0.80s; }
+.hero h1 .char.delay-17 { transition-delay: 0.85s; }
+.hero h1 .char.delay-18 { transition-delay: 0.90s; }
+.hero h1 .char.delay-19 { transition-delay: 0.95s; }
+.hero h1 .char.delay-20 { transition-delay: 1.00s; }
+
+/* 飘落物容器 */
+.falling-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+}
+.falling-item {
+  position: absolute;
+  top: -60px;
+  opacity: 0.85;
+  will-change: transform;
+  pointer-events: none;
+}
+.falling-item svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .bird-svg {
+    width: 56px;
+    height: 35px;
+  }
+}
+
+/* ============================================================
+   原有样式
+   ============================================================ */
 
 header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
 header .wrap{ display:flex; justify-content:space-between; align-items:center; }
@@ -441,51 +541,57 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </head>
 <body>
 
-<!-- ===== 推开门开幕动画（交互版） ===== -->
+<!-- ===== 推开门开幕动画 ===== -->
 <div id="door-loader">
   <div class="door-scene">
     <div class="door-frame" id="door-frame">
-      <!-- 回纹装饰 -->
       <div class="meander-wrap">
         <svg viewBox="0 0 300 14" stroke="currentColor" stroke-width="1.6" fill="none">
           <path d="M0,7 L8,7 L8,0 L16,0 L16,7 L24,7 L24,0 L32,0 L32,7 L40,7 L40,0 L48,0 L48,7 L56,7 L56,0 L64,0 L64,7 L72,7 L72,0 L80,0 L80,7 L88,7 L88,0 L96,0 L96,7 L104,7 L104,0 L112,0 L112,7 L120,7 L120,0 L128,0 L128,7 L136,7 L136,0 L144,0 L144,7 L152,7 L152,0 L160,0 L160,7 L168,7 L168,0 L176,0 L176,7 L184,7 L184,0 L192,0 L192,7 L200,7 L200,0 L208,0 L208,7 L216,7 L216,0 L224,0 L224,7 L232,7 L232,0 L240,0 L240,7 L248,7 L248,0 L256,0 L256,7 L264,7 L264,0 L272,0 L272,7 L280,7 L280,0 L288,0 L288,7 L296,7 L296,0 L300,0"/>
           <path d="M0,7 L8,7 L8,14 L16,14 L16,7 L24,7 L24,14 L32,14 L32,7 L40,7 L40,14 L48,14 L48,7 L56,7 L56,14 L64,14 L64,7 L72,7 L72,14 L80,14 L80,7 L88,7 L88,14 L96,14 L96,7 L104,7 L104,14 L112,14 L112,7 L120,7 L120,14 L128,14 L128,7 L136,7 L136,14 L144,14 L144,7 L152,7 L152,14 L160,14 L160,7 L168,7 L168,14 L176,14 L176,7 L184,7 L184,14 L192,14 L192,7 L200,7 L200,14 L208,14 L208,7 L216,7 L216,14 L224,14 L224,7 L232,7 L232,14 L240,14 L240,7 L248,7 L248,14 L256,14 L256,7 L264,7 L264,14 L272,14 L272,7 L280,7 L280,14 L288,14 L288,7 L296,7 L296,14 L300,14"/>
         </svg>
       </div>
-
-      <!-- 左门 -->
       <div class="door-panel-wrap door-left-wrap" id="door-left">
         <div class="door-panel">
           <div class="l-shape"></div>
           <div class="handle"></div>
         </div>
       </div>
-
-      <!-- 右门 -->
       <div class="door-panel-wrap door-right-wrap" id="door-right">
         <div class="door-panel">
           <div class="l-shape"></div>
           <div class="handle"></div>
         </div>
       </div>
-
-      <!-- 门缝光效 -->
       <div class="door-glow" id="door-glow"></div>
-
-      <!-- 交互提示 -->
       <div class="door-hint" id="door-hint">⇆ 拖拽开门</div>
-
-      <!-- 倒计时指示 -->
       <div class="door-timer" id="door-timer">
         <span class="dot active" data-i="0"></span>
         <span class="dot" data-i="1"></span>
         <span class="dot" data-i="2"></span>
       </div>
     </div>
-
     <div class="door-caption" id="door-caption">—— 推开 ——</div>
   </div>
 </div>
+
+<!-- ===== 飞鸟容器（开门后激活） ===== -->
+<div class="bird-container" id="bird-container">
+  <svg class="bird-svg" id="bird-svg" viewBox="0 0 80 50" fill="none" stroke="#1c1c1b" stroke-width="1.8">
+    <!-- 左翼 -->
+    <path class="wing wing-left" d="M40,25 Q15,8 5,15 Q-2,20 5,28 Q15,35 40,28" stroke-linejoin="round"/>
+    <!-- 右翼 -->
+    <path class="wing wing-right" d="M40,25 Q65,8 75,15 Q82,20 75,28 Q65,35 40,28" stroke-linejoin="round"/>
+    <!-- 身体 -->
+    <ellipse cx="40" cy="26" rx="6" ry="4" fill="#1c1c1b" stroke="none"/>
+    <!-- 尾巴 -->
+    <path d="M34,28 Q28,32 22,30 Q28,26 34,28" stroke-linejoin="round"/>
+    <path d="M46,28 Q52,32 58,30 Q52,26 46,28" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<!-- ===== 飘落物容器 ===== -->
+<div class="falling-container" id="falling-container"></div>
 
 <header>
   <div class="wrap">
@@ -555,7 +661,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       <circle cx="19.5" cy="4" r="1.4" fill="currentColor" stroke="none"/>
     </svg>
     <div class="hero-eyebrow">视觉创作者 · 摄影 / 影像 / 写作</div>
-    <h1>愿飞鸟的羽毛落下<br><em>橄榄的</em>枝叶。</h1>
+    <h1 id="hero-title">愿飞鸟的羽毛落下<br><em>橄榄的</em>枝叶。</h1>
     <svg class="hero-divider" viewBox="0 0 110 11" fill="none" stroke="currentColor" stroke-width="1.2">
       <path d="M0 5.5 H9 V0 H18 V11 H27 V0 H36 V11 H45 V0 H54 V11 H63 V0 H72 V11 H81 V0 H90 V11 H99 V0 H110"/>
     </svg>
@@ -617,7 +723,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 推开门交互逻辑（拖拽 + 点击 + 自动）
+// 1. 开门交互逻辑
 // ============================================================
 (function(){
   var loader = document.getElementById('door-loader');
@@ -631,39 +737,24 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
   if(!loader) return;
 
-  // ===== 状态管理 =====
   var isOpen = false;
   var isClosing = false;
   var isDragging = false;
   var autoTimer = null;
-  var dragTarget = null; // 'left' or 'right'
+  var dragTarget = null;
   var startX = 0;
-  var currentAngle = 0;
   var MAX_ANGLE = 68;
   var THRESHOLD = 22;
 
-  // ===== DOM 引用 =====
-  var leftPanel = leftWrap.querySelector('.door-panel');
-  var rightPanel = rightWrap.querySelector('.door-panel');
-
-  // ===== 核心：更新门角度 =====
   function setDoorAngle(side, angle) {
     angle = Math.max(0, Math.min(MAX_ANGLE, angle));
     var el = side === 'left' ? leftWrap : rightWrap;
     var rot = side === 'left' ? -angle : angle;
     el.style.transform = 'rotateY(' + rot + 'deg)';
-    if (side === 'left') currentAngle = angle;
-
-    // 光效随开门角度变化
-    var glowIntensity = Math.min(0.5, angle / MAX_ANGLE * 0.7);
-    glow.style.opacity = glowIntensity;
-    if (angle > 5) {
-      glow.classList.add('active');
-    } else {
-      glow.classList.remove('active');
-    }
-
-    // 门完全打开时显示 caption
+    var intensity = Math.min(0.5, angle / MAX_ANGLE * 0.7);
+    glow.style.opacity = intensity;
+    if (angle > 5) glow.classList.add('active');
+    else glow.classList.remove('active');
     if (angle > MAX_ANGLE * 0.85) {
       caption.classList.add('show');
       hint.classList.add('hidden');
@@ -676,14 +767,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     var el = side === 'left' ? leftWrap : rightWrap;
     var transform = el.style.transform || '';
     var match = transform.match(/rotateY\(([\d.-]+)deg\)/);
-    if (match) {
-      var val = parseFloat(match[1]);
-      return side === 'left' ? Math.abs(val) : Math.abs(val);
-    }
+    if (match) return Math.abs(parseFloat(match[1]));
     return 0;
   }
 
-  // ===== 开门 / 关门 =====
   function openDoor() {
     if (isOpen) return;
     isOpen = true;
@@ -695,11 +782,12 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     caption.classList.add('show');
     hint.classList.add('hidden');
     dots.forEach(function(d){ d.classList.remove('active'); });
-    // 延迟关闭 loader
     setTimeout(function(){
       if (!isClosing) {
         isClosing = true;
         loader.classList.add('closing');
+        // 开门结束后触发飞鸟和飘落物
+        triggerBirdAndFall();
         setTimeout(function(){ loader.style.display = 'none'; }, 800);
       }
     }, 600);
@@ -715,7 +803,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     hint.classList.remove('hidden');
   }
 
-  // ===== 倒计时自动开门 =====
   function startAutoTimer() {
     if (isOpen) return;
     var countdown = 0;
@@ -727,23 +814,12 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     autoTimer = setTimeout(function tick(){
       if (isOpen || isDragging) return;
       countdown++;
-      dots.forEach(function(d, i){
-        d.classList.toggle('active', i <= countdown);
-      });
-      if (countdown >= 2) {
-        openDoor();
-        return;
-      }
+      dots.forEach(function(d, i){ d.classList.toggle('active', i <= countdown); });
+      if (countdown >= 2) { openDoor(); return; }
       autoTimer = setTimeout(tick, 800);
     }, 800);
   }
 
-  function resetAutoTimer() {
-    clearTimeout(autoTimer);
-    if (!isOpen) startAutoTimer();
-  }
-
-  // ===== 拖拽逻辑 =====
   function getPointerX(e) {
     return e.type.indexOf('touch') === 0 ? e.touches[0].clientX : e.clientX;
   }
@@ -755,11 +831,9 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     var side = el === leftWrap ? 'left' : 'right';
     dragTarget = side;
     isDragging = true;
-    var pt = getPointerX(e);
-    startX = pt;
+    startX = getPointerX(e);
     el.classList.add('dragging');
     clearTimeout(autoTimer);
-    // 提示淡化
     hint.style.opacity = '0.3';
   }
 
@@ -768,20 +842,15 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     e.preventDefault();
     var pt = getPointerX(e);
     var delta = pt - startX;
-    // 左门：向右拖打开；右门：向左拖打开
     var dir = dragTarget === 'left' ? 1 : -1;
     var rawAngle = delta * 0.8 * dir;
     var clampedAngle = Math.max(0, Math.min(MAX_ANGLE, rawAngle));
     setDoorAngle(dragTarget, clampedAngle);
-    // 对称打开另一扇门
     if (clampedAngle > 0) {
       var otherSide = dragTarget === 'left' ? 'right' : 'left';
       var otherAngle = getDoorAngle(otherSide);
-      // 让另一扇门跟随，但不超过当前值太多（模拟联动）
       var targetOther = Math.min(clampedAngle, otherAngle + 2);
-      if (targetOther > 0) {
-        setDoorAngle(otherSide, targetOther);
-      }
+      if (targetOther > 0) setDoorAngle(otherSide, targetOther);
     }
   }
 
@@ -792,67 +861,355 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       var el = dragTarget === 'left' ? leftWrap : rightWrap;
       el.classList.remove('dragging');
       var angle = getDoorAngle(dragTarget);
-      if (angle > THRESHOLD) {
-        openDoor();
-      } else {
-        closeDoor();
-        resetAutoTimer();
-      }
+      if (angle > THRESHOLD) { openDoor(); }
+      else { closeDoor(); resetAutoTimer(); }
       dragTarget = null;
       hint.style.opacity = '1';
     }
   }
 
-  // ===== 点击开门（快捷操作） =====
   function onClickDoor(e) {
-    if (isOpen) return;
-    // 防止点击触发拖拽结束
-    if (isDragging) return;
+    if (isOpen || isDragging) return;
     openDoor();
   }
 
-  // ===== 绑定事件 =====
-  // 鼠标事件
   leftWrap.addEventListener('mousedown', onDragStart);
   rightWrap.addEventListener('mousedown', onDragStart);
   document.addEventListener('mousemove', onDragMove);
   document.addEventListener('mouseup', onDragEnd);
-
-  // 触摸事件
   leftWrap.addEventListener('touchstart', onDragStart, { passive: false });
   rightWrap.addEventListener('touchstart', onDragStart, { passive: false });
   document.addEventListener('touchmove', onDragMove, { passive: false });
   document.addEventListener('touchend', onDragEnd);
-
-  // 点击开门（整个门框点击）
   frame.addEventListener('click', onClickDoor);
 
-  // ===== 初始化 =====
-  // 检查是否应该显示
   if (sessionStorage.getItem('door_intro_shown')) {
     loader.classList.add('skip');
+    // 如果跳过开门，直接触发飞鸟
+    setTimeout(triggerBirdAndFall, 400);
     return;
   }
   sessionStorage.setItem('door_intro_shown', '1');
-
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     loader.classList.add('skip');
+    setTimeout(triggerBirdAndFall, 400);
     return;
   }
-
-  // 启动自动开门倒计时
   startAutoTimer();
 
-  // 小技巧：如果用户没有交互，但门已经开了一部分，松开后自动完成
-  // 在拖拽结束后已经处理了
-
-  // ===== 暴露开门方法给调试 =====
+  // 暴露开门方法给后续触发
   window.__openDoor = openDoor;
+  window.__triggerBird = triggerBirdAndFall;
 
 })();
 
 // ============================================================
-// 原有功能（诗歌数量、音乐、主题切换）
+// 2. 飞鸟 + 文字显现 + 飘落物
+// ============================================================
+
+var birdTriggered = false;
+
+function triggerBirdAndFall() {
+  if (birdTriggered) return;
+  birdTriggered = true;
+
+  var birdContainer = document.getElementById('bird-container');
+  var birdSvg = document.getElementById('bird-svg');
+  var titleEl = document.getElementById('hero-title');
+
+  if (!birdContainer || !birdSvg) return;
+
+  // 激活飞鸟容器
+  birdContainer.classList.add('active');
+
+  // 拆分标题文字为逐字元素
+  if (titleEl && !titleEl.dataset.split) {
+    var html = titleEl.innerHTML;
+    // 保留 em 标签，拆解文本节点
+    var tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    var chars = [];
+    var nodes = tempDiv.childNodes;
+    var charIndex = 0;
+
+    function processNode(node) {
+      if (node.nodeType === 3) { // 文本节点
+        var text = node.textContent;
+        for (var i = 0; i < text.length; i++) {
+          var span = document.createElement('span');
+          span.className = 'char delay-' + Math.min(charIndex + 1, 20);
+          span.textContent = text[i];
+          chars.push(span);
+          charIndex++;
+        }
+      } else if (node.nodeType === 1) { // 元素节点
+        var wrapper = document.createElement('span');
+        wrapper.style.display = 'inline-block';
+        var clone = node.cloneNode(false);
+        for (var child of node.childNodes) {
+          processNodeInto(child, clone);
+        }
+        wrapper.appendChild(clone);
+        chars.push(wrapper);
+        // 给 wrapper 也加延迟
+        wrapper.className = 'char delay-' + Math.min(charIndex + 1, 20);
+        charIndex++;
+      }
+    }
+
+    function processNodeInto(node, parent) {
+      if (node.nodeType === 3) {
+        var text = node.textContent;
+        for (var i = 0; i < text.length; i++) {
+          var span = document.createElement('span');
+          span.className = 'char delay-' + Math.min(charIndex + 1, 20);
+          span.textContent = text[i];
+          parent.appendChild(span);
+          charIndex++;
+        }
+      } else if (node.nodeType === 1) {
+        var clone = node.cloneNode(false);
+        for (var child of node.childNodes) {
+          processNodeInto(child, clone);
+        }
+        parent.appendChild(clone);
+      }
+    }
+
+    // 重新构建
+    var newHtml = '';
+    var walker = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null, false);
+    var nodes2 = [];
+    var node;
+    while (node = walker.nextNode()) {
+      if (node.nodeType === 3) {
+        var text = node.textContent;
+        for (var i = 0; i < text.length; i++) {
+          var span = document.createElement('span');
+          span.className = 'char delay-' + Math.min(charIndex + 1, 20);
+          span.textContent = text[i];
+          nodes2.push(span);
+          charIndex++;
+        }
+      } else if (node.nodeType === 1) {
+        var el = document.createElement(node.tagName.toLowerCase());
+        for (var attr of node.attributes) {
+          el.setAttribute(attr.name, attr.value);
+        }
+        nodes2.push(el);
+        // 处理子节点
+        for (var child of node.childNodes) {
+          // 简单处理
+        }
+      }
+    }
+
+    // 更简单的方法：直接拆分
+    var text = titleEl.textContent;
+    var emContent = titleEl.querySelector('em');
+    var emText = emContent ? emContent.textContent : '';
+
+    var newHTML = '';
+    var fullText = text;
+    var charIdx = 0;
+
+    // 按字符拆分，保留 em 标签
+    var parts = [];
+    var currentText = '';
+    if (emContent) {
+      var before = text.split(emText)[0];
+      var after = text.split(emText)[1] || '';
+      parts.push({ type: 'text', content: before });
+      parts.push({ type: 'em', content: emText });
+      parts.push({ type: 'text', content: after });
+    } else {
+      parts.push({ type: 'text', content: text });
+    }
+
+    var finalHtml = '';
+    parts.forEach(function(part) {
+      if (part.type === 'text') {
+        for (var i = 0; i < part.content.length; i++) {
+          var ch = part.content[i];
+          if (ch === ' ' || ch === '\n' || ch === '\r') {
+            finalHtml += ch;
+          } else {
+            var cls = 'char delay-' + Math.min(charIdx + 1, 20);
+            finalHtml += '<span class="' + cls + '">' + ch + '</span>';
+            charIdx++;
+          }
+        }
+      } else if (part.type === 'em') {
+        finalHtml += '<em>';
+        for (var i = 0; i < part.content.length; i++) {
+          var ch = part.content[i];
+          var cls = 'char delay-' + Math.min(charIdx + 1, 20);
+          finalHtml += '<span class="' + cls + '">' + ch + '</span>';
+          charIdx++;
+        }
+        finalHtml += '</em>';
+      }
+    });
+
+    titleEl.innerHTML = finalHtml;
+    titleEl.dataset.split = '1';
+  }
+
+  // 启动飞鸟动画
+  birdSvg.classList.add('bird-flying');
+
+  // 飞鸟开始后，延迟触发文字显现
+  setTimeout(function() {
+    var chars = titleEl.querySelectorAll('.char');
+    chars.forEach(function(el, index) {
+      setTimeout(function() {
+        el.classList.add('reveal');
+      }, index * 50);
+    });
+  }, 800);
+
+  // 飞鸟消失后，保持飘落物继续
+  // 飘落物已经在下面启动了
+
+  // 启动飘落物
+  startFalling();
+}
+
+// ============================================================
+// 3. 飘落物系统（持续循环）
+// ============================================================
+
+var fallingItems = [];
+var fallingContainer = document.getElementById('falling-container');
+var fallAnimId = null;
+
+// 羽毛 SVG
+function createFeatherSVG(theme) {
+  var color = theme === 'dark' ? '#e0ddd6' : '#f5f0e8';
+  var stroke = theme === 'dark' ? '#8a8a85' : '#b9b7b0';
+  return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.6">' +
+    '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
+    '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.4"/>' +
+    '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.3"/>' +
+    '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.3"/>' +
+    '</svg>';
+}
+
+// 橄榄叶 SVG
+function createOliveSVG() {
+  return '<svg viewBox="0 0 30 16" fill="none">' +
+    '<ellipse cx="15" cy="8" rx="13" ry="6" fill="#6b8c5c" stroke="#4a6b3c" stroke-width="0.8"/>' +
+    '<path d="M15,2 L15,14" stroke="#4a6b3c" stroke-width="0.6"/>' +
+    '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#4a6b3c" stroke-width="0.4" opacity="0.6"/>' +
+    '</svg>';
+}
+
+function startFalling() {
+  if (fallAnimId) return;
+
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var isEyeCare = document.documentElement.getAttribute('data-theme') === 'eye-care';
+  var theme = isDark ? 'dark' : (isEyeCare ? 'eye-care' : 'light');
+
+  var count = 18;
+  var types = ['feather', 'olive'];
+  var items = [];
+
+  for (var i = 0; i < count; i++) {
+    var type = types[Math.floor(Math.random() * types.length)];
+    var size = type === 'feather' ? 16 + Math.random() * 12 : 20 + Math.random() * 14;
+    var el = document.createElement('div');
+    el.className = 'falling-item';
+    var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
+    el.innerHTML = svgContent;
+    el.style.width = size + 'px';
+    el.style.height = (type === 'feather' ? size * 2.8 : size * 0.6) + 'px';
+    el.style.left = (Math.random() * 100) + '%';
+    el.style.top = (-20 - Math.random() * 60) + '%';
+    el.style.opacity = 0.5 + Math.random() * 0.4;
+
+    fallingContainer.appendChild(el);
+
+    items.push({
+      el: el,
+      x: parseFloat(el.style.left),
+      y: parseFloat(el.style.top),
+      speed: 0.3 + Math.random() * 0.6,
+      swayAmp: 15 + Math.random() * 40,
+      swaySpeed: 0.3 + Math.random() * 0.5,
+      angle: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 1.2,
+      type: type,
+      size: size,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+
+  fallingItems = items;
+
+  function animateFalling() {
+    var viewH = window.innerHeight;
+    items.forEach(function(item) {
+      // 下落
+      item.y += item.speed * 0.6;
+      // 水平摆动
+      item.phase += 0.02 * item.swaySpeed;
+      var swayOffset = Math.sin(item.phase) * item.swayAmp * 0.15;
+      // 旋转
+      item.angle += item.rotSpeed * 0.5;
+
+      var currentX = parseFloat(item.el.style.left) + swayOffset * 0.02;
+      item.el.style.transform = 'translate(' + currentX + 'px, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
+      // 更新位置（用百分比）
+      item.el.style.left = (parseFloat(item.el.style.left) + swayOffset * 0.02) + '%';
+      // 如果超出底部，重置到顶部
+      if (item.y > viewH + 60) {
+        item.y = -40 - Math.random() * 60;
+        item.el.style.left = (Math.random() * 95 + 2) + '%';
+        item.x = parseFloat(item.el.style.left);
+        item.speed = 0.3 + Math.random() * 0.6;
+        item.swayAmp = 15 + Math.random() * 40;
+        item.angle = Math.random() * 360;
+        item.rotSpeed = (Math.random() - 0.5) * 1.2;
+        item.el.style.opacity = 0.5 + Math.random() * 0.4;
+        // 重置尺寸
+        var newType = Math.random() > 0.5 ? 'feather' : 'olive';
+        var newSize = newType === 'feather' ? 16 + Math.random() * 12 : 20 + Math.random() * 14;
+        var svgContent = newType === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
+        item.el.innerHTML = svgContent;
+        item.el.style.width = newSize + 'px';
+        item.el.style.height = (newType === 'feather' ? newSize * 2.8 : newSize * 0.6) + 'px';
+        item.type = newType;
+        item.size = newSize;
+        // 重置 transform
+        item.el.style.transform = 'translate(0, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
+      }
+    });
+    fallAnimId = requestAnimationFrame(animateFalling);
+  }
+
+  animateFalling();
+
+  // 监听主题变化，更新羽毛颜色
+  var themeObserver = new MutationObserver(function() {
+    var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+    var isEyeCareNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
+    var newTheme = isDarkNow ? 'dark' : (isEyeCareNow ? 'eye-care' : 'light');
+    if (newTheme !== theme) {
+      theme = newTheme;
+      items.forEach(function(item) {
+        if (item.type === 'feather') {
+          var svgContent = createFeatherSVG(theme);
+          item.el.innerHTML = svgContent;
+        }
+      });
+    }
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+}
+
+// ============================================================
+// 4. 原有功能（诗歌数量、音乐、主题切换）
 // ============================================================
 
 (function(){
@@ -908,6 +1265,30 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     btns.forEach(function(btn){
       btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
     });
+    // 更新飘落物颜色（如果有）
+    updateFallingColors();
+  }
+  function updateFallingColors() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var isEye = document.documentElement.getAttribute('data-theme') === 'eye-care';
+    var theme = isDark ? 'dark' : (isEye ? 'eye-care' : 'light');
+    var items = document.querySelectorAll('.falling-item');
+    items.forEach(function(el) {
+      var svg = el.querySelector('svg');
+      if (!svg) return;
+      // 判断是否是羽毛
+      var paths = svg.querySelectorAll('path');
+      if (paths.length > 0 && paths[0].getAttribute('fill')) {
+        // 是羽毛
+        var color = theme === 'dark' ? '#e0ddd6' : (theme === 'eye-care' ? '#f5efe0' : '#f5f0e8');
+        var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#b9b7b0');
+        paths[0].setAttribute('fill', color);
+        paths[0].setAttribute('stroke', stroke);
+        for (var i = 1; i < paths.length; i++) {
+          paths[i].setAttribute('stroke', stroke);
+        }
+      }
+    });
   }
   var saved = localStorage.getItem('theme');
   var initial;
@@ -923,6 +1304,13 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     });
   });
 })();
+
+// ============================================================
+// 5. 窗口变化时调整飘落物
+// ============================================================
+window.addEventListener('resize', function() {
+  // 飘落物会自动适应
+});
 </script>
 
 </body>
