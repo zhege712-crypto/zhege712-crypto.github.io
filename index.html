@@ -33,34 +33,6 @@ img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
-/* 开场动画 */
-#loader{
-  position:fixed; inset:0; z-index:9999; background:var(--ink);
-  display:flex; align-items:center; justify-content:center;
-  transition:clip-path 0.9s cubic-bezier(.76,0,.24,1);
-  clip-path:circle(150% at 50% 50%);
-}
-#loader.closing{ clip-path:circle(0% at 50% 50%); }
-#loader.skip{ display:none; }
-.loader-title{ position:relative; font-family:var(--font-display); font-weight:500; font-size:clamp(2.4rem, 8vw, 5.5rem); color:var(--white); letter-spacing:0.02em; }
-.loader-title span{ position:absolute; top:0; left:0; animation: converge 1.6s cubic-bezier(.2,.8,.2,1) forwards; }
-.loader-title .ch-r{ color:var(--accent-red); mix-blend-mode:screen; transform:translate(-14px,0); }
-.loader-title .ch-b{ color:var(--accent-cobalt); mix-blend-mode:screen; transform:translate(14px,0); }
-.loader-title .ch-base{ position:relative; opacity:0; animation: fadein 0.6s ease 1s forwards; }
-@keyframes converge{ 0%{ transform:translate(var(--tx,0),0); opacity:1; } 70%{ opacity:0.7; } 100%{ transform:translate(0,0); opacity:0; } }
-@keyframes fadein{ to{ opacity:1; } }
-.loader-caption{
-  position:absolute; bottom:60px; left:50%; transform:translateX(-50%);
-  font-family:var(--font-mono); font-size:0.75rem; color:var(--fog);
-  letter-spacing:0.15em; text-transform:uppercase;
-  animation: fadein 0.6s ease 1.3s forwards; opacity:0;
-}
-@media (prefers-reduced-motion: reduce){
-  .loader-title span{ animation:none !important; transform:none !important; opacity:0 !important; }
-  .loader-title .ch-base{ opacity:1 !important; }
-  #loader{ transition:none; }
-}
-
 /* 顶部导航 */
 header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
 header .wrap{ display:flex; justify-content:space-between; align-items:center; }
@@ -139,16 +111,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </style>
 </head>
 <body>
-
-<!-- 开场动画：只在本次浏览器会话第一次访问时播放 -->
-<div id="loader">
-  <div class="loader-title">
-    <span class="ch-r">伞</span>
-    <span class="ch-b">伞</span>
-    <span class="ch-base">伞</span>
-  </div>
-  <div class="loader-caption">Developing —</div>
-</div>
 
 <header>
   <div class="wrap">
@@ -264,22 +226,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </button>
 
 <script>
-// 开场动画：本次会话只播放一次
-(function(){
-  var loader = document.getElementById('loader');
-  if(sessionStorage.getItem('introShown')){
-    loader.classList.add('skip');
-    return;
-  }
-  sessionStorage.setItem('introShown', '1');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var delay = reduce ? 0 : 1800;
-  setTimeout(function(){
-    loader.classList.add('closing');
-    setTimeout(function(){ loader.style.display = 'none'; }, 900);
-  }, delay);
-})();
-
 // 侧边导航：读取诗歌数量显示在徽标上
 (function(){
   var badge = document.getElementById('poem-count');

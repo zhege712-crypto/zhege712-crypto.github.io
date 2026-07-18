@@ -77,16 +77,139 @@ nav.top-nav a:hover::after{ width:100%; }
 }
 .submit-note b{ color:var(--ink); }
 
-/* 希腊回纹装饰 */
 .greek-divider{ width:120px; height:12px; color:var(--fog); margin:28px 0; display:block; }
 .greek-divider.gold{ color:var(--accent-gold); }
 .laurel{ width:36px; height:36px; color:var(--accent-gold); opacity:0.85; }
 
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 
+/* ===== 开幕动画：书本翻开（无字版） ===== */
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  opacity: 1;
+  visibility: visible;
+}
+#loader.closing {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+#loader.skip {
+  display: none;
+}
+
+.book {
+  width: 320px;
+  height: 400px;
+  position: relative;
+  perspective: 1500px;
+  transform-style: preserve-3d;
+}
+
+.book-page {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: #f5f0e8;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.book-page.left {
+  left: 0;
+  transform-origin: right center;
+  border-radius: 4px 0 0 4px;
+  animation: pageFlipLeft 1.8s cubic-bezier(.4,0,.2,1) forwards;
+}
+.book-page.right {
+  right: 0;
+  transform-origin: left center;
+  border-radius: 0 4px 4px 0;
+  animation: pageFlipRight 1.8s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+.page-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f5f0e8 60%, #e8e0d5);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-sizing: border-box;
+}
+.book-page.left .page-inner {
+  border-radius: 4px 0 0 4px;
+}
+.book-page.right .page-inner {
+  border-radius: 0 4px 4px 0;
+}
+
+.book-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 100%;
+  background: #d4cdc0;
+  border-radius: 2px;
+  box-shadow: inset -1px 0 4px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+
+@keyframes pageFlipLeft {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-180deg); }
+}
+@keyframes pageFlipRight {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+.loader-caption {
+  margin-top: 40px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--fog);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeInCaption 1s ease 0.8s forwards;
+}
+@keyframes fadeInCaption {
+  to { opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .book {
+    width: 200px;
+    height: 280px;
+  }
+}
 </style>
 </head>
 <body>
+
+<!-- 开幕动画：书本翻开（仅首次进入） -->
+<div id="loader">
+  <div class="book">
+    <div class="book-page left">
+      <div class="page-inner"></div>
+    </div>
+    <div class="book-page right">
+      <div class="page-inner"></div>
+    </div>
+    <div class="book-spine"></div>
+  </div>
+  <div class="loader-caption">翻开 · 诗歌漂流</div>
+</div>
 
 <header>
   <div class="wrap">
@@ -172,6 +295,34 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <footer>© 2026 · 诗歌漂流</footer>
 
 <script>
+// ===== 书本开幕动画（仅首次进入诗歌漂流） =====
+(function(){
+  var loader = document.getElementById('loader');
+  // 如果本次会话已经看过，直接跳过
+  if(sessionStorage.getItem('poems_intro_shown')){
+    loader.classList.add('skip');
+    return;
+  }
+  // 标记本次会话已看过
+  sessionStorage.setItem('poems_intro_shown', '1');
+  
+  // 如果用户开启了“减少动画”偏好，直接跳过
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce) {
+    loader.classList.add('skip');
+    return;
+  }
+
+  // 等待书本翻页动画完成（1.8s），再淡出关闭
+  setTimeout(function(){
+    loader.classList.add('closing');
+    setTimeout(function(){
+      loader.style.display = 'none';
+    }, 800);
+  }, 2000);
+})();
+
+// ===== 原有逻辑 =====
 (function(){
   var badge = document.getElementById('poem-count');
   var statCount = document.getElementById('stat-count');
@@ -189,11 +340,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     badge.textContent = '0'; statCount.textContent = '0'; statLatest.textContent = '—';
   });
 
-  // ⚠️ 把下面 owner/repo 换成你自己的，投稿链接才会指对地方
-  var owner = 'zhege712-crypto';
-  var repo = 'zhege712-crypto.github.io';
-  var title = encodeURIComponent('【投稿】我的诗');
-  var body = encodeURIComponent('标题：\n\n正文：\n\n（可以把图片直接拖进这个输入框上传）');
+  var owner = 'zhege712-crypto';  // ← 替换成你自己的 GitHub 用户名
+  var repo = 'zhege712-crypto.github.io'; // ← 替换成你自己的仓库名
   document.getElementById('submit-link').href =
     'https://github.com/' + owner + '/' + repo + '/discussions/new/choose';
 })();
