@@ -23,12 +23,6 @@
   --font-body: 'Inter', sans-serif;
   --font-mono: 'Space Mono', monospace;
   --maxw: 1100px;
-  --marble: #f5f0eb;
-  --marble-dark: #e8e2da;
-  --gold: #c9a87a;
-  --gold-light: #e8d5b8;
-  --temple-dark: #1a1816;
-  --temple-bg: #12100e;
 }
 
 [data-theme="dark"] {
@@ -41,12 +35,6 @@
   --white: #222221;
   --accent-red: #e55a5f;
   --accent-gold: #d4a373;
-  --marble: #d4cfc8;
-  --marble-dark: #c5bfb6;
-  --gold: #b8976a;
-  --gold-light: #d4be8a;
-  --temple-dark: #1a1816;
-  --temple-bg: #0d0c0a;
 }
 [data-theme="eye-care"] {
   --paper: #f5efe0;
@@ -58,12 +46,6 @@
   --fog: #d5c8b8;
   --accent-red: #c46a52;
   --accent-gold: #c9a87a;
-  --marble: #f0ebe0;
-  --marble-dark: #e5dfd0;
-  --gold: #b8976a;
-  --gold-light: #d4be8a;
-  --temple-dark: #2a2520;
-  --temple-bg: #1a1612;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -74,605 +56,109 @@ a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
 /* ============================================================
-   古希腊风格开门动画
+   开幕动画：羽毛 · 涟漪
    ============================================================ */
 
-#door-loader {
+#intro-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: var(--temple-bg);
+  background: #0d0c0a;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 1.2s ease, visibility 1.2s ease;
+  transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), visibility 2s ease;
   opacity: 1;
   visibility: visible;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
+  pointer-events: none;
 }
-#door-loader.closing {
+#intro-overlay.hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
-#door-loader.skip {
+#intro-overlay.skip {
   display: none;
 }
 
-/* ---- 背景：深邃苍穹 ---- */
-.door-loader-bg {
+/* ---- Canvas: 涟漪 + 背景 ---- */
+#ripple-canvas {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: block;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 80%, #2a2520 0%, #0d0c0a 80%);
-}
-.door-loader-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.08), transparent),
-    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.06), transparent),
-    radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.07), transparent),
-    radial-gradient(1px 1px at 80% 50%, rgba(255,255,255,0.05), transparent),
-    radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.04), transparent),
-    radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.06), transparent);
-  background-size: 200px 200px;
-}
-.door-loader-bg .glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
-}
-.door-loader-bg .glow-1 {
-  width: 60%;
-  height: 40%;
-  top: 20%;
-  left: 20%;
-  background: var(--gold);
-}
-.door-loader-bg .glow-2 {
-  width: 30%;
-  height: 50%;
-  bottom: 0%;
-  right: 0%;
-  background: var(--gold-light);
-  opacity: 0.06;
 }
 
-/* ---- 场景容器 ---- */
-.door-scene {
-  perspective: 1600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
+/* ---- 羽毛 ---- */
+#feather-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  position: relative;
   z-index: 2;
 }
-.door-scene .door-frame {
-  pointer-events: auto;
-}
-
-/* ===== 门框：古希腊神庙风格 ===== */
-.door-frame {
-  position: relative;
-  width: 380px;
-  height: 460px;
-  background: transparent;
-  transform-style: preserve-3d;
-  cursor: grab;
-}
-.door-frame:active { cursor: grabbing; }
-
-/* ---- 门框结构：多立克柱式 ---- */
-.door-frame .column-left,
-.door-frame .column-right {
+#feather {
   position: absolute;
-  top: 0;
-  width: 24px;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    var(--marble-dark) 0%, 
-    var(--marble) 30%, 
-    var(--marble) 70%, 
-    var(--marble-dark) 100%
-  );
-  border-radius: 4px 4px 0 0;
-  box-shadow: 
-    inset -1px 0 0 rgba(255,255,255,0.3),
-    inset 1px 0 0 rgba(0,0,0,0.06);
+  width: 60px;
+  height: auto;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 20px rgba(232, 163, 61, 0.15));
+  transform-origin: center center;
+  will-change: transform, left, top;
+  transition: none;
 }
-.door-frame .column-left {
-  left: 0;
-  border-radius: 4px 0 0 4px;
+#feather .feather-body {
+  fill: url(#featherGrad);
 }
-.door-frame .column-right {
-  right: 0;
-  border-radius: 0 4px 4px 0;
-}
-
-/* 柱头（顶部装饰） */
-.door-frame .capital {
-  position: absolute;
-  top: -12px;
-  width: 40px;
-  height: 14px;
-  background: var(--marble);
-  border-radius: 3px 3px 0 0;
-  box-shadow: 
-    0 -2px 8px rgba(0,0,0,0.15),
-    inset 0 1px 0 rgba(255,255,255,0.4);
-}
-.door-frame .capital-left {
-  left: -8px;
-}
-.door-frame .capital-right {
-  right: -8px;
-}
-.door-frame .capital::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 4px;
-  right: 4px;
-  height: 3px;
-  background: var(--gold);
-  opacity: 0.25;
-  border-radius: 2px;
-}
-
-/* 柱础 */
-.door-frame .base {
-  position: absolute;
-  bottom: -8px;
-  width: 40px;
-  height: 10px;
-  background: var(--marble-dark);
-  border-radius: 0 0 3px 3px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-.door-frame .base-left {
-  left: -8px;
-}
-.door-frame .base-right {
-  right: -8px;
-}
-
-/* ---- 横梁（门楣） ---- */
-.door-frame .entablature {
-  position: absolute;
-  top: -30px;
-  left: -4px;
-  right: -4px;
-  height: 18px;
-  background: linear-gradient(180deg, var(--marble) 0%, var(--marble-dark) 100%);
-  border-radius: 3px 3px 0 0;
-  box-shadow: 
-    0 -2px 20px rgba(0,0,0,0.2),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  pointer-events: none;
-}
-/* 金色装饰线 */
-.door-frame .entablature .gold-line {
-  flex: 1;
-  height: 1.5px;
-  background: var(--gold);
-  opacity: 0.3;
-}
-.door-frame .entablature .gold-line-center {
-  flex: 2;
-  height: 2px;
-  background: var(--gold);
-  opacity: 0.4;
-}
-/* 希腊回纹（简化） */
-.door-frame .entablature .meander {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-}
-.door-frame .entablature .meander span {
-  display: block;
-  width: 4px;
-  height: 4px;
-  background: var(--gold);
-  opacity: 0.2;
-  border-radius: 1px;
-}
-
-/* ---- 门板 ---- */
-.door-panel-wrap {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: calc(50% - 1px);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  transition: filter 0.3s ease;
-}
-.door-left-wrap {
-  left: 12px;
-  transform-origin: left center;
-  cursor: ew-resize;
-}
-.door-right-wrap {
-  right: 12px;
-  transform-origin: right center;
-  cursor: ew-resize;
-}
-
-.door-panel {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background: linear-gradient(180deg, 
-    var(--marble) 0%, 
-    var(--marble) 40%,
-    var(--marble-dark) 100%
-  );
-  box-shadow: 
-    inset -2px 0 0 rgba(0,0,0,0.04),
-    inset 2px 0 0 rgba(255,255,255,0.15),
-    0 4px 30px rgba(0,0,0,0.1);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-.door-left-wrap .door-panel {
-  border-radius: 2px 0 0 2px;
-  border-right: none;
-}
-.door-right-wrap .door-panel {
-  border-radius: 0 2px 2px 0;
-  border-left: none;
-}
-
-/* ---- 大理石板缝纹理（模拟） ---- */
-.door-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(90deg, transparent 50%, rgba(0,0,0,0.01) 50%),
-    linear-gradient(0deg, transparent 60%, rgba(0,0,0,0.01) 60%);
-  background-size: 80px 60px;
-  pointer-events: none;
-  opacity: 0.3;
-}
-.door-panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(ellipse at 30% 40%, rgba(255,255,255,0.05) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 60%, rgba(0,0,0,0.02) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-/* ---- 门板金色装饰（希腊回纹简化） ---- */
-.door-panel .gold-border {
-  position: absolute;
-  border: 1.5px solid var(--gold);
-  opacity: 0.3;
-}
-.door-left-wrap .gold-border {
-  top: 18%;
-  right: 12%;
-  width: 40%;
-  height: 50%;
-  border-right: none;
-  border-bottom: none;
-}
-.door-right-wrap .gold-border {
-  top: 18%;
-  left: 12%;
-  width: 40%;
-  height: 50%;
-  border-left: none;
-  border-bottom: none;
-}
-
-/* 门板中央装饰：橄榄枝抽象 */
-.door-panel .olive-motif {
-  position: absolute;
-  top: 28%;
-  width: 30%;
-  height: 40%;
-  opacity: 0.12;
-}
-.door-left-wrap .olive-motif {
-  right: 14%;
-}
-.door-right-wrap .olive-motif {
-  left: 14%;
-}
-.door-panel .olive-motif svg {
-  width: 100%;
-  height: 100%;
-  stroke: var(--gold);
-  stroke-width: 1.5;
+#feather .feather-vein {
+  stroke: #d4c8b8;
+  stroke-width: 0.6;
   fill: none;
 }
-
-/* ---- 门把手：青铜/金色 ---- */
-.door-panel .handle {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
-  height: 28px;
-  background: radial-gradient(ellipse at 40% 30%, var(--gold-light), var(--gold));
-  border-radius: 4px;
-  box-shadow: 
-    0 0 0 2px rgba(0,0,0,0.1),
-    0 4px 20px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.door-left-wrap .handle {
-  right: 10%;
-}
-.door-right-wrap .handle {
-  left: 10%;
-}
-.door-panel-wrap.dragging .handle {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 0 3px var(--gold), 0 4px 30px rgba(201, 168, 122, 0.3);
+#feather .feather-barbs {
+  stroke: #c4b8a8;
+  stroke-width: 0.4;
+  fill: none;
+  opacity: 0.6;
 }
 
-/* ---- 门缝光芒（庄重的金色光） ---- */
-.door-glow {
+/* ---- 底部文字（淡入） ---- */
+#intro-caption {
   position: absolute;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 84%;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    var(--gold) 15%,
-    var(--gold) 85%,
-    transparent
-  );
-  opacity: 0;
-  border-radius: 2px;
-  filter: blur(6px);
-  transition: opacity 1s ease;
-  pointer-events: none;
-}
-.door-glow.active {
-  opacity: 0.4;
-}
-.door-glow::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400%;
-  height: 200%;
-  background: radial-gradient(ellipse at center, rgba(201, 168, 122, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-  filter: blur(30px);
-}
-
-/* ---- 底部提示 ---- */
-.door-hint {
-  position: absolute;
-  bottom: -40px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.3em;
+  font-size: 0.65rem;
+  letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.2);
-  white-space: nowrap;
-  transition: opacity 1s ease;
-  pointer-events: none;
-  opacity: 1;
-}
-.door-hint.hidden { opacity: 0; }
-
-/* ---- 主标题 ---- */
-.door-caption {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: 0.85rem;
-  letter-spacing: 0.6em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.15);
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 1.5s ease;
+  z-index: 3;
   pointer-events: none;
 }
-.door-caption.show { opacity: 1; }
-
-/* ---- 倒计时 ---- */
-.door-timer {
-  position: absolute;
-  bottom: -56px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-  pointer-events: none;
-}
-.door-timer .dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.06);
-  transition: all 0.5s ease;
-}
-.door-timer .dot.active {
-  background: var(--gold);
-  box-shadow: 0 0 16px rgba(201, 168, 122, 0.3);
-}
-
-/* ---- 拖拽反馈 ---- */
-.door-panel-wrap.dragging .door-panel {
-  box-shadow: 
-    inset 0 0 0 1px var(--gold),
-    0 0 40px rgba(201, 168, 122, 0.06);
-}
-.door-panel-wrap.dragging {
-  filter: brightness(1.02);
+#intro-caption.show {
+  opacity: 1;
 }
 
 /* ---- 移动端适配 ---- */
 @media (max-width: 640px) {
-  .door-frame {
-    width: 260px;
-    height: 320px;
+  #feather {
+    width: 40px;
   }
-  .door-frame .column-left,
-  .door-frame .column-right {
-    width: 16px;
-  }
-  .door-frame .capital,
-  .door-frame .base {
-    width: 28px;
-    height: 10px;
-  }
-  .door-frame .capital { top: -9px; height: 10px; }
-  .door-frame .base { bottom: -6px; height: 8px; }
-  .door-frame .capital-left,
-  .door-frame .base-left { left: -6px; }
-  .door-frame .capital-right,
-  .door-frame .base-right { right: -6px; }
-  .door-frame .entablature {
-    top: -22px;
-    height: 14px;
-    left: -2px;
-    right: -2px;
-  }
-  .door-panel-wrap {
-    top: 0;
-    bottom: 0;
-  }
-  .door-left-wrap { left: 8px; }
-  .door-right-wrap { right: 8px; }
-  .door-left-wrap .door-panel { border-width: 0.5px; }
-  .door-right-wrap .door-panel { border-width: 0.5px; }
-  .door-panel .gold-border {
-    border-width: 1px;
-  }
-  .door-left-wrap .gold-border {
-    top: 20%;
-    right: 10%;
-    width: 36%;
-    height: 44%;
-  }
-  .door-right-wrap .gold-border {
-    top: 20%;
-    left: 10%;
-    width: 36%;
-    height: 44%;
-  }
-  .door-panel .handle {
-    width: 10px;
-    height: 20px;
-  }
-  .door-panel .olive-motif {
-    width: 26%;
-    height: 34%;
-  }
-  .door-left-wrap .olive-motif { right: 12%; }
-  .door-right-wrap .olive-motif { left: 12%; }
-  .door-caption {
-    font-size: 0.65rem;
-  }
-  .door-hint {
-    font-size: 0.45rem;
-    bottom: -32px;
-  }
-  .door-timer {
-    bottom: -46px;
-  }
-  .door-timer .dot {
-    width: 3px;
-    height: 3px;
-  }
-  .door-glow {
-    width: 3px;
+  #intro-caption {
+    font-size: 0.5rem;
+    bottom: 60px;
   }
 }
 
 /* ============================================================
-   飘落物容器
-   ============================================================ */
-
-.falling-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 40;
-  overflow: hidden;
-}
-.falling-item {
-  position: absolute;
-  top: -60px;
-  opacity: 0.7;
-  will-change: transform;
-  pointer-events: none;
-}
-.falling-item svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* ============================================================
-   标题文字逐字显现
-   ============================================================ */
-
-.hero h1 .char {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1);
-}
-.hero h1 .char.reveal {
-  opacity: 1;
-  transform: translateY(0);
-}
-.hero h1 .char.delay-1 { transition-delay: 0.05s; }
-.hero h1 .char.delay-2 { transition-delay: 0.10s; }
-.hero h1 .char.delay-3 { transition-delay: 0.15s; }
-.hero h1 .char.delay-4 { transition-delay: 0.20s; }
-.hero h1 .char.delay-5 { transition-delay: 0.25s; }
-.hero h1 .char.delay-6 { transition-delay: 0.30s; }
-.hero h1 .char.delay-7 { transition-delay: 0.35s; }
-.hero h1 .char.delay-8 { transition-delay: 0.40s; }
-.hero h1 .char.delay-9 { transition-delay: 0.45s; }
-.hero h1 .char.delay-10 { transition-delay: 0.50s; }
-.hero h1 .char.delay-11 { transition-delay: 0.55s; }
-.hero h1 .char.delay-12 { transition-delay: 0.60s; }
-.hero h1 .char.delay-13 { transition-delay: 0.65s; }
-.hero h1 .char.delay-14 { transition-delay: 0.70s; }
-.hero h1 .char.delay-15 { transition-delay: 0.75s; }
-.hero h1 .char.delay-16 { transition-delay: 0.80s; }
-.hero h1 .char.delay-17 { transition-delay: 0.85s; }
-.hero h1 .char.delay-18 { transition-delay: 0.90s; }
-.hero h1 .char.delay-19 { transition-delay: 0.95s; }
-.hero h1 .char.delay-20 { transition-delay: 1.00s; }
-
-/* ============================================================
-   原有样式
+   原有首页样式（保持不变）
    ============================================================ */
 
 header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
@@ -781,107 +267,73 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <body>
 
 <!-- ============================================================
-   古希腊风格开门动画
+   开幕动画：羽毛 · 涟漪
    ============================================================ -->
 
-<div id="door-loader">
-  <!-- 背景：深邃苍穹 -->
-  <div class="door-loader-bg">
-    <div class="glow glow-1"></div>
-    <div class="glow glow-2"></div>
+<div id="intro-overlay">
+  <canvas id="ripple-canvas"></canvas>
+  <div id="feather-container">
+    <svg id="feather" viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="featherGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f5f0eb"/>
+          <stop offset="40%" stop-color="#ede8e0"/>
+          <stop offset="70%" stop-color="#e8e2da"/>
+          <stop offset="100%" stop-color="#d4c8b8"/>
+        </linearGradient>
+        <radialGradient id="featherGlow" cx="50%" cy="30%" r="60%">
+          <stop offset="0%" stop-color="rgba(232,163,61,0.15)"/>
+          <stop offset="100%" stop-color="rgba(232,163,61,0)"/>
+        </radialGradient>
+      </defs>
+      <!-- 光晕 -->
+      <ellipse cx="40" cy="50" rx="30" ry="80" fill="url(#featherGlow)"/>
+      <!-- 羽毛主体 -->
+      <path class="feather-body" d="
+        M40,2
+        C55,10 68,30 70,55
+        C72,80 65,105 55,125
+        C48,138 44,148 40,158
+        C36,148 32,138 25,125
+        C15,105 8,80 10,55
+        C12,30 25,10 40,2Z
+      "/>
+      <!-- 羽轴 -->
+      <path class="feather-vein" d="M40,2 L40,158"/>
+      <!-- 左侧羽枝 -->
+      <path class="feather-barbs" d="
+        M40,12 L25,20
+        M40,22 L18,32
+        M40,32 L14,46
+        M40,42 L12,60
+        M40,52 L14,74
+        M40,62 L18,88
+        M40,72 L24,100
+        M40,82 L30,112
+        M40,92 L36,122
+      "/>
+      <!-- 右侧羽枝 -->
+      <path class="feather-barbs" d="
+        M40,12 L55,20
+        M40,22 L62,32
+        M40,32 L66,46
+        M40,42 L68,60
+        M40,52 L66,74
+        M40,62 L62,88
+        M40,72 L56,100
+        M40,82 L50,112
+        M40,92 L44,122
+      "/>
+      <!-- 金色高光线 -->
+      <path d="M40,15 L40,140" stroke="rgba(232,163,61,0.15)" stroke-width="2" fill="none"/>
+    </svg>
   </div>
-
-  <div class="door-scene">
-    <div class="door-frame" id="door-frame">
-      <!-- 横梁/门楣 -->
-      <div class="entablature">
-        <span class="gold-line"></span>
-        <span class="meander">
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-        </span>
-        <span class="gold-line-center"></span>
-        <span class="meander">
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-        </span>
-        <span class="gold-line"></span>
-      </div>
-
-      <!-- 左柱 -->
-      <div class="column-left">
-        <div class="capital capital-left"></div>
-        <div class="base base-left"></div>
-      </div>
-
-      <!-- 右柱 -->
-      <div class="column-right">
-        <div class="capital capital-right"></div>
-        <div class="base base-right"></div>
-      </div>
-
-      <!-- 左门 -->
-      <div class="door-panel-wrap door-left-wrap" id="door-left">
-        <div class="door-panel">
-          <div class="gold-border"></div>
-          <div class="olive-motif">
-            <svg viewBox="0 0 60 80">
-              <path d="M30,5 Q20,20 15,35 Q10,50 18,65" stroke-linecap="round"/>
-              <path d="M30,5 Q40,20 45,35 Q50,50 42,65" stroke-linecap="round"/>
-              <ellipse cx="20" cy="20" rx="6" ry="3" transform="rotate(-30 20 20)"/>
-              <ellipse cx="14" cy="32" rx="6" ry="3" transform="rotate(-20 14 32)"/>
-              <ellipse cx="12" cy="45" rx="6" ry="3" transform="rotate(-10 12 45)"/>
-              <ellipse cx="40" cy="20" rx="6" ry="3" transform="rotate(30 40 20)"/>
-              <ellipse cx="46" cy="32" rx="6" ry="3" transform="rotate(20 46 32)"/>
-              <ellipse cx="48" cy="45" rx="6" ry="3" transform="rotate(10 48 45)"/>
-              <path d="M30,5 L30,30" stroke-width="0.8"/>
-            </svg>
-          </div>
-          <div class="handle"></div>
-        </div>
-      </div>
-
-      <!-- 右门 -->
-      <div class="door-panel-wrap door-right-wrap" id="door-right">
-        <div class="door-panel">
-          <div class="gold-border"></div>
-          <div class="olive-motif">
-            <svg viewBox="0 0 60 80">
-              <path d="M30,5 Q20,20 15,35 Q10,50 18,65" stroke-linecap="round"/>
-              <path d="M30,5 Q40,20 45,35 Q50,50 42,65" stroke-linecap="round"/>
-              <ellipse cx="20" cy="20" rx="6" ry="3" transform="rotate(-30 20 20)"/>
-              <ellipse cx="14" cy="32" rx="6" ry="3" transform="rotate(-20 14 32)"/>
-              <ellipse cx="12" cy="45" rx="6" ry="3" transform="rotate(-10 12 45)"/>
-              <ellipse cx="40" cy="20" rx="6" ry="3" transform="rotate(30 40 20)"/>
-              <ellipse cx="46" cy="32" rx="6" ry="3" transform="rotate(20 46 32)"/>
-              <ellipse cx="48" cy="45" rx="6" ry="3" transform="rotate(10 48 45)"/>
-              <path d="M30,5 L30,30" stroke-width="0.8"/>
-            </svg>
-          </div>
-          <div class="handle"></div>
-        </div>
-      </div>
-
-      <!-- 门缝金光 -->
-      <div class="door-glow" id="door-glow"></div>
-
-      <!-- 提示 -->
-      <div class="door-hint" id="door-hint">⇆ 拖拽 · 点击</div>
-
-      <!-- 倒计时 -->
-      <div class="door-timer" id="door-timer">
-        <span class="dot active" data-i="0"></span>
-        <span class="dot" data-i="1"></span>
-        <span class="dot" data-i="2"></span>
-      </div>
-    </div>
-
-    <div class="door-caption" id="door-caption">—— 推 开 ——</div>
-  </div>
+  <div id="intro-caption">—— 羽落 · 涟漪 ——</div>
 </div>
 
-<!-- ===== 飘落物容器 ===== -->
-<div class="falling-container" id="falling-container"></div>
+<!-- ============================================================
+   首页内容
+   ============================================================ -->
 
 <header>
   <div class="wrap">
@@ -1013,386 +465,292 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 1. 开门交互逻辑
+// 开幕动画：羽毛 · 涟漪
 // ============================================================
-(function(){
-  var loader = document.getElementById('door-loader');
-  var frame = document.getElementById('door-frame');
-  var leftWrap = document.getElementById('door-left');
-  var rightWrap = document.getElementById('door-right');
-  var glow = document.getElementById('door-glow');
-  var caption = document.getElementById('door-caption');
-  var hint = document.getElementById('door-hint');
-  var dots = document.querySelectorAll('#door-timer .dot');
 
-  if(!loader) return;
+(function() {
+  var overlay = document.getElementById('intro-overlay');
+  var canvas = document.getElementById('ripple-canvas');
+  var ctx = canvas.getContext('2d');
+  var feather = document.getElementById('feather');
+  var caption = document.getElementById('intro-caption');
 
-  var isOpen = false;
-  var isClosing = false;
-  var isDragging = false;
-  var autoTimer = null;
-  var dragTarget = null;
-  var startX = 0;
-  var MAX_ANGLE = 68;
-  var THRESHOLD = 22;
-
-  function setDoorAngle(side, angle) {
-    angle = Math.max(0, Math.min(MAX_ANGLE, angle));
-    var el = side === 'left' ? leftWrap : rightWrap;
-    var rot = side === 'left' ? -angle : angle;
-    el.style.transform = 'rotateY(' + rot + 'deg)';
-    var intensity = Math.min(0.45, angle / MAX_ANGLE * 0.55);
-    glow.style.opacity = intensity;
-    if (angle > 5) glow.classList.add('active');
-    else glow.classList.remove('active');
-    if (angle > MAX_ANGLE * 0.85) {
-      caption.classList.add('show');
-      hint.classList.add('hidden');
-    } else {
-      caption.classList.remove('show');
-    }
-  }
-
-  function getDoorAngle(side) {
-    var el = side === 'left' ? leftWrap : rightWrap;
-    var transform = el.style.transform || '';
-    var match = transform.match(/rotateY\(([\d.-]+)deg\)/);
-    if (match) return Math.abs(parseFloat(match[1]));
-    return 0;
-  }
-
-  function openDoor() {
-    if (isOpen) return;
-    isOpen = true;
-    clearTimeout(autoTimer);
-    setDoorAngle('left', MAX_ANGLE);
-    setDoorAngle('right', MAX_ANGLE);
-    glow.style.opacity = '0.45';
-    glow.classList.add('active');
-    caption.classList.add('show');
-    hint.classList.add('hidden');
-    dots.forEach(function(d){ d.classList.remove('active'); });
-    setTimeout(function(){
-      if (!isClosing) {
-        isClosing = true;
-        loader.classList.add('closing');
-        triggerFallAndText();
-        setTimeout(function(){ loader.style.display = 'none'; }, 1000);
-      }
-    }, 700);
-  }
-
-  function closeDoor() {
-    if (isOpen) return;
-    setDoorAngle('left', 0);
-    setDoorAngle('right', 0);
-    glow.style.opacity = '0';
-    glow.classList.remove('active');
-    caption.classList.remove('show');
-    hint.classList.remove('hidden');
-  }
-
-  function startAutoTimer() {
-    if (isOpen) return;
-    var countdown = 0;
-    dots.forEach(function(d, i){
-      d.classList.remove('active');
-      if (i === 0) d.classList.add('active');
-    });
-    clearTimeout(autoTimer);
-    autoTimer = setTimeout(function tick(){
-      if (isOpen || isDragging) return;
-      countdown++;
-      dots.forEach(function(d, i){ d.classList.toggle('active', i <= countdown); });
-      if (countdown >= 2) { openDoor(); return; }
-      autoTimer = setTimeout(tick, 800);
-    }, 800);
-  }
-
-  function getPointerX(e) {
-    return e.type.indexOf('touch') === 0 ? e.touches[0].clientX : e.clientX;
-  }
-
-  function onDragStart(e) {
-    if (isOpen) return;
-    e.preventDefault();
-    var el = e.currentTarget;
-    var side = el === leftWrap ? 'left' : 'right';
-    dragTarget = side;
-    isDragging = true;
-    startX = getPointerX(e);
-    el.classList.add('dragging');
-    clearTimeout(autoTimer);
-    hint.style.opacity = '0.2';
-  }
-
-  function onDragMove(e) {
-    if (!isDragging || !dragTarget) return;
-    e.preventDefault();
-    var pt = getPointerX(e);
-    var delta = pt - startX;
-    var dir = dragTarget === 'left' ? 1 : -1;
-    var rawAngle = delta * 0.8 * dir;
-    var clampedAngle = Math.max(0, Math.min(MAX_ANGLE, rawAngle));
-    setDoorAngle(dragTarget, clampedAngle);
-    if (clampedAngle > 0) {
-      var otherSide = dragTarget === 'left' ? 'right' : 'left';
-      var otherAngle = getDoorAngle(otherSide);
-      var targetOther = Math.min(clampedAngle, otherAngle + 2);
-      if (targetOther > 0) setDoorAngle(otherSide, targetOther);
-    }
-  }
-
-  function onDragEnd(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    if (dragTarget) {
-      var el = dragTarget === 'left' ? leftWrap : rightWrap;
-      el.classList.remove('dragging');
-      var angle = getDoorAngle(dragTarget);
-      if (angle > THRESHOLD) { openDoor(); }
-      else { closeDoor(); resetAutoTimer(); }
-      dragTarget = null;
-      hint.style.opacity = '1';
-    }
-  }
-
-  function resetAutoTimer() {
-    clearTimeout(autoTimer);
-    if (!isOpen) startAutoTimer();
-  }
-
-  function onClickDoor(e) {
-    if (isOpen || isDragging) return;
-    openDoor();
-  }
-
-  leftWrap.addEventListener('mousedown', onDragStart);
-  rightWrap.addEventListener('mousedown', onDragStart);
-  document.addEventListener('mousemove', onDragMove);
-  document.addEventListener('mouseup', onDragEnd);
-  leftWrap.addEventListener('touchstart', onDragStart, { passive: false });
-  rightWrap.addEventListener('touchstart', onDragStart, { passive: false });
-  document.addEventListener('touchmove', onDragMove, { passive: false });
-  document.addEventListener('touchend', onDragEnd);
-  frame.addEventListener('click', onClickDoor);
-
-  if (sessionStorage.getItem('door_intro_shown')) {
-    loader.classList.add('skip');
-    setTimeout(triggerFallAndText, 400);
+  // 如果已经播放过，直接跳过
+  if (sessionStorage.getItem('intro_ripple_shown')) {
+    overlay.classList.add('skip');
     return;
   }
-  sessionStorage.setItem('door_intro_shown', '1');
+
+  // 如果用户偏好减少动画，跳过
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    loader.classList.add('skip');
-    setTimeout(triggerFallAndText, 400);
+    overlay.classList.add('skip');
     return;
   }
-  startAutoTimer();
 
-  window.__openDoor = openDoor;
-  window.__triggerFall = triggerFallAndText;
+  // 标记已播放
+  sessionStorage.setItem('intro_ripple_shown', '1');
+
+  // ---- 尺寸 ----
+  var W, H, cx, cy, maxR;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cx = W / 2;
+    cy = H * 0.55;
+    maxR = Math.max(W, H) * 0.8;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ---- 羽毛状态 ----
+  var featherState = {
+    x: W * 0.30,
+    y: -60,
+    angle: 0,
+    phase: 0,
+    scale: 1
+  };
+
+  // 目标位置（涟漪中心）
+  var targetX = cx;
+  var targetY = cy;
+
+  // ---- 涟漪状态 ----
+  var ripples = [];
+  var rippleActive = false;
+  var rippleStartTime = 0;
+  var RIPPLE_DURATION = 2800; // ms
+  var NUM_RINGS = 4;
+
+  // ---- 动画控制 ----
+  var startTime = performance.now();
+  var featherDuration = 3200; // 羽毛飘落时长
+  var animId = null;
+  var overlayHidden = false;
+
+  // ---- 绘制涟漪 ----
+  function drawRipples(progress) {
+    if (!rippleActive) return;
+
+    // progress: 0 → 1
+    var p = Math.min(progress, 1);
+
+    for (var i = 0; i < NUM_RINGS; i++) {
+      var ringProgress = (p - i * 0.12) / (1 - i * 0.12);
+      if (ringProgress < 0) continue;
+      if (ringProgress > 1) ringProgress = 1;
+
+      // 缓动：先快后慢
+      var eased = 1 - Math.pow(1 - ringProgress, 1.5);
+      var radius = eased * maxR * 0.65;
+
+      // 宽度：从粗到细
+      var width = 6 * (1 - eased * 0.7) * (1 - i * 0.15);
+
+      // 透明度
+      var alpha = 0.7 * (1 - eased * 0.85) * (1 - i * 0.12);
+
+      // 颜色：金色
+      var r = 232, g = 163, b = 61;
+      if (alpha < 0.005) continue;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+
+      // 外发光
+      var grad = ctx.createRadialGradient(cx, cy, radius - width * 0.5, cx, cy, radius + width * 0.5);
+      grad.addColorStop(0, 'rgba(232, 163, 61, 0)');
+      grad.addColorStop(0.3, 'rgba(232, 163, 61, ' + (alpha * 0.6) + ')');
+      grad.addColorStop(0.7, 'rgba(232, 163, 61, ' + (alpha * 0.8) + ')');
+      grad.addColorStop(1, 'rgba(232, 163, 61, 0)');
+
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = width;
+      ctx.shadowColor = 'rgba(232, 163, 61, ' + (alpha * 0.3) + ')';
+      ctx.shadowBlur = 20 * (1 - eased * 0.5);
+      ctx.stroke();
+      ctx.restore();
+
+      // 内圈微光
+      if (i === 0 && ringProgress < 0.6) {
+        ctx.save();
+        var glowAlpha = 0.15 * (1 - ringProgress / 0.6);
+        var glowRadius = radius * 0.3 * (ringProgress / 0.6);
+        var grad2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+        grad2.addColorStop(0, 'rgba(232, 163, 61, ' + glowAlpha + ')');
+        grad2.addColorStop(1, 'rgba(232, 163, 61, 0)');
+        ctx.fillStyle = grad2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+  }
+
+  // ---- 绘制背景（黑色 + 细微星光） ----
+  function drawBackground() {
+    ctx.fillStyle = '#0d0c0a';
+    ctx.fillRect(0, 0, W, H);
+
+    // 细微星光
+    if (!window._stars) {
+      window._stars = [];
+      for (var i = 0; i < 40; i++) {
+        window._stars.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 0.3 + Math.random() * 0.6,
+          a: 0.05 + Math.random() * 0.1
+        });
+      }
+    }
+    var stars = window._stars;
+    for (var i = 0; i < stars.length; i++) {
+      ctx.beginPath();
+      ctx.arc(stars[i].x, stars[i].y, stars[i].r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + stars[i].a + ')';
+      ctx.fill();
+    }
+  }
+
+  // ---- 绘制羽毛（在Canvas上绘制，与DOM重叠） ----
+  // 但我们使用DOM元素来显示羽毛，所以这里不绘制
+
+  // ---- 更新羽毛位置 ----
+  function updateFeather(progress) {
+    // progress: 0 → 1
+    var p = Math.min(progress, 1);
+
+    // 起始位置：左上偏右
+    var startX = W * 0.30;
+    var startY = -60;
+    var endX = cx + (Math.random() - 0.5) * 60;
+    var endY = cy;
+
+    // 路径：S形曲线
+    var x = startX + (endX - startX) * p + Math.sin(p * Math.PI * 3) * W * 0.08 * (1 - p * 0.3);
+    var y = startY + (endY - startY) * p + Math.sin(p * Math.PI * 2.5) * 30 * (1 - p);
+
+    // 旋转
+    var angle = Math.sin(p * Math.PI * 2.5) * 20 + p * 8;
+
+    // 缩放：从稍微变小到正常
+    var scale = 0.85 + 0.15 * p;
+
+    // 透明度
+    var opacity = Math.min(1, p * 4);
+
+    feather.style.left = x + 'px';
+    feather.style.top = y + 'px';
+    feather.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg) scale(' + scale + ')';
+    feather.style.opacity = opacity;
+
+    return { x: x, y: y, angle: angle };
+  }
+
+  // ---- 主循环 ----
+  var lastTime = 0;
+  var featherProgress = 0;
+  var rippleProgress = 0;
+  var isRippleTriggered = false;
+
+  function animate(time) {
+    if (!lastTime) lastTime = time;
+    var delta = time - lastTime;
+    lastTime = time;
+
+    // 计算羽毛进度
+    var elapsed = time - startTime;
+    featherProgress = Math.min(elapsed / featherDuration, 1);
+
+    // 更新羽毛
+    var pos = updateFeather(featherProgress);
+
+    // 触发涟漪：羽毛到达目标位置附近
+    if (!isRippleTriggered && featherProgress > 0.75) {
+      isRippleTriggered = true;
+      rippleActive = true;
+      rippleStartTime = time;
+      caption.classList.add('show');
+    }
+
+    // 涟漪进度
+    if (rippleActive) {
+      var rippleElapsed = time - rippleStartTime;
+      rippleProgress = Math.min(rippleElapsed / RIPPLE_DURATION, 1);
+    }
+
+    // ---- 绘制 ----
+    drawBackground();
+
+    if (rippleActive) {
+      drawRipples(rippleProgress);
+    }
+
+    // ---- 判断是否结束 ----
+    if (featherProgress >= 1 && rippleProgress >= 1) {
+      // 动画结束，隐藏遮罩
+      if (!overlayHidden) {
+        overlayHidden = true;
+        overlay.classList.add('hidden');
+        // 释放资源
+        if (animId) {
+          cancelAnimationFrame(animId);
+          animId = null;
+        }
+        // 延迟移除Canvas
+        setTimeout(function() {
+          overlay.style.display = 'none';
+        }, 2200);
+      }
+      return;
+    }
+
+    // 继续
+    animId = requestAnimationFrame(animate);
+  }
+
+  // ---- 启动动画 ----
+  // 确保canvas尺寸正确后启动
+  setTimeout(function() {
+    animId = requestAnimationFrame(animate);
+  }, 100);
+
+  // ---- 窗口resize处理 ----
+  var resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      resize();
+      // 更新羽毛位置
+      if (!overlayHidden) {
+        // 重新计算位置
+        var p = featherProgress;
+        var newX = W * 0.30 + (cx - W * 0.30) * p + Math.sin(p * Math.PI * 3) * W * 0.08 * (1 - p * 0.3);
+        var newY = -60 + (cy + 60) * p + Math.sin(p * Math.PI * 2.5) * 30 * (1 - p);
+        feather.style.left = newX + 'px';
+        feather.style.top = newY + 'px';
+      }
+    }, 200);
+  });
+
+  // ---- 暴露给外部 ----
+  window.__introRipple = {
+    skip: function() {
+      overlay.classList.add('skip');
+      if (animId) cancelAnimationFrame(animId);
+    }
+  };
 
 })();
 
-// ============================================================
-// 2. 文字显现 + 飘落物
-// ============================================================
-
-var fallTriggered = false;
-
-function triggerFallAndText() {
-  if (fallTriggered) return;
-  fallTriggered = true;
-
-  var titleEl = document.getElementById('hero-title');
-  if (!titleEl) return;
-
-  // 拆分标题
-  if (!titleEl.dataset.split) {
-    var parts = [];
-    var emContent = titleEl.querySelector('em');
-    var fullText = titleEl.textContent;
-    var emText = emContent ? emContent.textContent : '';
-
-    if (emContent) {
-      var before = fullText.split(emText)[0] || '';
-      var after = fullText.split(emText)[1] || '';
-      parts.push({ type: 'text', content: before });
-      parts.push({ type: 'em', content: emText });
-      parts.push({ type: 'text', content: after });
-    } else {
-      parts.push({ type: 'text', content: fullText });
-    }
-
-    var finalHtml = '';
-    var charIdx = 0;
-    parts.forEach(function(part) {
-      if (part.type === 'text') {
-        for (var i = 0; i < part.content.length; i++) {
-          var ch = part.content[i];
-          if (ch === ' ' || ch === '\n' || ch === '\r') {
-            finalHtml += ch;
-          } else {
-            var cls = 'char delay-' + Math.min(charIdx + 1, 20);
-            finalHtml += '<span class="' + cls + '">' + ch + '</span>';
-            charIdx++;
-          }
-        }
-      } else if (part.type === 'em') {
-        finalHtml += '<em>';
-        for (var i = 0; i < part.content.length; i++) {
-          var ch = part.content[i];
-          var cls = 'char delay-' + Math.min(charIdx + 1, 20);
-          finalHtml += '<span class="' + cls + '">' + ch + '</span>';
-          charIdx++;
-        }
-        finalHtml += '</em>';
-      }
-    });
-
-    titleEl.innerHTML = finalHtml;
-    titleEl.dataset.split = '1';
-  }
-
-  setTimeout(function() {
-    var chars = titleEl.querySelectorAll('.char');
-    chars.forEach(function(el, index) {
-      setTimeout(function() {
-        el.classList.add('reveal');
-      }, index * 45);
-    });
-  }, 500);
-
-  startFalling();
-}
 
 // ============================================================
-// 3. 飘落物系统
-// ============================================================
-
-var fallingItems = [];
-var fallingContainer = document.getElementById('falling-container');
-var fallAnimId = null;
-
-function createFeatherSVG(theme) {
-  var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
-  var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
-  return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.5">' +
-    '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
-    '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.3"/>' +
-    '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
-    '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
-    '</svg>';
-}
-
-function createOliveSVG() {
-  return '<svg viewBox="0 0 30 16" fill="none">' +
-    '<ellipse cx="15" cy="8" rx="13" ry="5.5" fill="#7a9a6a" stroke="#5a7a4a" stroke-width="0.7"/>' +
-    '<path d="M15,2.5 L15,13.5" stroke="#5a7a4a" stroke-width="0.5"/>' +
-    '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#5a7a4a" stroke-width="0.35" opacity="0.5"/>' +
-    '</svg>';
-}
-
-function startFalling() {
-  if (fallAnimId) return;
-
-  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  var isEyeCare = document.documentElement.getAttribute('data-theme') === 'eye-care';
-  var theme = isDark ? 'dark' : (isEyeCare ? 'eye-care' : 'light');
-
-  var count = 22;
-  var types = ['feather', 'olive'];
-  var items = [];
-
-  for (var i = 0; i < count; i++) {
-    var type = types[Math.floor(Math.random() * types.length)];
-    var size = type === 'feather' ? 12 + Math.random() * 14 : 16 + Math.random() * 16;
-    var el = document.createElement('div');
-    el.className = 'falling-item';
-    var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
-    el.innerHTML = svgContent;
-    el.style.width = size + 'px';
-    el.style.height = (type === 'feather' ? size * 2.8 : size * 0.55) + 'px';
-    el.style.left = (Math.random() * 100) + '%';
-    el.style.top = (-20 - Math.random() * 80) + '%';
-    el.style.opacity = 0.3 + Math.random() * 0.4;
-
-    fallingContainer.appendChild(el);
-
-    items.push({
-      el: el,
-      x: parseFloat(el.style.left),
-      y: parseFloat(el.style.top),
-      speed: 0.2 + Math.random() * 0.6,
-      swayAmp: 10 + Math.random() * 40,
-      swaySpeed: 0.2 + Math.random() * 0.5,
-      angle: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 1.2,
-      type: type,
-      size: size,
-      phase: Math.random() * Math.PI * 2
-    });
-  }
-
-  fallingItems = items;
-
-  function animateFalling() {
-    var viewH = window.innerHeight;
-    items.forEach(function(item) {
-      item.y += item.speed * 0.45;
-      item.phase += 0.016 * item.swaySpeed;
-      var swayOffset = Math.sin(item.phase) * item.swayAmp * 0.1;
-      item.angle += item.rotSpeed * 0.35;
-
-      var currentX = parseFloat(item.el.style.left) + swayOffset * 0.012;
-      item.el.style.transform = 'translate(' + currentX + 'px, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
-      item.el.style.left = (parseFloat(item.el.style.left) + swayOffset * 0.012) + '%';
-
-      if (item.y > viewH + 60) {
-        item.y = -40 - Math.random() * 80;
-        item.el.style.left = (Math.random() * 95 + 2) + '%';
-        item.x = parseFloat(item.el.style.left);
-        item.speed = 0.2 + Math.random() * 0.6;
-        item.swayAmp = 10 + Math.random() * 40;
-        item.angle = Math.random() * 360;
-        item.rotSpeed = (Math.random() - 0.5) * 1.2;
-        item.el.style.opacity = 0.3 + Math.random() * 0.4;
-        var newType = Math.random() > 0.5 ? 'feather' : 'olive';
-        var newSize = newType === 'feather' ? 12 + Math.random() * 14 : 16 + Math.random() * 16;
-        var svgContent = newType === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
-        item.el.innerHTML = svgContent;
-        item.el.style.width = newSize + 'px';
-        item.el.style.height = (newType === 'feather' ? newSize * 2.8 : newSize * 0.55) + 'px';
-        item.type = newType;
-        item.size = newSize;
-        item.el.style.transform = 'translate(0, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
-      }
-    });
-    fallAnimId = requestAnimationFrame(animateFalling);
-  }
-
-  animateFalling();
-
-  var themeObserver = new MutationObserver(function() {
-    var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-    var isEyeCareNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
-    var newTheme = isDarkNow ? 'dark' : (isEyeCareNow ? 'eye-care' : 'light');
-    if (newTheme !== theme) {
-      theme = newTheme;
-      items.forEach(function(item) {
-        if (item.type === 'feather') {
-          var svgContent = createFeatherSVG(theme);
-          item.el.innerHTML = svgContent;
-        }
-      });
-    }
-  });
-  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-}
-
-// ============================================================
-// 4. 原有功能
+// 原有功能：诗歌数量、音乐、主题切换
 // ============================================================
 
 (function(){
@@ -1448,27 +806,6 @@ function startFalling() {
     btns.forEach(function(btn){
       btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
     });
-    updateFallingColors();
-  }
-  function updateFallingColors() {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var isEye = document.documentElement.getAttribute('data-theme') === 'eye-care';
-    var theme = isDark ? 'dark' : (isEye ? 'eye-care' : 'light');
-    var items = document.querySelectorAll('.falling-item');
-    items.forEach(function(el) {
-      var svg = el.querySelector('svg');
-      if (!svg) return;
-      var paths = svg.querySelectorAll('path');
-      if (paths.length > 0 && paths[0].getAttribute('fill')) {
-        var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
-        var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
-        paths[0].setAttribute('fill', color);
-        paths[0].setAttribute('stroke', stroke);
-        for (var i = 1; i < paths.length; i++) {
-          paths[i].setAttribute('stroke', stroke);
-        }
-      }
-    });
   }
   var saved = localStorage.getItem('theme');
   var initial;
@@ -1485,5 +822,6 @@ function startFalling() {
   });
 })();
 </script>
+
 </body>
 </html>
