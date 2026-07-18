@@ -88,7 +88,6 @@ a{ color:inherit; text-decoration:none; }
   display: none;
 }
 
-/* ---- 背景微光 ---- */
 .intro-bg {
   position: absolute;
   inset: 0;
@@ -98,8 +97,8 @@ a{ color:inherit; text-decoration:none; }
 .intro-bg .glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.08;
+  filter: blur(120px);
+  opacity: 0.06;
 }
 .intro-bg .glow-1 {
   width: 60%;
@@ -109,15 +108,14 @@ a{ color:inherit; text-decoration:none; }
   background: var(--accent-gold);
 }
 .intro-bg .glow-2 {
-  width: 30%;
-  height: 40%;
-  bottom: 10%;
-  right: 10%;
+  width: 40%;
+  height: 50%;
+  bottom: 5%;
+  right: 5%;
   background: var(--accent-gold);
-  opacity: 0.04;
+  opacity: 0.03;
 }
 
-/* ---- 背景星光 ---- */
 .intro-stars {
   position: absolute;
   inset: 0;
@@ -127,7 +125,7 @@ a{ color:inherit; text-decoration:none; }
 .intro-stars .star {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.07);
 }
 .intro-stars .star:nth-child(1) { width: 2px; height: 2px; top: 10%; left: 6%; animation: twinkle 3.2s ease-in-out infinite; }
 .intro-stars .star:nth-child(2) { width: 2px; height: 2px; top: 22%; left: 88%; animation: twinkle 2.6s ease-in-out infinite 0.6s; }
@@ -140,11 +138,10 @@ a{ color:inherit; text-decoration:none; }
 .intro-stars .star:nth-child(9) { width: 2px; height: 2px; top: 90%; left: 75%; animation: twinkle 3.0s ease-in-out infinite 0.7s; }
 .intro-stars .star:nth-child(10) { width: 2px; height: 2px; top: 32%; left: 15%; animation: twinkle 3.6s ease-in-out infinite 2.0s; }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.08; transform: scale(1); }
+  0%, 100% { opacity: 0.07; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.5); }
 }
 
-/* ---- Canvas 涟漪 ---- */
 #ripple-canvas {
   position: absolute;
   inset: 0;
@@ -155,7 +152,6 @@ a{ color:inherit; text-decoration:none; }
   z-index: 2;
 }
 
-/* ---- 底部文字 ---- */
 #intro-caption {
   position: absolute;
   bottom: 80px;
@@ -165,11 +161,11 @@ a{ color:inherit; text-decoration:none; }
   font-size: 0.6rem;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.06);
   z-index: 4;
   pointer-events: none;
   opacity: 0;
-  animation: captionFade 2.4s ease 3.2s forwards;
+  animation: captionFade 2.4s ease 3.6s forwards;
 }
 @keyframes captionFade {
   0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
@@ -180,7 +176,7 @@ a{ color:inherit; text-decoration:none; }
 }
 
 /* ============================================================
-   首页内容（淡入）
+   首页内容
    ============================================================ */
 
 .page-content {
@@ -191,7 +187,6 @@ a{ color:inherit; text-decoration:none; }
   opacity: 1;
 }
 
-/* ---- 标题文字逐字显现 ---- */
 .hero h1 .char {
   display: inline-block;
   opacity: 0;
@@ -223,10 +218,6 @@ a{ color:inherit; text-decoration:none; }
 .hero h1 .char.delay-19 { transition-delay: 0.95s; }
 .hero h1 .char.delay-20 { transition-delay: 1.00s; }
 
-/* ============================================================
-   持续飘落物（少量）
-   ============================================================ */
-
 .falling-container {
   position: fixed;
   top: 0;
@@ -251,14 +242,8 @@ a{ color:inherit; text-decoration:none; }
   height: 100%;
 }
 @keyframes fall {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.3;
-  }
-  100% {
-    transform: translateY(110vh) rotate(720deg);
-    opacity: 0.03;
-  }
+  0% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.03; }
 }
 
 /* ============================================================
@@ -371,11 +356,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <body>
 
 <!-- ============================================================
-   开幕动画：浮世绘海浪涟漪
+   开幕动画：浮世绘海浪涟漪（含粗细变化与随机性）
    ============================================================ -->
 
 <div id="intro-overlay">
-  <!-- 背景 -->
   <div class="intro-bg">
     <div class="glow glow-1"></div>
     <div class="glow glow-2"></div>
@@ -386,11 +370,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <span class="star"></span><span class="star"></span><span class="star"></span>
     <span class="star"></span>
   </div>
-
-  <!-- 涟漪 Canvas -->
   <canvas id="ripple-canvas"></canvas>
-
-  <!-- 底部文字 -->
   <div id="intro-caption">—— 涟漪 ——</div>
 </div>
 
@@ -537,7 +517,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 浮世绘海浪涟漪（Canvas 绘制）
+// 浮世绘海浪涟漪（含粗细变化与随机性）
 // ============================================================
 
 (function() {
@@ -554,24 +534,45 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     H = canvas.height = window.innerHeight;
     cx = W / 2;
     cy = H * 0.55;
-    maxR = Math.max(W, H) * 0.75;
+    maxR = Math.max(W, H) * 0.78;
   }
   resize();
   window.addEventListener('resize', resize);
 
   // ===== 配置 =====
-  var NUM_RINGS = 7;
-  var WAVES_PER_RING = 10;
-  var RING_DELAY = 0.28; // 每层延迟（秒）
-  var TOTAL_DURATION = 4.0; // 总时长
+  var NUM_RINGS = 8;
+  var RING_DELAY = 0.32;
+  var TOTAL_DURATION = 4.2;
   var startTime = null;
   var animId = null;
 
-  // ===== 绘制单个浪尖（浮世绘风格） =====
-  function drawWaveCrest(ctx, ox, oy, radius, angle, progress, ringProgress, idx) {
-    var baseLen = radius * 0.18 * (0.85 + 0.15 * Math.sin(angle * 2 + idx));
-    var len = baseLen * (0.6 + 0.4 * ringProgress);
-    var spread = 0.4 + 0.15 * Math.sin(angle * 3 + idx * 0.7);
+  // ===== 工具：随机数 =====
+  function rand(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function randInt(min, max) {
+    return Math.floor(rand(min, max + 1));
+  }
+
+  // ===== 绘制单个浪尖（带粗细变化 + 随机性） =====
+  function drawWaveCrest(ctx, ox, oy, radius, angle, ringIdx, progress, seed) {
+    // progress: 0→1 表示该浪尖在整圈涟漪中的生命进程
+
+    // 随机因子（基于种子保证每帧一致）
+    var s = seed || 0;
+    var r1 = Math.sin(s * 1.7 + 3.2) * 0.5 + 0.5;
+    var r2 = Math.sin(s * 2.3 + 5.1) * 0.5 + 0.5;
+    var r3 = Math.sin(s * 3.1 + 7.7) * 0.5 + 0.5;
+
+    // 基础长度（随机变化 30%）
+    var baseLen = radius * 0.16 * (0.7 + 0.3 * r1);
+    // 长度随进度衰减（越晚越短）
+    var lenScale = 1 - progress * 0.5;
+    var len = baseLen * lenScale * (0.8 + 0.2 * r2);
+
+    // 如果长度太小则跳过
+    if (len < 3) return;
 
     // 方向
     var dirX = Math.cos(angle);
@@ -579,186 +580,195 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     var perpX = -Math.sin(angle);
     var perpY = Math.cos(angle);
 
-    // 起点（环上）
+    // 环上起点
     var sx = ox + radius * dirX;
     var sy = oy + radius * dirY;
 
-    // 浪尖顶点（向外延伸 + 横向偏移制造卷曲感）
-    var tipR = radius + len;
-    var tipAngle = angle + 0.25 * spread * (1 - ringProgress * 0.3);
-    var tx = ox + tipR * Math.cos(tipAngle);
-    var ty = oy + tipR * Math.sin(tipAngle);
+    // ---- 浪尖曲线：三个控制点，产生自然卷曲 ----
+    // 控制点1：向外伸展（偏移量随机）
+    var cp1Dist = len * (0.4 + 0.2 * r2);
+    var cp1AngleOffset = 0.15 * (r3 - 0.5) * 2;
+    var cp1x = sx + cp1Dist * Math.cos(angle + cp1AngleOffset);
+    var cp1y = sy + cp1Dist * Math.sin(angle + cp1AngleOffset);
 
-    // 卷曲控制点（向内回卷）
-    var curlR = radius + len * 0.5;
-    var curlAngle = angle + 0.7 * spread * (1 + ringProgress * 0.2);
-    var cx2 = ox + curlR * Math.cos(curlAngle);
-    var cy2 = oy + curlR * Math.sin(curlAngle);
+    // 控制点2：卷曲顶点（向外更远，且横向偏移）
+    var cp2Dist = len * (0.8 + 0.15 * r1);
+    var cp2AngleOffset = 0.3 * (r2 - 0.3) * 0.8 + 0.2;
+    var cp2x = sx + cp2Dist * Math.cos(angle + cp2AngleOffset);
+    var cp2y = sy + cp2Dist * Math.sin(angle + cp2AngleOffset);
 
-    // 内卷终点（回到环内侧）
-    var innerR = radius - len * 0.15;
-    var innerAngle = angle + 0.9 * spread * (1 + ringProgress * 0.1);
-    var ix = ox + innerR * Math.cos(innerAngle);
-    var iy = oy + innerR * Math.sin(innerAngle);
+    // 终点：向内回卷（形成浪花卷曲）
+    var endDist = len * (0.5 + 0.2 * r3);
+    var endAngleOffset = 0.6 * (r1 - 0.2) * 0.6 + 0.3;
+    var ex = sx + endDist * Math.cos(angle + endAngleOffset);
+    var ey = sy + endDist * Math.sin(angle + endAngleOffset);
 
-    // ---- 绘制主浪 ----
-    var alpha = 0.6 * (1 - ringProgress * 0.7);
-    var lineW = 2.2 * (1 - ringProgress * 0.5) * (0.8 + 0.2 * Math.sin(angle * 2 + idx));
+    // ---- 透明度与颜色 ----
+    var alpha = 0.65 * (1 - progress * 0.7) * (0.8 + 0.2 * r1);
+    if (alpha < 0.02) return;
 
+    // ---- 粗细变化：从根部粗到尖端细（渐变） ----
+    var baseWidth = 3.2 * (1 - progress * 0.4) * (0.6 + 0.4 * r2);
+    var tipWidth = baseWidth * 0.15 * (0.5 + 0.5 * r3);
+
+    // 绘制主浪（使用 Bezier 曲线，逐段绘制实现粗细渐变）
     ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.strokeStyle = 'rgba(232, 163, 61, 0.9)';
-    ctx.lineWidth = lineW;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    ctx.globalAlpha = Math.min(alpha, 0.8);
 
-    // 主浪：从环上到浪尖（带卷曲）
-    ctx.beginPath();
-    ctx.moveTo(sx, sy);
-    ctx.quadraticCurveTo(
-      sx + (tx - sx) * 0.4 + perpX * len * 0.15,
-      sy + (ty - sy) * 0.4 + perpY * len * 0.15,
-      tx, ty
-    );
-    // 卷曲回环
-    ctx.quadraticCurveTo(
-      tx + (cx2 - tx) * 0.3 + perpX * len * 0.08,
-      ty + (cy2 - ty) * 0.3 + perpY * len * 0.08,
-      cx2, cy2
-    );
-    ctx.stroke();
+    // 分段绘制：将曲线分成多段，每段用不同粗细
+    var segments = 6;
+    var points = [];
+    for (var i = 0; i <= segments; i++) {
+      var t = i / segments;
+      // 三次贝塞尔曲线（从起点→cp1→cp2→终点）
+      var mt = 1 - t;
+      var px = mt * mt * mt * sx + 3 * mt * mt * t * cp1x + 3 * mt * t * t * cp2x + t * t * t * ex;
+      var py = mt * mt * mt * sy + 3 * mt * mt * t * cp1y + 3 * mt * t * t * cp2y + t * t * t * ey;
+      points.push({ x: px, y: py, t: t });
+    }
 
-    // ---- 浪尖的细小分支（飞沫感） ----
-    if (ringProgress > 0.3 && ringProgress < 0.8) {
-      var branchAlpha = 0.2 * (1 - Math.abs(ringProgress - 0.55) * 2);
-      ctx.globalAlpha = alpha * branchAlpha * 1.2;
-      ctx.lineWidth = lineW * 0.3;
+    // 逐段绘制，粗细渐变
+    for (var i = 0; i < points.length - 1; i++) {
+      var p0 = points[i];
+      var p1 = points[i + 1];
+      var t0 = p0.t;
+      var t1 = p1.t;
 
-      // 分支1（外侧）
-      var b1Angle = tipAngle + 0.4 + 0.2 * Math.sin(idx * 1.3);
-      var b1Len = len * 0.25 * (0.6 + 0.4 * Math.sin(angle * 2 + idx * 1.7));
-      var b1x = tx + b1Len * Math.cos(b1Angle);
-      var b1y = ty + b1Len * Math.sin(b1Angle);
+      // 粗细：从根部到尖端线性递减
+      var w0 = baseWidth * (1 - t0 * 0.9) + tipWidth * t0 * 0.9;
+      var w1 = baseWidth * (1 - t1 * 0.9) + tipWidth * t1 * 0.9;
+
+      // 对短线段，宽度取平均
+      var avgW = (w0 + w1) / 2;
+
+      // 颜色渐变：根部更亮，尖端稍暗
+      var bright = 1 - t0 * 0.3;
+      var r = Math.round(232 * bright);
+      var g = Math.round(163 * bright);
+      var b = Math.round(61 * bright);
+
       ctx.beginPath();
-      ctx.moveTo(tx, ty);
-      ctx.quadraticCurveTo(
-        tx + (b1x - tx) * 0.4 + perpX * len * 0.05,
-        ty + (b1y - ty) * 0.4 + perpY * len * 0.05,
-        b1x, b1y
-      );
-      ctx.stroke();
-
-      // 分支2（内侧）
-      var b2Angle = tipAngle - 0.4 - 0.2 * Math.sin(idx * 1.7 + 0.5);
-      var b2Len = len * 0.2 * (0.5 + 0.5 * Math.cos(angle * 2 + idx * 1.3));
-      var b2x = tx + b2Len * Math.cos(b2Angle);
-      var b2y = ty + b2Len * Math.sin(b2Angle);
-      ctx.beginPath();
-      ctx.moveTo(tx, ty);
-      ctx.quadraticCurveTo(
-        tx + (b2x - tx) * 0.4 - perpX * len * 0.04,
-        ty + (b2y - ty) * 0.4 - perpY * len * 0.04,
-        b2x, b2y
-      );
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+      ctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (alpha * 0.9) + ')';
+      ctx.lineWidth = avgW;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.stroke();
     }
 
-    // ---- 浪尖末端光点 ----
-    if (ringProgress > 0.2 && ringProgress < 0.7) {
-      var dotAlpha = 0.15 * (1 - Math.abs(ringProgress - 0.45) * 2.5);
-      if (dotAlpha > 0.01) {
-        ctx.globalAlpha = dotAlpha * 0.8;
-        ctx.fillStyle = 'rgba(232, 200, 120, 0.6)';
-        ctx.beginPath();
-        ctx.arc(tx, ty, 1.5 + 2 * (1 - ringProgress), 0, Math.PI * 2);
-        ctx.fill();
-        // 第二光点
-        ctx.globalAlpha = dotAlpha * 0.4;
-        ctx.beginPath();
-        ctx.arc(tx + perpX * 3 * (1 - ringProgress), ty + perpY * 3 * (1 - ringProgress), 2 + 3 * (1 - ringProgress), 0, Math.PI * 2);
-        ctx.fill();
+    // ---- 浪尖的小分支（飞沫） ----
+    if (progress > 0.15 && progress < 0.7 && len > 8) {
+      var branchAlpha = 0.15 * (1 - Math.abs(progress - 0.4) * 2.5) * (0.5 + 0.5 * r3);
+      if (branchAlpha > 0.01) {
+        var tip = points[points.length - 1];
+        var dirAngle = Math.atan2(ey - cp2y, ex - cp2x);
+        var numBranches = randInt(1, 3);
+
+        for (var b = 0; b < numBranches; b++) {
+          var bAngle = dirAngle + rand(-0.6, 0.6) + (b - (numBranches - 1) / 2) * 0.4;
+          var bLen = len * rand(0.12, 0.25) * (1 - progress * 0.3);
+          var bx = tip.x + bLen * Math.cos(bAngle);
+          var by = tip.y + bLen * Math.sin(bAngle);
+
+          ctx.beginPath();
+          ctx.moveTo(tip.x, tip.y);
+          var midX = tip.x + bLen * 0.4 * Math.cos(bAngle + rand(-0.2, 0.2));
+          var midY = tip.y + bLen * 0.4 * Math.sin(bAngle + rand(-0.2, 0.2));
+          ctx.quadraticCurveTo(midX, midY, bx, by);
+          ctx.strokeStyle = 'rgba(232, 200, 120, ' + (branchAlpha * 0.6) + ')';
+          ctx.lineWidth = avgW * 0.25;
+          ctx.stroke();
+
+          // 分支末端小光点
+          if (branchAlpha > 0.05) {
+            ctx.beginPath();
+            ctx.arc(bx, by, avgW * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(232, 200, 120, ' + (branchAlpha * 0.4) + ')';
+            ctx.fill();
+          }
+        }
       }
     }
 
-    ctx.restore();
-
-    // ---- 金色光晕（浪尖周围的辉光） ----
-    if (ringProgress > 0.1 && ringProgress < 0.6) {
-      var glowAlpha = 0.03 * (1 - ringProgress * 1.5);
-      if (glowAlpha > 0.005) {
-        ctx.save();
-        ctx.globalAlpha = glowAlpha;
-        var grad = ctx.createRadialGradient(tx, ty, 0, tx, ty, len * 0.6);
-        grad.addColorStop(0, 'rgba(232, 163, 61, 0.3)');
-        grad.addColorStop(1, 'rgba(232, 163, 61, 0)');
+    // ---- 浪尖光晕 ----
+    if (progress > 0.05 && progress < 0.5) {
+      var glowAlpha = 0.04 * (1 - progress * 1.8) * (0.5 + 0.5 * r1);
+      if (glowAlpha > 0.003) {
+        var tip = points[points.length - 1];
+        var grad = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, len * 0.5);
+        grad.addColorStop(0, 'rgba(232, 200, 120, ' + glowAlpha + ')');
+        grad.addColorStop(1, 'rgba(232, 200, 120, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(tx, ty, len * 0.6, 0, Math.PI * 2);
+        ctx.arc(tip.x, tip.y, len * 0.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
       }
     }
+
+    ctx.restore();
   }
 
-  // ===== 绘制单层涟漪 =====
+  // ===== 绘制单圈涟漪 =====
   function drawRing(ctx, ringIdx, progress) {
-    // progress: 0→1 表示该层从出现到消失
     if (progress <= 0 || progress > 1) return;
 
-    var radius = progress * maxR * 0.85;
-    if (radius < 2) return;
+    var radius = progress * maxR * 0.82;
+    if (radius < 3) return;
 
-    var alpha = 0.8 * (1 - progress * 0.8);
-    if (alpha < 0.01) return;
+    // 计算该圈有多少个浪尖（随机 8~14 个）
+    var baseCount = 8 + ringIdx % 4;
+    var count = baseCount + Math.floor(Math.sin(ringIdx * 1.3 + 0.5) * 2);
+    count = Math.max(6, Math.min(16, count));
 
-    // 绘制主环（半透明金色环）
-    ctx.save();
-    ctx.globalAlpha = alpha * 0.15;
-    ctx.strokeStyle = 'rgba(232, 163, 61, 0.5)';
-    ctx.lineWidth = 1.5 * (1 - progress * 0.4);
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-
-    // 绘制浪尖
-    var ringProgress = progress;
-    var count = WAVES_PER_RING + Math.floor(ringIdx * 0.5);
+    // 对每个浪尖，加入角度随机偏移
+    var angleOffset = ringIdx * 0.12;
 
     for (var i = 0; i < count; i++) {
-      var angle = (i / count) * Math.PI * 2 + ringIdx * 0.15;
-      drawWaveCrest(ctx, cx, cy, radius, angle, ringIdx / NUM_RINGS, ringProgress, i);
+      var angle = (i / count) * Math.PI * 2 + angleOffset;
+      // 随机微调角度，让浪尖不是完美均匀分布
+      var jitter = 0.04 * Math.sin(i * 0.7 + ringIdx * 1.1);
+      angle += jitter;
+
+      // 种子用于生成一致的随机性
+      var seed = i * 7.3 + ringIdx * 13.7 + 0.3;
+
+      // 每个浪尖的进度微调（使它们不完全同步，更自然）
+      var localProgress = Math.min(1, progress * (0.85 + 0.15 * Math.sin(i * 1.3 + ringIdx * 0.7)));
+
+      drawWaveCrest(ctx, cx, cy, radius, angle, ringIdx, localProgress, seed);
     }
 
-    // 绘制内圈细环（增加层次）
-    if (progress > 0.05 && progress < 0.6) {
-      var innerAlpha = alpha * 0.08 * (1 - progress * 1.2);
-      if (innerAlpha > 0.005) {
+    // ---- 环上微光带（增加层次感） ----
+    if (progress > 0.05 && progress < 0.55) {
+      var bandAlpha = 0.03 * (1 - progress * 1.2) * (0.5 + 0.5 * Math.sin(ringIdx * 0.5));
+      if (bandAlpha > 0.005) {
         ctx.save();
-        ctx.globalAlpha = innerAlpha;
-        ctx.strokeStyle = 'rgba(232, 200, 140, 0.3)';
-        ctx.lineWidth = 0.5;
+        ctx.globalAlpha = bandAlpha;
+        ctx.strokeStyle = 'rgba(232, 200, 140, 0.2)';
+        ctx.lineWidth = 0.8 * (1 - progress * 0.3);
         ctx.beginPath();
-        ctx.arc(cx, cy, radius * 0.92, 0, Math.PI * 2);
+        ctx.arc(cx, cy, radius * 0.95, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
     }
 
-    // 环上的微小光点
-    if (progress > 0.05 && progress < 0.5) {
-      var dotAlpha = 0.04 * (1 - progress * 1.5);
+    // ---- 环上细小光点 ----
+    if (progress > 0.1 && progress < 0.6) {
+      var dotAlpha = 0.025 * (1 - progress * 1.4);
       if (dotAlpha > 0.005) {
         ctx.save();
         ctx.globalAlpha = dotAlpha;
-        for (var i = 0; i < 20; i++) {
-          var a = (i / 20) * Math.PI * 2 + ringIdx * 0.3;
-          var rOff = radius * (0.98 + 0.02 * Math.sin(i * 1.7 + ringIdx));
+        var dotCount = 12 + ringIdx % 6;
+        for (var i = 0; i < dotCount; i++) {
+          var a = (i / dotCount) * Math.PI * 2 + ringIdx * 0.3;
+          var rOff = radius * (0.92 + 0.08 * Math.sin(i * 1.3 + ringIdx * 0.9));
           var dx = cx + rOff * Math.cos(a);
           var dy = cy + rOff * Math.sin(a);
-          ctx.fillStyle = 'rgba(232, 200, 140, 0.5)';
+          ctx.fillStyle = 'rgba(232, 200, 140, 0.3)';
           ctx.beginPath();
-          ctx.arc(dx, dy, 0.5 + 0.8 * (1 - progress), 0, Math.PI * 2);
+          ctx.arc(dx, dy, 0.5 + 0.6 * (1 - progress), 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.restore();
@@ -771,29 +781,24 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     if (!startTime) startTime = time;
     var elapsed = (time - startTime) / 1000;
 
-    // 清空画布（完全透明）
     ctx.clearRect(0, 0, W, H);
 
-    // 绘制所有涟漪层
     for (var i = 0; i < NUM_RINGS; i++) {
       var progress = (elapsed - i * RING_DELAY) / TOTAL_DURATION;
       drawRing(ctx, i, progress);
     }
 
-    // 判断是否结束
     var allDone = true;
     for (var i = 0; i < NUM_RINGS; i++) {
       var p = (elapsed - i * RING_DELAY) / TOTAL_DURATION;
       if (p < 1.0) allDone = false;
     }
 
-    if (allDone && elapsed > TOTAL_DURATION + NUM_RINGS * RING_DELAY + 0.5) {
-      // 动画完成
+    if (allDone && elapsed > TOTAL_DURATION + NUM_RINGS * RING_DELAY + 0.8) {
       if (animId) {
         cancelAnimationFrame(animId);
         animId = null;
       }
-      // 触发页面显现
       showPage();
       return;
     }
@@ -813,7 +818,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       overlay.classList.add('hidden');
       setTimeout(function() {
         overlay.style.display = 'none';
-        // 释放Canvas资源
         if (canvas) {
           canvas.width = 0;
           canvas.height = 0;
@@ -821,7 +825,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       }, 1800);
     }, 400);
 
-    // 触发标题显现
     setTimeout(triggerTitleReveal, 600);
   }
 
@@ -897,9 +900,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
   sessionStorage.setItem('intro_ripple_shown', '1');
 
-  // 等待一帧确保尺寸正确
   requestAnimationFrame(function() {
-    // 稍微延迟，让页面渲染完成
     setTimeout(function() {
       startTime = null;
       animId = requestAnimationFrame(animate);
