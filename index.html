@@ -26,7 +26,6 @@
   --maxw: 1100px;
 }
 
-/* ===== 暗色主题 ===== */
 [data-theme="dark"] {
   --ink: #ecece5;
   --charcoal: #c4c4be;
@@ -38,8 +37,6 @@
   --accent-red: #e55a5f;
   --accent-gold: #d4a373;
 }
-
-/* ===== 护眼暖色主题 ===== */
 [data-theme="eye-care"] {
   --paper: #fbf7ea;
   --paper-2: #f3edd8;
@@ -59,7 +56,6 @@ img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
-/* 顶部导航 */
 header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
 header .wrap{ display:flex; justify-content:space-between; align-items:center; }
 .logo{ font-family:var(--font-display); font-weight:600; font-size:1.1rem; color:var(--white); }
@@ -69,7 +65,6 @@ nav.top-nav a::after{ content:''; position:absolute; left:0; bottom:0; width:0; 
 nav.top-nav a:hover::after{ width:100%; }
 @media (max-width:640px){ nav.top-nav ul{ gap:16px; } }
 
-/* 侧边分栏导航 */
 .side-nav{
   position:fixed; left:24px; top:120px; z-index:150; width:168px;
   background:rgba(255,255,255,0.6); backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
@@ -78,22 +73,46 @@ nav.top-nav a:hover::after{ width:100%; }
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 .side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:2px; font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal); transition:background 0.25s ease, color 0.25s ease; }
-.side-nav a:hover{ background:rgba(0,0,0,0.05); }
-.side-nav a.active{ background:rgba(0,0,0,0.08); color:var(--ink); font-weight:600; }
+.side-nav a:hover{ background:var(--paper-2); }
+.side-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; }
 .side-nav a svg{ width:17px; height:17px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.6; }
 .side-nav a .badge{ margin-left:auto; font-family:var(--font-mono); font-size:0.65rem; background:var(--paper); color:var(--steel); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; }
 .side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
-.side-nav .theme-selector-wrap{
-  margin-top:16px; border-top:1px solid var(--fog); padding-top:12px;
+
+.theme-switcher{
+  margin-top:16px;
+  border-top:1px solid var(--fog);
+  padding-top:14px;
+  display:flex;
+  gap:4px;
 }
-.side-nav .theme-selector-wrap select{
-  width:100%; padding:8px; background:var(--white); color:var(--ink);
-  border:1px solid var(--fog); border-radius:4px;
-  font-family:var(--font-mono); font-size:0.7rem; cursor:pointer;
+.theme-btn{
+  flex:1;
+  padding:8px 2px;
+  font-family:var(--font-mono);
+  font-size:0.6rem;
+  background:transparent;
+  border:none;
+  border-radius:2px;
+  color:var(--charcoal);
+  cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease;
+  text-align:center;
+  letter-spacing:0.03em;
+  line-height:1.3;
+}
+.theme-btn:hover{ background:var(--paper-2); }
+.theme-btn.active{
+  background:var(--accent-gold);
+  color:var(--white);
+}
+.theme-btn .icon{
+  display:block;
+  font-size:1.05rem;
+  margin-bottom:2px;
 }
 @media (max-width:1180px){ .side-nav{ display:none; } }
 
-/* Hero */
 .hero{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; position:relative; padding-top:100px; background:var(--paper); }
 .hero-eyebrow{ font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--steel); margin-bottom:18px; display:flex; align-items:center; gap:10px; }
 .hero-eyebrow::before{ content:''; width:22px; height:1px; background:var(--accent-red); }
@@ -107,7 +126,6 @@ nav.top-nav a:hover::after{ width:100%; }
 .hero-scroll .line::after{ content:''; position:absolute; top:-40px; left:0; width:100%; height:40px; background:var(--accent-red); animation:scrollline 2s ease-in-out infinite; }
 @keyframes scrollline{ 50%{ top:40px; } 100%{ top:40px; } }
 
-/* 入口卡片 */
 .entry-grid{ padding:0 0 140px; display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--paper-2); }
 .entry-card{
   background:var(--paper); padding:44px 32px; min-height:220px;
@@ -124,7 +142,6 @@ nav.top-nav a:hover::after{ width:100%; }
 
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 
-/* 音乐播放按钮 */
 #music-toggle{ position:fixed; right:28px; bottom:28px; z-index:200; width:56px; height:56px; border-radius:50%; background:var(--ink); border:1px solid var(--charcoal); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,0.25); transition:border-color 0.3s ease; }
 #music-toggle:hover{ border-color:var(--accent-gold); }
 #music-toggle .ring{ position:absolute; inset:-4px; border-radius:50%; border:1px solid var(--accent-gold); opacity:0; transform:scale(0.85); transition:opacity 0.3s ease; }
@@ -188,13 +205,16 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <span class="badge" id="poem-count">·</span>
   </a>
 
-  <!-- ===== 主题切换器 ===== -->
-  <div class="theme-selector-wrap">
-    <select id="theme-selector">
-      <option value="light">☀️ 日间</option>
-      <option value="dark">🌙 夜间</option>
-      <option value="eye-care">📖 护眼</option>
-    </select>
+  <div class="theme-switcher">
+    <button class="theme-btn" data-theme="light">
+      <span class="icon">☀️</span>日间
+    </button>
+    <button class="theme-btn" data-theme="dark">
+      <span class="icon">🌙</span>夜间
+    </button>
+    <button class="theme-btn" data-theme="eye-care">
+      <span class="icon">📖</span>护眼
+    </button>
   </div>
 </nav>
 
@@ -270,7 +290,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </button>
 
 <script>
-// ===== 诗歌数量徽标 =====
 (function(){
   var badge = document.getElementById('poem-count');
   if(!badge) return;
@@ -279,14 +298,12 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   }).catch(function(){ badge.textContent = '0'; });
 })();
 
-// ===== 音乐播放器 =====
 (function(){
   var btn = document.getElementById('music-toggle');
   var audio = document.getElementById('bg-music');
   var label = btn.querySelector('.label');
   var autoStarted = false;
   audio.volume = 0.35;
-
   function startPlaying(){
     if(autoStarted) return;
     audio.play().then(function(){
@@ -309,18 +326,13 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   });
 })();
 
-// ===== 主题切换（智能时间 + 手动覆盖） =====
 (function(){
-  var selector = document.getElementById('theme-selector');
-  if(!selector) return;
-
-  // 根据时间判断是否应为夜间（19:00 ~ 06:00）
+  var btns = document.querySelectorAll('.theme-btn');
+  if(!btns.length) return;
   function isNightTime() {
     var hour = new Date().getHours();
     return (hour >= 19 || hour < 6);
   }
-
-  // 应用主题
   function applyTheme(theme) {
     if (theme === 'light') {
       document.documentElement.removeAttribute('data-theme');
@@ -328,21 +340,22 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       document.documentElement.setAttribute('data-theme', theme);
     }
     localStorage.setItem('theme', theme);
-    selector.value = theme;
+    btns.forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+    });
   }
-
-  // 初始化：优先使用 localStorage，若无则根据时间自动
   var saved = localStorage.getItem('theme');
+  var initial;
   if (saved && (saved === 'light' || saved === 'dark' || saved === 'eye-care')) {
-    applyTheme(saved);
+    initial = saved;
   } else {
-    var initial = isNightTime() ? 'dark' : 'light';
-    applyTheme(initial);
+    initial = isNightTime() ? 'dark' : 'light';
   }
-
-  // 监听下拉切换
-  selector.addEventListener('change', function(){
-    applyTheme(this.value);
+  applyTheme(initial);
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applyTheme(this.getAttribute('data-theme'));
+    });
   });
 })();
 </script>
