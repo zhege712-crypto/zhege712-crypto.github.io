@@ -23,6 +23,11 @@
   --font-body: 'Inter', sans-serif;
   --font-mono: 'Space Mono', monospace;
   --maxw: 1100px;
+  --pop-red: #e63946;
+  --pop-blue: #2a6fdb;
+  --pop-yellow: #f4c542;
+  --pop-white: #f8f4ef;
+  --pop-black: #1a1a1a;
 }
 
 [data-theme="dark"] {
@@ -35,6 +40,10 @@
   --white: #222221;
   --accent-red: #e55a5f;
   --accent-gold: #d4a373;
+  --pop-red: #e8505a;
+  --pop-blue: #3a7fe8;
+  --pop-yellow: #e8b830;
+  --pop-white: #e8e4df;
 }
 [data-theme="eye-care"] {
   --paper: #f5efe0;
@@ -46,6 +55,10 @@
   --fog: #d5c8b8;
   --accent-red: #c46a52;
   --accent-gold: #c9a87a;
+  --pop-red: #d46a52;
+  --pop-blue: #5a7fa8;
+  --pop-yellow: #d4a870;
+  --pop-white: #f5f0e5;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -55,12 +68,15 @@ img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
-/* ---------- 推开门开幕动画 ---------- */
+/* ============================================================
+   波普艺术风格开门动画
+   ============================================================ */
+
 #door-loader {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #1c1c1b;
+  background: var(--pop-black);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -81,6 +97,48 @@ a{ color:inherit; text-decoration:none; }
   display: none;
 }
 
+/* 波普背景光晕 */
+.door-loader-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.door-loader-bg .glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+}
+.door-loader-bg .glow-1 {
+  width: 50%;
+  height: 50%;
+  top: -10%;
+  left: -10%;
+  background: var(--pop-red);
+  animation: bgPulse 4s ease-in-out infinite;
+}
+.door-loader-bg .glow-2 {
+  width: 40%;
+  height: 40%;
+  bottom: -10%;
+  right: -10%;
+  background: var(--pop-blue);
+  animation: bgPulse 4s ease-in-out infinite 2s;
+}
+@keyframes bgPulse {
+  0%, 100% { transform: scale(1); opacity: 0.25; }
+  50% { transform: scale(1.2); opacity: 0.4; }
+}
+
+/* 波普背景波点装饰 */
+.door-loader-bg .bg-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 2px, transparent 2px);
+  background-size: 30px 30px;
+}
+
 .door-scene {
   perspective: 1400px;
   display: flex;
@@ -88,63 +146,107 @@ a{ color:inherit; text-decoration:none; }
   align-items: center;
   gap: 28px;
   pointer-events: none;
+  position: relative;
+  z-index: 2;
 }
 .door-scene .door-frame {
   pointer-events: auto;
 }
 
+/* ---- 门框 ---- */
 .door-frame {
   position: relative;
-  width: 340px;
-  height: 420px;
-  border: 4px solid #1c1c1b;
-  background: #1c1c1b;
-  border-radius: 2px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  width: 360px;
+  height: 440px;
+  border: 6px solid var(--pop-black);
+  background: var(--pop-black);
+  border-radius: 4px;
+  box-shadow: 
+    0 20px 60px rgba(0,0,0,0.6),
+    inset 0 0 0 2px rgba(255,255,255,0.08);
   transform-style: preserve-3d;
   cursor: grab;
 }
 .door-frame:active { cursor: grabbing; }
 
-.meander-wrap {
+/* ---- 门楣：波普风格装饰带 ---- */
+.door-header {
   position: absolute;
-  top: -24px;
+  top: -34px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% + 16px);
-  height: 20px;
-  background: #1c1c1b;
-  border-radius: 2px 2px 0 0;
+  width: calc(100% + 20px);
+  height: 30px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--pop-black) 0px,
+    var(--pop-black) 12px,
+    var(--pop-white) 12px,
+    var(--pop-white) 24px
+  );
+  border-radius: 4px 4px 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  gap: 8px;
   pointer-events: none;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
 }
-.meander-wrap svg {
-  width: 100%;
-  height: 14px;
-  stroke: #f5f0e8;
-  stroke-width: 1.8;
-  fill: none;
+.door-header .pop-text {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.15em;
+  color: var(--pop-red);
+  text-shadow: 
+    0 0 10px rgba(230, 57, 70, 0.3),
+    0 0 30px rgba(230, 57, 70, 0.1);
+  background: var(--pop-white);
+  padding: 0 16px;
+  border-radius: 2px;
+  line-height: 1.6;
+}
+.door-header .pop-text span {
+  display: inline-block;
+  animation: popTextPulse 1.2s ease-in-out infinite;
+}
+.door-header .pop-text span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.door-header .pop-text span:nth-child(3) {
+  animation-delay: 0.30s;
+}
+@keyframes popTextPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
 }
 
+/* 门楣两侧装饰星 */
+.door-header .star {
+  color: var(--pop-yellow);
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+.door-header .star-left { margin-right: 4px; }
+.door-header .star-right { margin-left: 4px; }
+
+/* ---- 门板 ---- */
 .door-panel-wrap {
   position: absolute;
-  top: 4px;
-  bottom: 4px;
-  width: calc(50% - 2px);
+  top: 6px;
+  bottom: 6px;
+  width: calc(50% - 3px);
   transform-style: preserve-3d;
   backface-visibility: hidden;
   transition: filter 0.3s ease;
 }
 .door-left-wrap {
-  left: 4px;
+  left: 6px;
   transform-origin: left center;
   cursor: ew-resize;
 }
 .door-right-wrap {
-  right: 4px;
+  right: 6px;
   transform-origin: right center;
   cursor: ew-resize;
 }
@@ -152,78 +254,145 @@ a{ color:inherit; text-decoration:none; }
 .door-panel {
   width: 100%;
   height: 100%;
-  background: #f5f0e8;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
   position: relative;
   transition: box-shadow 0.3s ease;
+  border: 2px solid var(--pop-black);
 }
-.door-left-wrap .door-panel { border-radius: 2px 0 0 2px; }
-.door-right-wrap .door-panel { border-radius: 0 2px 2px 0; }
-
-.door-panel-wrap.dragging .door-panel {
-  box-shadow: inset 0 0 0 2px var(--accent-gold), 0 0 30px rgba(232, 163, 61, 0.15);
-}
-.door-panel-wrap.dragging { filter: brightness(1.02); }
-
-.door-panel .l-shape {
-  position: absolute;
-  top: 26%;
-  width: 48%;
-  height: 48%;
-  border: 3px solid #1c1c1b;
+.door-left-wrap .door-panel {
+  border-radius: 2px 0 0 2px;
   border-right: none;
-  border-bottom: none;
-  opacity: 0.85;
-  transition: border-color 0.3s ease;
 }
-.door-left-wrap .l-shape { right: 16%; }
-.door-right-wrap .l-shape { left: 16%; transform: scaleX(-1); }
-.door-panel-wrap.dragging .l-shape { border-color: var(--accent-gold); }
+.door-right-wrap .door-panel {
+  border-radius: 0 2px 2px 0;
+  border-left: none;
+}
 
+/* 左门：红色 + 白色波点 */
+.door-left-wrap .door-panel {
+  background-color: var(--pop-red);
+  background-image: radial-gradient(circle, rgba(255,255,255,0.3) 4px, transparent 4px);
+  background-size: 22px 22px;
+}
+
+/* 右门：蓝色 + 白色波点 */
+.door-right-wrap .door-panel {
+  background-color: var(--pop-blue);
+  background-image: radial-gradient(circle, rgba(255,255,255,0.3) 4px, transparent 4px);
+  background-size: 22px 22px;
+}
+
+/* 拖拽反馈 */
+.door-panel-wrap.dragging .door-panel {
+  box-shadow: inset 0 0 0 3px var(--pop-yellow), 0 0 40px rgba(244, 197, 66, 0.2);
+}
+.door-panel-wrap.dragging {
+  filter: brightness(1.04);
+}
+
+/* ---- 门板上的几何装饰（构成主义风格融入波普） ---- */
+.door-panel .geo-shape {
+  position: absolute;
+  border: 3px solid var(--pop-black);
+  opacity: 0.5;
+}
+.door-left-wrap .geo-shape {
+  top: 30%;
+  right: 16%;
+  width: 32%;
+  height: 32%;
+  border-radius: 50%;
+  background: var(--pop-yellow);
+  opacity: 0.4;
+  border-color: var(--pop-black);
+}
+.door-right-wrap .geo-shape {
+  top: 30%;
+  left: 16%;
+  width: 32%;
+  height: 32%;
+  border-radius: 4px;
+  background: var(--pop-yellow);
+  opacity: 0.4;
+  border-color: var(--pop-black);
+}
+
+/* ---- 门把手：金色波普风格 ---- */
 .door-panel .handle {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  top: 52%;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: var(--accent-gold);
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: 0 0 0 3px #1c1c1b, 0 4px 12px rgba(0,0,0,0.3);
+  background: radial-gradient(circle at 35% 35%, #f5d98a, var(--accent-gold));
+  border: 3px solid var(--pop-black);
+  box-shadow: 
+    0 0 0 3px var(--pop-black),
+    0 4px 20px rgba(0,0,0,0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .door-left-wrap .handle { right: 14%; }
 .door-right-wrap .handle { left: 14%; }
+
 .door-panel-wrap.dragging .handle {
-  transform: translateY(-50%) scale(1.15);
-  box-shadow: 0 0 0 4px var(--accent-gold), 0 4px 20px rgba(232, 163, 61, 0.4);
+  transform: scale(1.2);
+  box-shadow: 
+    0 0 0 4px var(--pop-yellow),
+    0 0 30px rgba(244, 197, 66, 0.5);
 }
 
+/* ---- 门缝光芒（波普风格射线） ---- */
 .door-glow {
   position: absolute;
-  top: 10%;
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 80%;
-  background: var(--accent-gold);
+  width: 8px;
+  height: 84%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--pop-yellow) 20%,
+    var(--pop-yellow) 80%,
+    transparent
+  );
   opacity: 0;
-  border-radius: 2px;
-  filter: blur(3px);
-  transition: opacity 0.6s ease;
+  border-radius: 4px;
+  filter: blur(4px);
+  transition: opacity 0.8s ease;
   pointer-events: none;
 }
-.door-glow.active { opacity: 0.5; }
+.door-glow.active {
+  opacity: 0.6;
+}
+/* 光芒射线（波普风格） */
+.door-glow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(244, 197, 66, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  filter: blur(20px);
+}
 
+/* ---- 底部提示文字 ---- */
 .door-hint {
   position: absolute;
-  bottom: -38px;
+  bottom: -36px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-size: 0.6rem;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(185, 183, 176, 0.5);
+  color: rgba(255,255,255,0.35);
   white-space: nowrap;
   transition: opacity 0.8s ease;
   pointer-events: none;
@@ -231,144 +400,132 @@ a{ color:inherit; text-decoration:none; }
 }
 .door-hint.hidden { opacity: 0; }
 
+/* ---- 主标题文字 ---- */
 .door-caption {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: #b9b7b0;
+  color: rgba(255,255,255,0.5);
   opacity: 0;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.8s ease;
   pointer-events: none;
 }
 .door-caption.show { opacity: 1; }
 
+/* ---- 倒计时指示器（波普风格圆点） ---- */
 .door-timer {
   position: absolute;
   bottom: -52px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 4px;
+  gap: 6px;
   pointer-events: none;
 }
 .door-timer .dot {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: rgba(185, 183, 176, 0.2);
-  transition: background 0.4s ease;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.4s ease;
 }
-.door-timer .dot.active { background: var(--accent-gold); }
+.door-timer .dot.active {
+  background: var(--pop-yellow);
+  border-color: var(--pop-yellow);
+  box-shadow: 0 0 12px rgba(244, 197, 66, 0.4);
+}
 
+/* ---- 移动端适配 ---- */
 @media (max-width: 640px) {
-  .door-frame { width: 240px; height: 300px; }
-  .meander-wrap { top: -18px; height: 16px; }
-  .meander-wrap svg { height: 10px; }
-  .door-panel .l-shape { border-width: 2px; top: 28%; width: 44%; height: 44%; }
-  .door-panel .handle { width: 10px; height: 10px; }
-  .door-caption { font-size: 0.6rem; }
-  .door-hint { font-size: 0.5rem; bottom: -32px; }
+  .door-frame {
+    width: 260px;
+    height: 320px;
+    border-width: 4px;
+  }
+  .door-header {
+    top: -26px;
+    height: 22px;
+    width: calc(100% + 16px);
+  }
+  .door-header .pop-text {
+    font-size: 0.85rem;
+    padding: 0 10px;
+  }
+  .door-header .star { font-size: 0.65rem; }
+  .door-panel-wrap { top: 4px; bottom: 4px; }
+  .door-left-wrap { left: 4px; }
+  .door-right-wrap { right: 4px; }
+  .door-left-wrap .door-panel { border-width: 1.5px; }
+  .door-right-wrap .door-panel { border-width: 1.5px; }
+  .door-left-wrap .door-panel {
+    background-size: 16px 16px;
+  }
+  .door-right-wrap .door-panel {
+    background-size: 16px 16px;
+  }
+  .door-left-wrap .door-panel {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.25) 3px, transparent 3px);
+  }
+  .door-right-wrap .door-panel {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.25) 3px, transparent 3px);
+  }
+  .door-panel .geo-shape {
+    border-width: 2px;
+  }
+  .door-left-wrap .geo-shape {
+    width: 28%;
+    height: 28%;
+    right: 14%;
+  }
+  .door-right-wrap .geo-shape {
+    width: 28%;
+    height: 28%;
+    left: 14%;
+  }
+  .door-panel .handle {
+    width: 14px;
+    height: 14px;
+  }
+  .door-caption { font-size: 0.55rem; }
+  .door-hint { font-size: 0.5rem; bottom: -30px; }
   .door-timer { bottom: -44px; }
+  .door-timer .dot { width: 5px; height: 5px; }
+  .door-glow { width: 5px; }
 }
 
 /* ============================================================
-   飞鸟 + 文字显现 + 飘落物动画（开门后触发）
+   飘落物容器
    ============================================================ */
 
-/* 飞鸟容器 */
-.bird-container {
+.falling-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 50;
-  overflow: visible;
-  opacity: 0;
-  transition: opacity 0.6s ease;
+  z-index: 40;
+  overflow: hidden;
 }
-.bird-container.active {
-  opacity: 1;
-}
-
-/* 飞鸟 SVG */
-.bird-svg {
+.falling-item {
   position: absolute;
-  width: 80px;
-  height: 50px;
-  top: 22%;
-  right: -20%;
-  opacity: 0;
-  transform: translate(0, 0) scale(0.8);
-  transition: none;
+  top: -60px;
+  opacity: 0.85;
+  will-change: transform;
+  pointer-events: none;
 }
-.bird-svg .wing {
-  transition: transform 0.15s ease;
-  transform-origin: center center;
-}
-.bird-svg .wing-up {
-  transform: rotate(-8deg);
-}
-.bird-svg .wing-down {
-  transform: rotate(12deg);
+.falling-item svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/* 飞鸟飞行路径 —— 使用 Web Animations API 或 CSS */
-.bird-flying {
-  animation: birdFly 4.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-@keyframes birdFly {
-  0% {
-    right: -20%;
-    top: 22%;
-    opacity: 0;
-    transform: translate(0, 0) scale(0.8) rotate(2deg);
-  }
-  8% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  25% {
-    right: 55%;
-    top: 18%;
-    transform: translate(0, -20px) scale(1.05) rotate(-3deg);
-  }
-  45% {
-    right: 70%;
-    top: 24%;
-    transform: translate(0, 5px) scale(1) rotate(2deg);
-  }
-  65% {
-    right: 85%;
-    top: 16%;
-    transform: translate(0, -15px) scale(1.02) rotate(-2deg);
-  }
-  85% {
-    right: 105%;
-    top: 22%;
-    transform: translate(0, 0) scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    right: 120%;
-    top: 20%;
-    transform: translate(0, 0) scale(0.9) rotate(3deg);
-    opacity: 0;
-  }
-}
+/* ============================================================
+   标题文字逐字显现
+   ============================================================ */
 
-/* 飞鸟翅膀扇动 */
-@keyframes wingFlap {
-  0%, 100% { transform: rotate(-12deg); }
-  50% { transform: rotate(16deg); }
-}
-.bird-flying .wing {
-  animation: wingFlap 0.25s ease-in-out infinite;
-}
-
-/* 标题文字 —— 逐字显现 */
 .hero h1 .char {
   display: inline-block;
   opacity: 0;
@@ -399,38 +556,6 @@ a{ color:inherit; text-decoration:none; }
 .hero h1 .char.delay-18 { transition-delay: 0.90s; }
 .hero h1 .char.delay-19 { transition-delay: 0.95s; }
 .hero h1 .char.delay-20 { transition-delay: 1.00s; }
-
-/* 飘落物容器 */
-.falling-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 40;
-  overflow: hidden;
-}
-.falling-item {
-  position: absolute;
-  top: -60px;
-  opacity: 0.85;
-  will-change: transform;
-  pointer-events: none;
-}
-.falling-item svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-  .bird-svg {
-    width: 56px;
-    height: 35px;
-  }
-}
 
 /* ============================================================
    原有样式
@@ -541,53 +666,59 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </head>
 <body>
 
-<!-- ===== 推开门开幕动画 ===== -->
+<!-- ============================================================
+   波普艺术风格开门动画
+   ============================================================ -->
+
 <div id="door-loader">
+  <!-- 背景光晕和波点 -->
+  <div class="door-loader-bg">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="bg-dots"></div>
+  </div>
+
   <div class="door-scene">
     <div class="door-frame" id="door-frame">
-      <div class="meander-wrap">
-        <svg viewBox="0 0 300 14" stroke="currentColor" stroke-width="1.6" fill="none">
-          <path d="M0,7 L8,7 L8,0 L16,0 L16,7 L24,7 L24,0 L32,0 L32,7 L40,7 L40,0 L48,0 L48,7 L56,7 L56,0 L64,0 L64,7 L72,7 L72,0 L80,0 L80,7 L88,7 L88,0 L96,0 L96,7 L104,7 L104,0 L112,0 L112,7 L120,7 L120,0 L128,0 L128,7 L136,7 L136,0 L144,0 L144,7 L152,7 L152,0 L160,0 L160,7 L168,7 L168,0 L176,0 L176,7 L184,7 L184,0 L192,0 L192,7 L200,7 L200,0 L208,0 L208,7 L216,7 L216,0 L224,0 L224,7 L232,7 L232,0 L240,0 L240,7 L248,7 L248,0 L256,0 L256,7 L264,7 L264,0 L272,0 L272,7 L280,7 L280,0 L288,0 L288,7 L296,7 L296,0 L300,0"/>
-          <path d="M0,7 L8,7 L8,14 L16,14 L16,7 L24,7 L24,14 L32,14 L32,7 L40,7 L40,14 L48,14 L48,7 L56,7 L56,14 L64,14 L64,7 L72,7 L72,14 L80,14 L80,7 L88,7 L88,14 L96,14 L96,7 L104,7 L104,14 L112,14 L112,7 L120,7 L120,14 L128,14 L128,7 L136,7 L136,14 L144,14 L144,7 L152,7 L152,14 L160,14 L160,7 L168,7 L168,14 L176,14 L176,7 L184,7 L184,14 L192,14 L192,7 L200,7 L200,14 L208,14 L208,7 L216,7 L216,14 L224,14 L224,7 L232,7 L232,14 L240,14 L240,7 L248,7 L248,14 L256,14 L256,7 L264,7 L264,14 L272,14 L272,7 L280,7 L280,14 L288,14 L288,7 L296,7 L296,14 L300,14"/>
-        </svg>
+      <!-- 波普风格门楣 -->
+      <div class="door-header">
+        <span class="star star-left">✦</span>
+        <span class="pop-text"><span>P</span><span>O</span><span>P</span></span>
+        <span class="star star-right">✦</span>
       </div>
+
+      <!-- 左门：红色 + 波点 -->
       <div class="door-panel-wrap door-left-wrap" id="door-left">
         <div class="door-panel">
-          <div class="l-shape"></div>
+          <div class="geo-shape"></div>
           <div class="handle"></div>
         </div>
       </div>
+
+      <!-- 右门：蓝色 + 波点 -->
       <div class="door-panel-wrap door-right-wrap" id="door-right">
         <div class="door-panel">
-          <div class="l-shape"></div>
+          <div class="geo-shape"></div>
           <div class="handle"></div>
         </div>
       </div>
+
+      <!-- 门缝金光 -->
       <div class="door-glow" id="door-glow"></div>
-      <div class="door-hint" id="door-hint">⇆ 拖拽开门</div>
+
+      <!-- 提示文字 -->
+      <div class="door-hint" id="door-hint">⇆ 拖拽 · 点击</div>
+
+      <!-- 倒计时指示器 -->
       <div class="door-timer" id="door-timer">
         <span class="dot active" data-i="0"></span>
         <span class="dot" data-i="1"></span>
         <span class="dot" data-i="2"></span>
       </div>
     </div>
+
     <div class="door-caption" id="door-caption">—— 推开 ——</div>
   </div>
-</div>
-
-<!-- ===== 飞鸟容器（开门后激活） ===== -->
-<div class="bird-container" id="bird-container">
-  <svg class="bird-svg" id="bird-svg" viewBox="0 0 80 50" fill="none" stroke="#1c1c1b" stroke-width="1.8">
-    <!-- 左翼 -->
-    <path class="wing wing-left" d="M40,25 Q15,8 5,15 Q-2,20 5,28 Q15,35 40,28" stroke-linejoin="round"/>
-    <!-- 右翼 -->
-    <path class="wing wing-right" d="M40,25 Q65,8 75,15 Q82,20 75,28 Q65,35 40,28" stroke-linejoin="round"/>
-    <!-- 身体 -->
-    <ellipse cx="40" cy="26" rx="6" ry="4" fill="#1c1c1b" stroke="none"/>
-    <!-- 尾巴 -->
-    <path d="M34,28 Q28,32 22,30 Q28,26 34,28" stroke-linejoin="round"/>
-    <path d="M46,28 Q52,32 58,30 Q52,26 46,28" stroke-linejoin="round"/>
-  </svg>
 </div>
 
 <!-- ===== 飘落物容器 ===== -->
@@ -723,7 +854,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 1. 开门交互逻辑
+// 1. 波普艺术开门交互逻辑
 // ============================================================
 (function(){
   var loader = document.getElementById('door-loader');
@@ -751,7 +882,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     var el = side === 'left' ? leftWrap : rightWrap;
     var rot = side === 'left' ? -angle : angle;
     el.style.transform = 'rotateY(' + rot + 'deg)';
-    var intensity = Math.min(0.5, angle / MAX_ANGLE * 0.7);
+    var intensity = Math.min(0.6, angle / MAX_ANGLE * 0.8);
     glow.style.opacity = intensity;
     if (angle > 5) glow.classList.add('active');
     else glow.classList.remove('active');
@@ -777,7 +908,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     clearTimeout(autoTimer);
     setDoorAngle('left', MAX_ANGLE);
     setDoorAngle('right', MAX_ANGLE);
-    glow.style.opacity = '0.5';
+    glow.style.opacity = '0.6';
     glow.classList.add('active');
     caption.classList.add('show');
     hint.classList.add('hidden');
@@ -786,8 +917,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       if (!isClosing) {
         isClosing = true;
         loader.classList.add('closing');
-        // 开门结束后触发飞鸟和飘落物
-        triggerBirdAndFall();
+        triggerFallAndText();
         setTimeout(function(){ loader.style.display = 'none'; }, 800);
       }
     }, 600);
@@ -834,7 +964,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     startX = getPointerX(e);
     el.classList.add('dragging');
     clearTimeout(autoTimer);
-    hint.style.opacity = '0.3';
+    hint.style.opacity = '0.2';
   }
 
   function onDragMove(e) {
@@ -868,6 +998,11 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     }
   }
 
+  function resetAutoTimer() {
+    clearTimeout(autoTimer);
+    if (!isOpen) startAutoTimer();
+  }
+
   function onClickDoor(e) {
     if (isOpen || isDragging) return;
     openDoor();
@@ -885,148 +1020,54 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
   if (sessionStorage.getItem('door_intro_shown')) {
     loader.classList.add('skip');
-    // 如果跳过开门，直接触发飞鸟
-    setTimeout(triggerBirdAndFall, 400);
+    setTimeout(triggerFallAndText, 400);
     return;
   }
   sessionStorage.setItem('door_intro_shown', '1');
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     loader.classList.add('skip');
-    setTimeout(triggerBirdAndFall, 400);
+    setTimeout(triggerFallAndText, 400);
     return;
   }
   startAutoTimer();
 
-  // 暴露开门方法给后续触发
   window.__openDoor = openDoor;
-  window.__triggerBird = triggerBirdAndFall;
+  window.__triggerFall = triggerFallAndText;
 
 })();
 
 // ============================================================
-// 2. 飞鸟 + 文字显现 + 飘落物
+// 2. 文字显现 + 飘落物（无飞鸟）
 // ============================================================
 
-var birdTriggered = false;
+var fallTriggered = false;
 
-function triggerBirdAndFall() {
-  if (birdTriggered) return;
-  birdTriggered = true;
+function triggerFallAndText() {
+  if (fallTriggered) return;
+  fallTriggered = true;
 
-  var birdContainer = document.getElementById('bird-container');
-  var birdSvg = document.getElementById('bird-svg');
   var titleEl = document.getElementById('hero-title');
+  if (!titleEl) return;
 
-  if (!birdContainer || !birdSvg) return;
-
-  // 激活飞鸟容器
-  birdContainer.classList.add('active');
-
-  // 拆分标题文字为逐字元素
-  if (titleEl && !titleEl.dataset.split) {
-    var html = titleEl.innerHTML;
-    // 保留 em 标签，拆解文本节点
-    var tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    var chars = [];
-    var nodes = tempDiv.childNodes;
-    var charIndex = 0;
-
-    function processNode(node) {
-      if (node.nodeType === 3) { // 文本节点
-        var text = node.textContent;
-        for (var i = 0; i < text.length; i++) {
-          var span = document.createElement('span');
-          span.className = 'char delay-' + Math.min(charIndex + 1, 20);
-          span.textContent = text[i];
-          chars.push(span);
-          charIndex++;
-        }
-      } else if (node.nodeType === 1) { // 元素节点
-        var wrapper = document.createElement('span');
-        wrapper.style.display = 'inline-block';
-        var clone = node.cloneNode(false);
-        for (var child of node.childNodes) {
-          processNodeInto(child, clone);
-        }
-        wrapper.appendChild(clone);
-        chars.push(wrapper);
-        // 给 wrapper 也加延迟
-        wrapper.className = 'char delay-' + Math.min(charIndex + 1, 20);
-        charIndex++;
-      }
-    }
-
-    function processNodeInto(node, parent) {
-      if (node.nodeType === 3) {
-        var text = node.textContent;
-        for (var i = 0; i < text.length; i++) {
-          var span = document.createElement('span');
-          span.className = 'char delay-' + Math.min(charIndex + 1, 20);
-          span.textContent = text[i];
-          parent.appendChild(span);
-          charIndex++;
-        }
-      } else if (node.nodeType === 1) {
-        var clone = node.cloneNode(false);
-        for (var child of node.childNodes) {
-          processNodeInto(child, clone);
-        }
-        parent.appendChild(clone);
-      }
-    }
-
-    // 重新构建
-    var newHtml = '';
-    var walker = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null, false);
-    var nodes2 = [];
-    var node;
-    while (node = walker.nextNode()) {
-      if (node.nodeType === 3) {
-        var text = node.textContent;
-        for (var i = 0; i < text.length; i++) {
-          var span = document.createElement('span');
-          span.className = 'char delay-' + Math.min(charIndex + 1, 20);
-          span.textContent = text[i];
-          nodes2.push(span);
-          charIndex++;
-        }
-      } else if (node.nodeType === 1) {
-        var el = document.createElement(node.tagName.toLowerCase());
-        for (var attr of node.attributes) {
-          el.setAttribute(attr.name, attr.value);
-        }
-        nodes2.push(el);
-        // 处理子节点
-        for (var child of node.childNodes) {
-          // 简单处理
-        }
-      }
-    }
-
-    // 更简单的方法：直接拆分
-    var text = titleEl.textContent;
+  // 拆分标题为逐字元素
+  if (!titleEl.dataset.split) {
+    var parts = [];
     var emContent = titleEl.querySelector('em');
+    var fullText = titleEl.textContent;
     var emText = emContent ? emContent.textContent : '';
 
-    var newHTML = '';
-    var fullText = text;
-    var charIdx = 0;
-
-    // 按字符拆分，保留 em 标签
-    var parts = [];
-    var currentText = '';
     if (emContent) {
-      var before = text.split(emText)[0];
-      var after = text.split(emText)[1] || '';
+      var before = fullText.split(emText)[0] || '';
+      var after = fullText.split(emText)[1] || '';
       parts.push({ type: 'text', content: before });
       parts.push({ type: 'em', content: emText });
       parts.push({ type: 'text', content: after });
     } else {
-      parts.push({ type: 'text', content: text });
+      parts.push({ type: 'text', content: fullText });
     }
 
     var finalHtml = '';
+    var charIdx = 0;
     parts.forEach(function(part) {
       if (part.type === 'text') {
         for (var i = 0; i < part.content.length; i++) {
@@ -1055,10 +1096,7 @@ function triggerBirdAndFall() {
     titleEl.dataset.split = '1';
   }
 
-  // 启动飞鸟动画
-  birdSvg.classList.add('bird-flying');
-
-  // 飞鸟开始后，延迟触发文字显现
+  // 延迟显现文字
   setTimeout(function() {
     var chars = titleEl.querySelectorAll('.char');
     chars.forEach(function(el, index) {
@@ -1066,27 +1104,23 @@ function triggerBirdAndFall() {
         el.classList.add('reveal');
       }, index * 50);
     });
-  }, 800);
-
-  // 飞鸟消失后，保持飘落物继续
-  // 飘落物已经在下面启动了
+  }, 400);
 
   // 启动飘落物
   startFalling();
 }
 
 // ============================================================
-// 3. 飘落物系统（持续循环）
+// 3. 飘落物系统（羽毛 + 橄榄叶，持续循环）
 // ============================================================
 
 var fallingItems = [];
 var fallingContainer = document.getElementById('falling-container');
 var fallAnimId = null;
 
-// 羽毛 SVG
 function createFeatherSVG(theme) {
-  var color = theme === 'dark' ? '#e0ddd6' : '#f5f0e8';
-  var stroke = theme === 'dark' ? '#8a8a85' : '#b9b7b0';
+  var color = theme === 'dark' ? '#e0ddd6' : (theme === 'eye-care' ? '#f5efe0' : '#f5f0e8');
+  var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#b9b7b0');
   return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.6">' +
     '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
     '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.4"/>' +
@@ -1095,7 +1129,6 @@ function createFeatherSVG(theme) {
     '</svg>';
 }
 
-// 橄榄叶 SVG
 function createOliveSVG() {
   return '<svg viewBox="0 0 30 16" fill="none">' +
     '<ellipse cx="15" cy="8" rx="13" ry="6" fill="#6b8c5c" stroke="#4a6b3c" stroke-width="0.8"/>' +
@@ -1111,13 +1144,13 @@ function startFalling() {
   var isEyeCare = document.documentElement.getAttribute('data-theme') === 'eye-care';
   var theme = isDark ? 'dark' : (isEyeCare ? 'eye-care' : 'light');
 
-  var count = 18;
+  var count = 20;
   var types = ['feather', 'olive'];
   var items = [];
 
   for (var i = 0; i < count; i++) {
     var type = types[Math.floor(Math.random() * types.length)];
-    var size = type === 'feather' ? 16 + Math.random() * 12 : 20 + Math.random() * 14;
+    var size = type === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
     var el = document.createElement('div');
     el.className = 'falling-item';
     var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
@@ -1125,8 +1158,8 @@ function startFalling() {
     el.style.width = size + 'px';
     el.style.height = (type === 'feather' ? size * 2.8 : size * 0.6) + 'px';
     el.style.left = (Math.random() * 100) + '%';
-    el.style.top = (-20 - Math.random() * 60) + '%';
-    el.style.opacity = 0.5 + Math.random() * 0.4;
+    el.style.top = (-20 - Math.random() * 80) + '%';
+    el.style.opacity = 0.4 + Math.random() * 0.5;
 
     fallingContainer.appendChild(el);
 
@@ -1134,11 +1167,11 @@ function startFalling() {
       el: el,
       x: parseFloat(el.style.left),
       y: parseFloat(el.style.top),
-      speed: 0.3 + Math.random() * 0.6,
-      swayAmp: 15 + Math.random() * 40,
-      swaySpeed: 0.3 + Math.random() * 0.5,
+      speed: 0.25 + Math.random() * 0.7,
+      swayAmp: 12 + Math.random() * 45,
+      swaySpeed: 0.25 + Math.random() * 0.6,
       angle: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 1.2,
+      rotSpeed: (Math.random() - 0.5) * 1.4,
       type: type,
       size: size,
       phase: Math.random() * Math.PI * 2
@@ -1150,38 +1183,32 @@ function startFalling() {
   function animateFalling() {
     var viewH = window.innerHeight;
     items.forEach(function(item) {
-      // 下落
-      item.y += item.speed * 0.6;
-      // 水平摆动
-      item.phase += 0.02 * item.swaySpeed;
-      var swayOffset = Math.sin(item.phase) * item.swayAmp * 0.15;
-      // 旋转
-      item.angle += item.rotSpeed * 0.5;
+      item.y += item.speed * 0.5;
+      item.phase += 0.018 * item.swaySpeed;
+      var swayOffset = Math.sin(item.phase) * item.swayAmp * 0.12;
+      item.angle += item.rotSpeed * 0.4;
 
-      var currentX = parseFloat(item.el.style.left) + swayOffset * 0.02;
+      var currentX = parseFloat(item.el.style.left) + swayOffset * 0.015;
       item.el.style.transform = 'translate(' + currentX + 'px, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
-      // 更新位置（用百分比）
-      item.el.style.left = (parseFloat(item.el.style.left) + swayOffset * 0.02) + '%';
-      // 如果超出底部，重置到顶部
+      item.el.style.left = (parseFloat(item.el.style.left) + swayOffset * 0.015) + '%';
+
       if (item.y > viewH + 60) {
-        item.y = -40 - Math.random() * 60;
+        item.y = -40 - Math.random() * 80;
         item.el.style.left = (Math.random() * 95 + 2) + '%';
         item.x = parseFloat(item.el.style.left);
-        item.speed = 0.3 + Math.random() * 0.6;
-        item.swayAmp = 15 + Math.random() * 40;
+        item.speed = 0.25 + Math.random() * 0.7;
+        item.swayAmp = 12 + Math.random() * 45;
         item.angle = Math.random() * 360;
-        item.rotSpeed = (Math.random() - 0.5) * 1.2;
-        item.el.style.opacity = 0.5 + Math.random() * 0.4;
-        // 重置尺寸
+        item.rotSpeed = (Math.random() - 0.5) * 1.4;
+        item.el.style.opacity = 0.4 + Math.random() * 0.5;
         var newType = Math.random() > 0.5 ? 'feather' : 'olive';
-        var newSize = newType === 'feather' ? 16 + Math.random() * 12 : 20 + Math.random() * 14;
+        var newSize = newType === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
         var svgContent = newType === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
         item.el.innerHTML = svgContent;
         item.el.style.width = newSize + 'px';
         item.el.style.height = (newType === 'feather' ? newSize * 2.8 : newSize * 0.6) + 'px';
         item.type = newType;
         item.size = newSize;
-        // 重置 transform
         item.el.style.transform = 'translate(0, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
       }
     });
@@ -1190,7 +1217,6 @@ function startFalling() {
 
   animateFalling();
 
-  // 监听主题变化，更新羽毛颜色
   var themeObserver = new MutationObserver(function() {
     var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
     var isEyeCareNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
@@ -1209,7 +1235,7 @@ function startFalling() {
 }
 
 // ============================================================
-// 4. 原有功能（诗歌数量、音乐、主题切换）
+// 4. 原有功能：诗歌数量、音乐、主题切换
 // ============================================================
 
 (function(){
@@ -1265,7 +1291,6 @@ function startFalling() {
     btns.forEach(function(btn){
       btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
     });
-    // 更新飘落物颜色（如果有）
     updateFallingColors();
   }
   function updateFallingColors() {
@@ -1276,10 +1301,8 @@ function startFalling() {
     items.forEach(function(el) {
       var svg = el.querySelector('svg');
       if (!svg) return;
-      // 判断是否是羽毛
       var paths = svg.querySelectorAll('path');
       if (paths.length > 0 && paths[0].getAttribute('fill')) {
-        // 是羽毛
         var color = theme === 'dark' ? '#e0ddd6' : (theme === 'eye-care' ? '#f5efe0' : '#f5f0e8');
         var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#b9b7b0');
         paths[0].setAttribute('fill', color);
@@ -1305,12 +1328,7 @@ function startFalling() {
   });
 })();
 
-// ============================================================
-// 5. 窗口变化时调整飘落物
-// ============================================================
-window.addEventListener('resize', function() {
-  // 飘落物会自动适应
-});
+window.addEventListener('resize', function() {});
 </script>
 
 </body>
