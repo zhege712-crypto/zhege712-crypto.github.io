@@ -70,7 +70,7 @@ a{ color:inherit; text-decoration:none; }
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #0a0908;
+  background: #0a0810;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,36 +88,37 @@ a{ color:inherit; text-decoration:none; }
   display: none;
 }
 
-/* ---- 背景微光 ---- */
+/* ---- 背景 ---- */
 .intro-bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  background: radial-gradient(ellipse at 50% 80%, #0d1a2e, #060812);
 }
 .intro-bg .glow {
   position: absolute;
   border-radius: 50%;
   filter: blur(100px);
-  opacity: 0.08;
+  opacity: 0.05;
 }
 .intro-bg .glow-1 {
-  width: 60%;
-  height: 60%;
-  top: 20%;
-  left: 20%;
+  width: 50%;
+  height: 50%;
+  top: 30%;
+  left: 25%;
   background: var(--accent-gold);
 }
 .intro-bg .glow-2 {
-  width: 30%;
-  height: 40%;
-  bottom: 10%;
-  right: 10%;
-  background: var(--accent-gold);
-  opacity: 0.04;
+  width: 40%;
+  height: 60%;
+  bottom: 0;
+  right: 0;
+  background: #1a3a6a;
+  opacity: 0.08;
 }
 
-/* ---- 背景星光 ---- */
+/* ---- 星点 ---- */
 .intro-stars {
   position: absolute;
   inset: 0;
@@ -127,25 +128,23 @@ a{ color:inherit; text-decoration:none; }
 .intro-stars .star {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
 }
-.intro-stars .star:nth-child(1) { width: 2px; height: 2px; top: 10%; left: 6%; animation: twinkle 3.2s ease-in-out infinite; }
-.intro-stars .star:nth-child(2) { width: 2px; height: 2px; top: 22%; left: 88%; animation: twinkle 2.6s ease-in-out infinite 0.6s; }
-.intro-stars .star:nth-child(3) { width: 2px; height: 2px; top: 50%; left: 3%; animation: twinkle 3.8s ease-in-out infinite 1.4s; }
-.intro-stars .star:nth-child(4) { width: 2px; height: 2px; top: 68%; left: 94%; animation: twinkle 2.8s ease-in-out infinite 0.3s; }
-.intro-stars .star:nth-child(5) { width: 2px; height: 2px; top: 38%; left: 97%; animation: twinkle 3.4s ease-in-out infinite 0.9s; }
-.intro-stars .star:nth-child(6) { width: 2px; height: 2px; top: 82%; left: 12%; animation: twinkle 2.4s ease-in-out infinite 1.8s; }
-.intro-stars .star:nth-child(7) { width: 2px; height: 2px; top: 12%; left: 48%; animation: twinkle 4.2s ease-in-out infinite 0.2s; }
-.intro-stars .star:nth-child(8) { width: 2px; height: 2px; top: 58%; left: 45%; animation: twinkle 2.8s ease-in-out infinite 1.1s; }
-.intro-stars .star:nth-child(9) { width: 2px; height: 2px; top: 90%; left: 75%; animation: twinkle 3.0s ease-in-out infinite 0.7s; }
-.intro-stars .star:nth-child(10) { width: 2px; height: 2px; top: 32%; left: 15%; animation: twinkle 3.6s ease-in-out infinite 2.0s; }
+.intro-stars .star:nth-child(1) { width: 2px; height: 2px; top: 10%; left: 8%; animation: twinkle 3.2s ease-in-out infinite; }
+.intro-stars .star:nth-child(2) { width: 2px; height: 2px; top: 25%; left: 88%; animation: twinkle 2.6s ease-in-out infinite 0.6s; }
+.intro-stars .star:nth-child(3) { width: 2px; height: 2px; top: 55%; left: 4%; animation: twinkle 3.8s ease-in-out infinite 1.4s; }
+.intro-stars .star:nth-child(4) { width: 2px; height: 2px; top: 72%; left: 92%; animation: twinkle 2.8s ease-in-out infinite 0.3s; }
+.intro-stars .star:nth-child(5) { width: 2px; height: 2px; top: 40%; left: 95%; animation: twinkle 3.4s ease-in-out infinite 0.9s; }
+.intro-stars .star:nth-child(6) { width: 2px; height: 2px; top: 85%; left: 15%; animation: twinkle 2.4s ease-in-out infinite 1.8s; }
+.intro-stars .star:nth-child(7) { width: 2px; height: 2px; top: 15%; left: 48%; animation: twinkle 4.2s ease-in-out infinite 0.2s; }
+.intro-stars .star:nth-child(8) { width: 2px; height: 2px; top: 60%; left: 42%; animation: twinkle 2.8s ease-in-out infinite 1.1s; }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.08; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.5); }
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.5); }
 }
 
-/* ---- Canvas 涟漪 ---- */
-#ripple-canvas {
+/* ---- Canvas ---- */
+#wave-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -155,32 +154,81 @@ a{ color:inherit; text-decoration:none; }
   z-index: 2;
 }
 
+/* ---- 品牌浮现 ---- */
+#brand-container {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+#brand-container.show {
+  opacity: 1;
+}
+
+#brand-char {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(5rem, 14vw, 10rem);
+  color: #f5e8c8;
+  text-shadow: 
+    0 0 30px rgba(232, 200, 160, 0.15),
+    0 0 60px rgba(232, 200, 160, 0.05);
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+#brand-char.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#brand-sub {
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1.2vw, 0.9rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(232, 200, 160, 0.25);
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity 1.2s ease 0.3s;
+}
+#brand-sub.show {
+  opacity: 1;
+}
+
 /* ---- 底部文字 ---- */
 #intro-caption {
   position: absolute;
-  bottom: 80px;
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.5rem;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.04);
   z-index: 4;
   pointer-events: none;
   opacity: 0;
-  animation: captionFade 2.4s ease 3.2s forwards;
+  animation: captionFade 2.4s ease 3.8s forwards;
 }
 @keyframes captionFade {
-  0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  0% { opacity: 0; transform: translateX(-50%) translateY(6px); }
   100% { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 @media (max-width: 640px) {
-  #intro-caption { font-size: 0.45rem; bottom: 50px; }
+  #intro-caption { font-size: 0.4rem; bottom: 40px; }
+  #brand-char { font-size: clamp(3.5rem, 12vw, 5rem); }
 }
 
 /* ============================================================
-   首页内容（淡入）
+   首页内容
    ============================================================ */
 
 .page-content {
@@ -191,7 +239,6 @@ a{ color:inherit; text-decoration:none; }
   opacity: 1;
 }
 
-/* ---- 标题文字逐字显现 ---- */
 .hero h1 .char {
   display: inline-block;
   opacity: 0;
@@ -223,10 +270,6 @@ a{ color:inherit; text-decoration:none; }
 .hero h1 .char.delay-19 { transition-delay: 0.95s; }
 .hero h1 .char.delay-20 { transition-delay: 1.00s; }
 
-/* ============================================================
-   持续飘落物（少量）
-   ============================================================ */
-
 .falling-container {
   position: fixed;
   top: 0;
@@ -240,7 +283,7 @@ a{ color:inherit; text-decoration:none; }
 .falling-item {
   position: absolute;
   top: -60px;
-  opacity: 0.3;
+  opacity: 0.25;
   will-change: transform;
   pointer-events: none;
   animation: fall linear infinite;
@@ -251,14 +294,8 @@ a{ color:inherit; text-decoration:none; }
   height: 100%;
 }
 @keyframes fall {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.3;
-  }
-  100% {
-    transform: translateY(110vh) rotate(720deg);
-    opacity: 0.03;
-  }
+  0% { transform: translateY(0) rotate(0deg); opacity: 0.25; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.02; }
 }
 
 /* ============================================================
@@ -371,11 +408,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <body>
 
 <!-- ============================================================
-   开幕动画：浮世绘海浪涟漪
+   开幕动画：浮世绘·潮涌
    ============================================================ -->
 
 <div id="intro-overlay">
-  <!-- 背景 -->
   <div class="intro-bg">
     <div class="glow glow-1"></div>
     <div class="glow glow-2"></div>
@@ -383,15 +419,17 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   <div class="intro-stars">
     <span class="star"></span><span class="star"></span><span class="star"></span>
     <span class="star"></span><span class="star"></span><span class="star"></span>
-    <span class="star"></span><span class="star"></span><span class="star"></span>
-    <span class="star"></span>
+    <span class="star"></span><span class="star"></span>
+  </div>
+  <canvas id="wave-canvas"></canvas>
+
+  <!-- 品牌浮现 -->
+  <div id="brand-container">
+    <div id="brand-char">伞</div>
+    <div id="brand-sub">umbrella</div>
   </div>
 
-  <!-- 涟漪 Canvas -->
-  <canvas id="ripple-canvas"></canvas>
-
-  <!-- 底部文字 -->
-  <div id="intro-caption">—— 涟漪 ——</div>
+  <div id="intro-caption">—— 潮涌 · 浮世 ——</div>
 </div>
 
 <!-- ============================================================
@@ -537,228 +575,242 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 浮世绘海浪涟漪（Canvas 绘制）
+// 浮世绘·潮涌：海浪冲刷沙滩效果
 // ============================================================
 
 (function() {
   var overlay = document.getElementById('intro-overlay');
-  var canvas = document.getElementById('ripple-canvas');
+  var canvas = document.getElementById('wave-canvas');
   var ctx = canvas.getContext('2d');
   var pageContent = document.getElementById('page-content');
+  var brandContainer = document.getElementById('brand-container');
+  var brandChar = document.getElementById('brand-char');
+  var brandSub = document.getElementById('brand-sub');
 
   // ===== 尺寸 =====
-  var W, H, cx, cy, maxR;
+  var W, H, cx, cy;
 
   function resize() {
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
     cx = W / 2;
     cy = H * 0.55;
-    maxR = Math.max(W, H) * 0.75;
   }
   resize();
   window.addEventListener('resize', resize);
 
-  // ===== 配置 =====
-  var NUM_RINGS = 7;
-  var WAVES_PER_RING = 10;
-  var RING_DELAY = 0.28; // 每层延迟（秒）
-  var TOTAL_DURATION = 4.0; // 总时长
+  // ===== 波浪配置 =====
+  var NUM_WAVES = 6;
+  var waves = [];
   var startTime = null;
   var animId = null;
+  var brandRevealed = false;
+  var pageShown = false;
 
-  // ===== 绘制单个浪尖（浮世绘风格） =====
-  function drawWaveCrest(ctx, ox, oy, radius, angle, progress, ringProgress, idx) {
-    var baseLen = radius * 0.18 * (0.85 + 0.15 * Math.sin(angle * 2 + idx));
-    var len = baseLen * (0.6 + 0.4 * ringProgress);
-    var spread = 0.4 + 0.15 * Math.sin(angle * 3 + idx * 0.7);
+  // 工具函数
+  function rand(min, max) { return min + Math.random() * (max - min); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
-    // 方向
-    var dirX = Math.cos(angle);
-    var dirY = Math.sin(angle);
-    var perpX = -Math.sin(angle);
-    var perpY = Math.cos(angle);
-
-    // 起点（环上）
-    var sx = ox + radius * dirX;
-    var sy = oy + radius * dirY;
-
-    // 浪尖顶点（向外延伸 + 横向偏移制造卷曲感）
-    var tipR = radius + len;
-    var tipAngle = angle + 0.25 * spread * (1 - ringProgress * 0.3);
-    var tx = ox + tipR * Math.cos(tipAngle);
-    var ty = oy + tipR * Math.sin(tipAngle);
-
-    // 卷曲控制点（向内回卷）
-    var curlR = radius + len * 0.5;
-    var curlAngle = angle + 0.7 * spread * (1 + ringProgress * 0.2);
-    var cx2 = ox + curlR * Math.cos(curlAngle);
-    var cy2 = oy + curlR * Math.sin(curlAngle);
-
-    // 内卷终点（回到环内侧）
-    var innerR = radius - len * 0.15;
-    var innerAngle = angle + 0.9 * spread * (1 + ringProgress * 0.1);
-    var ix = ox + innerR * Math.cos(innerAngle);
-    var iy = oy + innerR * Math.sin(innerAngle);
-
-    // ---- 绘制主浪 ----
-    var alpha = 0.6 * (1 - ringProgress * 0.7);
-    var lineW = 2.2 * (1 - ringProgress * 0.5) * (0.8 + 0.2 * Math.sin(angle * 2 + idx));
-
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.strokeStyle = 'rgba(232, 163, 61, 0.9)';
-    ctx.lineWidth = lineW;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    // 主浪：从环上到浪尖（带卷曲）
-    ctx.beginPath();
-    ctx.moveTo(sx, sy);
-    ctx.quadraticCurveTo(
-      sx + (tx - sx) * 0.4 + perpX * len * 0.15,
-      sy + (ty - sy) * 0.4 + perpY * len * 0.15,
-      tx, ty
-    );
-    // 卷曲回环
-    ctx.quadraticCurveTo(
-      tx + (cx2 - tx) * 0.3 + perpX * len * 0.08,
-      ty + (cy2 - ty) * 0.3 + perpY * len * 0.08,
-      cx2, cy2
-    );
-    ctx.stroke();
-
-    // ---- 浪尖的细小分支（飞沫感） ----
-    if (ringProgress > 0.3 && ringProgress < 0.8) {
-      var branchAlpha = 0.2 * (1 - Math.abs(ringProgress - 0.55) * 2);
-      ctx.globalAlpha = alpha * branchAlpha * 1.2;
-      ctx.lineWidth = lineW * 0.3;
-
-      // 分支1（外侧）
-      var b1Angle = tipAngle + 0.4 + 0.2 * Math.sin(idx * 1.3);
-      var b1Len = len * 0.25 * (0.6 + 0.4 * Math.sin(angle * 2 + idx * 1.7));
-      var b1x = tx + b1Len * Math.cos(b1Angle);
-      var b1y = ty + b1Len * Math.sin(b1Angle);
-      ctx.beginPath();
-      ctx.moveTo(tx, ty);
-      ctx.quadraticCurveTo(
-        tx + (b1x - tx) * 0.4 + perpX * len * 0.05,
-        ty + (b1y - ty) * 0.4 + perpY * len * 0.05,
-        b1x, b1y
-      );
-      ctx.stroke();
-
-      // 分支2（内侧）
-      var b2Angle = tipAngle - 0.4 - 0.2 * Math.sin(idx * 1.7 + 0.5);
-      var b2Len = len * 0.2 * (0.5 + 0.5 * Math.cos(angle * 2 + idx * 1.3));
-      var b2x = tx + b2Len * Math.cos(b2Angle);
-      var b2y = ty + b2Len * Math.sin(b2Angle);
-      ctx.beginPath();
-      ctx.moveTo(tx, ty);
-      ctx.quadraticCurveTo(
-        tx + (b2x - tx) * 0.4 - perpX * len * 0.04,
-        ty + (b2y - ty) * 0.4 - perpY * len * 0.04,
-        b2x, b2y
-      );
-      ctx.stroke();
-    }
-
-    // ---- 浪尖末端光点 ----
-    if (ringProgress > 0.2 && ringProgress < 0.7) {
-      var dotAlpha = 0.15 * (1 - Math.abs(ringProgress - 0.45) * 2.5);
-      if (dotAlpha > 0.01) {
-        ctx.globalAlpha = dotAlpha * 0.8;
-        ctx.fillStyle = 'rgba(232, 200, 120, 0.6)';
-        ctx.beginPath();
-        ctx.arc(tx, ty, 1.5 + 2 * (1 - ringProgress), 0, Math.PI * 2);
-        ctx.fill();
-        // 第二光点
-        ctx.globalAlpha = dotAlpha * 0.4;
-        ctx.beginPath();
-        ctx.arc(tx + perpX * 3 * (1 - ringProgress), ty + perpY * 3 * (1 - ringProgress), 2 + 3 * (1 - ringProgress), 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    ctx.restore();
-
-    // ---- 金色光晕（浪尖周围的辉光） ----
-    if (ringProgress > 0.1 && ringProgress < 0.6) {
-      var glowAlpha = 0.03 * (1 - ringProgress * 1.5);
-      if (glowAlpha > 0.005) {
-        ctx.save();
-        ctx.globalAlpha = glowAlpha;
-        var grad = ctx.createRadialGradient(tx, ty, 0, tx, ty, len * 0.6);
-        grad.addColorStop(0, 'rgba(232, 163, 61, 0.3)');
-        grad.addColorStop(1, 'rgba(232, 163, 61, 0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(tx, ty, len * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
+  // 初始化波浪层
+  function initWaves() {
+    waves = [];
+    for (var i = 0; i < NUM_WAVES; i++) {
+      var progressOffset = i / NUM_WAVES * 0.35;
+      waves.push({
+        // 推进进度（0-1.2，超过1表示退去）
+        progress: -0.3 - i * 0.08,
+        speed: 0.006 + rand(0.002, 0.008),
+        // 波浪形状参数
+        amplitude: 40 + rand(20, 80) + i * 4,
+        frequency: 0.012 + rand(0.003, 0.01),
+        phase: rand(0, Math.PI * 2),
+        // 颜色：从深蓝到靛蓝
+        baseR: 10 + i * 6,
+        baseG: 30 + i * 12,
+        baseB: 60 + i * 15,
+        // 泡沫颜色（金色调）
+        foamR: 200 + i * 5,
+        foamG: 170 - i * 3,
+        foamB: 120 - i * 5,
+        // 泡沫粗细范围
+        foamMin: 0.3 + rand(0.1, 0.5),
+        foamMax: 2.0 + rand(0.5, 2.0) + i * 0.3,
+        // 每层波浪高度位置（底部起始偏移）
+        baseY: 0.92 - i * 0.04,
+        // 是否已触发品牌
+        triggered: false
+      });
     }
   }
+  initWaves();
 
-  // ===== 绘制单层涟漪 =====
-  function drawRing(ctx, ringIdx, progress) {
-    // progress: 0→1 表示该层从出现到消失
-    if (progress <= 0 || progress > 1) return;
+  // ===== 绘制单层波浪 =====
+  function drawWave(ctx, wave, time) {
+    var p = wave.progress;
+    if (p < -0.1 || p > 1.3) return;
 
-    var radius = progress * maxR * 0.85;
-    if (radius < 2) return;
+    // 计算当前高度位置（从底部向上推进）
+    var progressY = clamp(p, 0, 1);
+    // 缓动：先快后慢，模拟海浪涌上沙滩
+    var eased = 1 - Math.pow(1 - progressY, 1.3);
+    var baseY = wave.baseY * H;
+    var targetY = H * 0.15;
+    var currentY = lerp(baseY, targetY, eased);
 
-    var alpha = 0.8 * (1 - progress * 0.8);
-    if (alpha < 0.01) return;
+    // 波浪横向波动
+    var amp = wave.amplitude * (0.6 + 0.4 * (1 - progressY));
+    var freq = wave.frequency;
+    var phase = wave.phase + time * 0.0004;
 
-    // 绘制主环（半透明金色环）
+    // ---- 绘制波浪主体（半透明填充） ----
+    var alpha = 0.15 * (1 - progressY * 0.5) * (0.8 + 0.2 * Math.sin(time * 0.0002 + wave.progress * 2));
+    var r = wave.baseR, g = wave.baseG, b = wave.baseB;
+
     ctx.save();
-    ctx.globalAlpha = alpha * 0.15;
-    ctx.strokeStyle = 'rgba(232, 163, 61, 0.5)';
-    ctx.lineWidth = 1.5 * (1 - progress * 0.4);
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
+    ctx.globalAlpha = Math.min(alpha, 0.25);
 
-    // 绘制浪尖
-    var ringProgress = progress;
-    var count = WAVES_PER_RING + Math.floor(ringIdx * 0.5);
-
-    for (var i = 0; i < count; i++) {
-      var angle = (i / count) * Math.PI * 2 + ringIdx * 0.15;
-      drawWaveCrest(ctx, cx, cy, radius, angle, ringIdx / NUM_RINGS, ringProgress, i);
+    // 构建波浪路径
+    var steps = 60;
+    var points = [];
+    for (var i = 0; i <= steps; i++) {
+      var t = i / steps;
+      var x = t * W;
+      var yOffset = Math.sin(t * W * freq + phase) * amp * (1 - t * 0.3);
+      var y = currentY + yOffset;
+      points.push({ x: x, y: y });
     }
 
-    // 绘制内圈细环（增加层次）
-    if (progress > 0.05 && progress < 0.6) {
-      var innerAlpha = alpha * 0.08 * (1 - progress * 1.2);
-      if (innerAlpha > 0.005) {
-        ctx.save();
-        ctx.globalAlpha = innerAlpha;
-        ctx.strokeStyle = 'rgba(232, 200, 140, 0.3)';
-        ctx.lineWidth = 0.5;
+    // 填充波浪（从底部到波浪线）
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, H);
+    for (var i = 0; i < points.length; i++) {
+      ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.lineTo(points[points.length - 1].x, H);
+    ctx.closePath();
+
+    var grad = ctx.createLinearGradient(0, currentY, 0, H);
+    grad.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ',0.3)');
+    grad.addColorStop(0.5, 'rgba(' + r + ',' + g + ',' + b + ',0.15)');
+    grad.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',0.02)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+
+    // ---- 绘制波浪前沿（泡沫边缘，粗细变化） ----
+    var foamAlpha = 0.4 * (1 - progressY * 0.5) * (0.7 + 0.3 * Math.sin(time * 0.0003 + wave.progress * 3));
+    if (foamAlpha < 0.02) return;
+
+    ctx.save();
+    ctx.globalAlpha = Math.min(foamAlpha, 0.6);
+
+    var foamR2 = wave.foamR, foamG2 = wave.foamG, foamB2 = wave.foamB;
+    var foamColor = 'rgba(' + foamR2 + ',' + foamG2 + ',' + foamB2 + ',';
+
+    // 分段绘制泡沫线（每段不同宽度，模拟沙滩上的水痕）
+    var segments = 80;
+    for (var i = 0; i < segments; i++) {
+      var t1 = i / segments;
+      var t2 = (i + 1) / segments;
+      var idx1 = Math.floor(t1 * steps);
+      var idx2 = Math.floor(t2 * steps);
+      idx1 = Math.min(idx1, points.length - 2);
+      idx2 = Math.min(idx2, points.length - 2);
+
+      var p1 = points[idx1];
+      var p2 = points[idx2];
+      if (!p1 || !p2) continue;
+
+      // 粗细变化：使用多个噪声源叠加
+      var noise1 = Math.sin(i * 0.5 + wave.progress * 10) * 0.5 + 0.5;
+      var noise2 = Math.sin(i * 0.13 + wave.progress * 7 + 1.2) * 0.5 + 0.5;
+      var noise3 = Math.sin(i * 0.07 + time * 0.0001 + 0.8) * 0.5 + 0.5;
+      var mix = (noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2);
+      // 在边缘处更细（模拟泡沫消散）
+      var edgeFactor = 1 - Math.abs(t1 - 0.5) * 0.4;
+      var width = lerp(wave.foamMin, wave.foamMax, mix) * edgeFactor * (0.8 + 0.2 * (1 - progressY));
+
+      // 透明度随宽度变化（宽的地方更实）
+      var segAlpha = 0.4 + 0.6 * (width / wave.foamMax);
+
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.lineWidth = width;
+      ctx.strokeStyle = foamColor + (segAlpha * 0.8) + ')';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // 在较宽的位置添加第二层细线（增加层次感）
+      if (width > wave.foamMax * 0.5 && i % 3 === 0) {
         ctx.beginPath();
-        ctx.arc(cx, cy, radius * 0.92, 0, Math.PI * 2);
+        var offsetY = -width * 0.3 * (0.5 + 0.5 * Math.sin(i * 0.7 + 1.5));
+        ctx.moveTo(p1.x, p1.y + offsetY);
+        ctx.lineTo(p2.x, p2.y + offsetY);
+        ctx.lineWidth = width * 0.3;
+        ctx.strokeStyle = foamColor + (segAlpha * 0.2) + ')';
         ctx.stroke();
-        ctx.restore();
       }
     }
 
-    // 环上的微小光点
-    if (progress > 0.05 && progress < 0.5) {
-      var dotAlpha = 0.04 * (1 - progress * 1.5);
-      if (dotAlpha > 0.005) {
-        ctx.save();
-        ctx.globalAlpha = dotAlpha;
-        for (var i = 0; i < 20; i++) {
-          var a = (i / 20) * Math.PI * 2 + ringIdx * 0.3;
-          var rOff = radius * (0.98 + 0.02 * Math.sin(i * 1.7 + ringIdx));
-          var dx = cx + rOff * Math.cos(a);
-          var dy = cy + rOff * Math.sin(a);
-          ctx.fillStyle = 'rgba(232, 200, 140, 0.5)';
+    // ---- 绘制卷曲浪尖（浮世绘风格） ----
+    if (progressY > 0.2 && progressY < 0.8) {
+      var curlAlpha = 0.3 * (1 - Math.abs(progressY - 0.5) * 2) * 0.8;
+      if (curlAlpha > 0.05) {
+        var curlPos = 0.3 + 0.4 * Math.sin(time * 0.0002 + wave.progress * 5 + 1.2) * 0.5 + 0.5;
+        var curlIdx = Math.floor(curlPos * steps);
+        curlIdx = Math.min(curlIdx, points.length - 3);
+
+        var cp = points[curlIdx];
+        if (cp) {
+          ctx.globalAlpha = curlAlpha;
+          ctx.strokeStyle = 'rgba(232, 200, 160, 0.2)';
+          ctx.lineWidth = 1.0 + 0.5 * (1 - progressY);
           ctx.beginPath();
-          ctx.arc(dx, dy, 0.5 + 0.8 * (1 - progress), 0, Math.PI * 2);
+          // 卷曲：从浪尖向上卷
+          var curlLen = 20 + 30 * (1 - progressY);
+          var angle = -0.8 + 0.6 * Math.sin(time * 0.0003 + wave.progress * 6 + curlIdx);
+          ctx.moveTo(cp.x, cp.y);
+          ctx.quadraticCurveTo(
+            cp.x + Math.cos(angle) * curlLen * 0.6,
+            cp.y + Math.sin(angle) * curlLen * 0.6 - 8,
+            cp.x + Math.cos(angle + 0.5) * curlLen * 0.8,
+            cp.y + Math.sin(angle + 0.5) * curlLen * 0.8 - 16
+          );
+          ctx.stroke();
+
+          // 浪尖光点
+          ctx.globalAlpha = curlAlpha * 0.3;
+          ctx.fillStyle = 'rgba(232, 220, 180, 0.3)';
+          ctx.beginPath();
+          ctx.arc(cp.x + Math.cos(angle + 0.5) * curlLen * 0.8,
+                 cp.y + Math.sin(angle + 0.5) * curlLen * 0.8 - 16,
+                 1.5 + 2 * (1 - progressY), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    ctx.restore();
+
+    // ---- 浪花飞沫（细小光点） ----
+    if (progressY > 0.15 && progressY < 0.7) {
+      var sprayAlpha = 0.06 * (1 - Math.abs(progressY - 0.4) * 2.5);
+      if (sprayAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = sprayAlpha;
+        var numSpray = 10 + Math.floor(15 * (1 - progressY));
+        for (var i = 0; i < numSpray; i++) {
+          var idx = Math.floor(rand(0, steps));
+          var p = points[idx];
+          if (!p) continue;
+          var dx = p.x + rand(-20, 20);
+          var dy = p.y + rand(-30, 10);
+          var size = rand(0.5, 1.8) * (1 - progressY * 0.3);
+          ctx.fillStyle = 'rgba(232, 220, 200, ' + rand(0.2, 0.6) + ')';
+          ctx.beginPath();
+          ctx.arc(dx, dy, size, 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.restore();
@@ -769,60 +821,63 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   // ===== 动画循环 =====
   function animate(time) {
     if (!startTime) startTime = time;
-    var elapsed = (time - startTime) / 1000;
+    var elapsed = time - startTime;
 
-    // 清空画布（完全透明）
+    // 清空画布
     ctx.clearRect(0, 0, W, H);
 
-    // 绘制所有涟漪层
-    for (var i = 0; i < NUM_RINGS; i++) {
-      var progress = (elapsed - i * RING_DELAY) / TOTAL_DURATION;
-      drawRing(ctx, i, progress);
-    }
-
-    // 判断是否结束
+    // 更新所有波浪
     var allDone = true;
-    for (var i = 0; i < NUM_RINGS; i++) {
-      var p = (elapsed - i * RING_DELAY) / TOTAL_DURATION;
-      if (p < 1.0) allDone = false;
+    for (var i = 0; i < waves.length; i++) {
+      var wave = waves[i];
+      // 推进
+      wave.progress += wave.speed * 0.6;
+
+      // 如果波浪到达中心附近且尚未触发品牌
+      if (!wave.triggered && wave.progress > 0.65) {
+        wave.triggered = true;
+        if (!brandRevealed) {
+          brandRevealed = true;
+          revealBrand();
+        }
+      }
+
+      // 绘制
+      drawWave(ctx, wave, elapsed);
+
+      // 检查是否所有波浪都完成了
+      if (wave.progress < 1.2) allDone = false;
     }
 
-    if (allDone && elapsed > TOTAL_DURATION + NUM_RINGS * RING_DELAY + 0.5) {
-      // 动画完成
-      if (animId) {
-        cancelAnimationFrame(animId);
-        animId = null;
-      }
-      // 触发页面显现
-      showPage();
-      return;
+    // 所有波浪完成后，淡出遮罩
+    if (allDone && !pageShown && elapsed > 6000) {
+      pageShown = true;
+      setTimeout(function() {
+        pageContent.classList.add('visible');
+        setTimeout(function() {
+          overlay.classList.add('hidden');
+          setTimeout(function() {
+            overlay.style.display = 'none';
+            if (canvas) { canvas.width = 0; canvas.height = 0; }
+          }, 1800);
+        }, 400);
+        // 触发标题
+        setTimeout(triggerTitleReveal, 600);
+      }, 500);
     }
 
     animId = requestAnimationFrame(animate);
   }
 
-  // ===== 显示页面 =====
-  var pageShown = false;
-
-  function showPage() {
-    if (pageShown) return;
-    pageShown = true;
-
-    pageContent.classList.add('visible');
+  // ===== 品牌浮现 =====
+  function revealBrand() {
+    brandContainer.classList.add('show');
     setTimeout(function() {
-      overlay.classList.add('hidden');
-      setTimeout(function() {
-        overlay.style.display = 'none';
-        // 释放Canvas资源
-        if (canvas) {
-          canvas.width = 0;
-          canvas.height = 0;
-        }
-      }, 1800);
-    }, 400);
-
-    // 触发标题显现
-    setTimeout(triggerTitleReveal, 600);
+      brandChar.classList.add('show');
+    }, 300);
+    setTimeout(function() {
+      brandSub.classList.add('show');
+    }, 700);
   }
 
   // ===== 标题逐字显现 =====
@@ -883,7 +938,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   }
 
   // ===== 启动 =====
-  if (sessionStorage.getItem('intro_ripple_shown')) {
+  if (sessionStorage.getItem('intro_wave_shown')) {
     overlay.classList.add('skip');
     pageContent.classList.add('visible');
     return;
@@ -895,11 +950,9 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     return;
   }
 
-  sessionStorage.setItem('intro_ripple_shown', '1');
+  sessionStorage.setItem('intro_wave_shown', '1');
 
-  // 等待一帧确保尺寸正确
   requestAnimationFrame(function() {
-    // 稍微延迟，让页面渲染完成
     setTimeout(function() {
       startTime = null;
       animId = requestAnimationFrame(animate);
