@@ -63,7 +63,7 @@ a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
 /* ============================================================
-   开幕动画遮罩
+   开幕动画：纯涟漪
    ============================================================ */
 
 #intro-overlay {
@@ -100,7 +100,7 @@ a{ color:inherit; text-decoration:none; }
   width: 2px;
   height: 2px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.10);
 }
 .intro-stars .star:nth-child(1) { top: 10%; left: 6%; animation: twinkle 3.2s ease-in-out infinite; }
 .intro-stars .star:nth-child(2) { top: 22%; left: 88%; animation: twinkle 2.6s ease-in-out infinite 0.6s; }
@@ -113,124 +113,11 @@ a{ color:inherit; text-decoration:none; }
 .intro-stars .star:nth-child(9) { top: 90%; left: 75%; animation: twinkle 3.0s ease-in-out infinite 0.7s; }
 .intro-stars .star:nth-child(10) { top: 32%; left: 15%; animation: twinkle 3.6s ease-in-out infinite 2.0s; }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.12; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.4); }
+  0%, 100% { opacity: 0.10; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
 }
 
-/* ============================================================
-   羽毛（精细版）
-   ============================================================ */
-
-#feather {
-  position: absolute;
-  top: 6%;
-  left: 82%;
-  width: 56px;
-  height: auto;
-  opacity: 0;
-  z-index: 3;
-  transform-origin: center center;
-  filter: drop-shadow(0 0 40px rgba(232, 163, 61, 0.06));
-  animation: featherFall 4.2s cubic-bezier(0.22, 0.68, 0.35, 1) forwards;
-}
-#feather .feather-body {
-  fill: url(#featherGrad);
-}
-#feather .feather-vein {
-  stroke: #d4c8b8;
-  stroke-width: 0.8;
-  fill: none;
-  stroke-linecap: round;
-}
-#feather .feather-barb {
-  stroke: #c8bcac;
-  stroke-width: 0.5;
-  fill: none;
-  stroke-linecap: round;
-  opacity: 0.7;
-}
-#feather .feather-barb-light {
-  stroke: #d8d0c4;
-  stroke-width: 0.3;
-  fill: none;
-  stroke-linecap: round;
-  opacity: 0.4;
-}
-#feather .feather-gold {
-  stroke: rgba(232, 163, 61, 0.12);
-  stroke-width: 2;
-  fill: none;
-  stroke-linecap: round;
-}
-@keyframes featherFall {
-  0% {
-    top: 6%;
-    left: 82%;
-    opacity: 0;
-    transform: translate(0, 0) rotate(-12deg) scale(0.7);
-  }
-  10% {
-    opacity: 1;
-    transform: translate(0, 0) rotate(-5deg) scale(1);
-  }
-  35% {
-    top: 28%;
-    left: 65%;
-    transform: translate(-40px, 0) rotate(8deg) scale(1.03);
-  }
-  55% {
-    top: 46%;
-    left: 56%;
-    transform: translate(25px, 0) rotate(-6deg) scale(0.97);
-  }
-  75% {
-    top: 60%;
-    left: 50%;
-    transform: translate(-15px, 0) rotate(4deg) scale(1.01);
-  }
-  100% {
-    top: 68%;
-    left: 46%;
-    opacity: 1;
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-}
-
-/* 羽毛自身摆动 */
-#feather .sway {
-  animation: featherSway 2.8s ease-in-out infinite alternate;
-}
-@keyframes featherSway {
-  0% { transform: rotate(-3deg); }
-  100% { transform: rotate(5deg); }
-}
-
-/* ---- 移动端羽毛适配 ---- */
-@media (max-width: 640px) {
-  #feather {
-    width: 38px;
-    top: 4%;
-    left: 76%;
-  }
-  @keyframes featherFall {
-    0% {
-      top: 4%;
-      left: 76%;
-      opacity: 0;
-      transform: translate(0, 0) rotate(-12deg) scale(0.7);
-    }
-    10% { opacity: 1; transform: translate(0, 0) rotate(-5deg) scale(1); }
-    35% { top: 26%; left: 60%; transform: translate(-28px, 0) rotate(8deg) scale(1.03); }
-    55% { top: 44%; left: 52%; transform: translate(18px, 0) rotate(-6deg) scale(0.97); }
-    75% { top: 58%; left: 48%; transform: translate(-10px, 0) rotate(4deg) scale(1.01); }
-    100% { top: 66%; left: 44%; opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
-  }
-}
-
-/* ============================================================
-   金色涟漪（多层波纹）
-   ============================================================ */
-
+/* ---- 涟漪容器 ---- */
 .ripple-container {
   position: absolute;
   top: 0;
@@ -239,54 +126,77 @@ a{ color:inherit; text-decoration:none; }
   height: 100%;
   pointer-events: none;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
-  animation: rippleContainer 5.6s ease forwards;
+  animation: rippleContainerFade 5.8s ease forwards;
 }
-@keyframes rippleContainer {
-  0%, 32% { opacity: 0; }
-  38% { opacity: 1; }
-  78% { opacity: 1; }
+@keyframes rippleContainerFade {
+  0%, 30% { opacity: 0; }
+  36% { opacity: 1; }
+  80% { opacity: 1; }
   100% { opacity: 0; }
 }
 
+/* ---- 涟漪发射点（中心光晕） ---- */
+.ripple-center {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 163, 61, 0.5) 0%, rgba(232, 163, 61, 0.15) 40%, rgba(232, 163, 61, 0) 80%);
+  opacity: 0;
+  animation: centerPulse 2.8s ease 0.3s forwards;
+  z-index: 1;
+}
+@keyframes centerPulse {
+  0% { opacity: 0; transform: scale(0.3); }
+  25% { opacity: 1; transform: scale(1.4); }
+  60% { opacity: 0.5; transform: scale(3); }
+  100% { opacity: 0; transform: scale(5); }
+}
+
+/* ---- 涟漪波纹（6层，连续发射） ---- */
 .ripple-ring {
   position: absolute;
-  top: 50%;
-  left: 50%;
   border-radius: 50%;
   border-style: solid;
   border-color: rgba(232, 163, 61, 0.5);
   box-shadow: 0 0 40px rgba(232, 163, 61, 0.04), inset 0 0 40px rgba(232, 163, 61, 0.02);
-  animation: rippleExpand 2.8s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+  animation: rippleExpand 3.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
   transform: translate(-50%, -50%) scale(0);
+  top: 50%;
+  left: 50%;
 }
+/* 每层的延迟和透明度递减 */
 .ripple-ring:nth-child(1) {
   animation-delay: 0.0s;
   border-color: rgba(232, 163, 61, 0.55);
   border-width: 2.5px;
 }
 .ripple-ring:nth-child(2) {
-  animation-delay: 0.30s;
+  animation-delay: 0.35s;
   border-color: rgba(232, 163, 61, 0.40);
   border-width: 2px;
 }
 .ripple-ring:nth-child(3) {
-  animation-delay: 0.60s;
+  animation-delay: 0.70s;
   border-color: rgba(232, 163, 61, 0.28);
   border-width: 1.5px;
 }
 .ripple-ring:nth-child(4) {
-  animation-delay: 0.90s;
+  animation-delay: 1.05s;
   border-color: rgba(232, 163, 61, 0.18);
   border-width: 1.2px;
 }
 .ripple-ring:nth-child(5) {
-  animation-delay: 1.20s;
+  animation-delay: 1.40s;
   border-color: rgba(232, 163, 61, 0.10);
   border-width: 1px;
 }
 .ripple-ring:nth-child(6) {
-  animation-delay: 1.50s;
+  animation-delay: 1.75s;
   border-color: rgba(232, 163, 61, 0.06);
   border-width: 0.8px;
 }
@@ -297,33 +207,12 @@ a{ color:inherit; text-decoration:none; }
     opacity: 0.9;
   }
   15% {
-    opacity: 0.95;
+    opacity: 1;
   }
   100% {
-    transform: translate(-50%, -50%) scale(5.2);
+    transform: translate(-50%, -50%) scale(5.5);
     opacity: 0;
   }
-}
-
-/* ---- 涟漪中心光晕 ---- */
-.ripple-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(232, 163, 61, 0.5) 0%, rgba(232, 163, 61, 0.15) 40%, rgba(232, 163, 61, 0) 80%);
-  opacity: 0;
-  z-index: 1;
-  animation: centerGlow 2.6s ease 0.3s forwards;
-}
-@keyframes centerGlow {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
-  60% { opacity: 0.5; transform: translate(-50%, -50%) scale(3); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(5); }
 }
 
 /* ---- 涟漪上的细小光点（模拟水花） ---- */
@@ -333,37 +222,21 @@ a{ color:inherit; text-decoration:none; }
   background: rgba(232, 163, 61, 0.3);
   opacity: 0;
   z-index: 1;
-  animation: sparkleFloat 2.2s ease forwards;
+  animation: sparkleFloat 2.4s ease forwards;
 }
-.ripple-sparkle:nth-child(7) { top: 44%; left: 44%; width: 4px; height: 4px; animation-delay: 0.5s; }
-.ripple-sparkle:nth-child(8) { top: 54%; left: 52%; width: 3px; height: 3px; animation-delay: 0.7s; }
-.ripple-sparkle:nth-child(9) { top: 48%; left: 56%; width: 5px; height: 5px; animation-delay: 0.9s; }
-.ripple-sparkle:nth-child(10) { top: 56%; left: 44%; width: 3px; height: 3px; animation-delay: 1.1s; }
-.ripple-sparkle:nth-child(11) { top: 42%; left: 54%; width: 4px; height: 4px; animation-delay: 1.3s; }
+.ripple-sparkle:nth-child(7) { top: 44%; left: 44%; width: 4px; height: 4px; animation-delay: 0.6s; }
+.ripple-sparkle:nth-child(8) { top: 54%; left: 52%; width: 3px; height: 3px; animation-delay: 0.8s; }
+.ripple-sparkle:nth-child(9) { top: 48%; left: 56%; width: 5px; height: 5px; animation-delay: 1.0s; }
+.ripple-sparkle:nth-child(10) { top: 56%; left: 44%; width: 3px; height: 3px; animation-delay: 1.2s; }
+.ripple-sparkle:nth-child(11) { top: 42%; left: 54%; width: 4px; height: 4px; animation-delay: 1.4s; }
 @keyframes sparkleFloat {
   0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
-  30% { opacity: 0.8; transform: translate(-8px, -12px) scale(1); }
-  70% { opacity: 0.4; transform: translate(6px, -20px) scale(0.7); }
-  100% { opacity: 0; transform: translate(0, -30px) scale(0.2); }
+  30% { opacity: 0.8; transform: translate(-10px, -14px) scale(1); }
+  70% { opacity: 0.4; transform: translate(8px, -24px) scale(0.7); }
+  100% { opacity: 0; transform: translate(0, -34px) scale(0.2); }
 }
 
-/* ---- 移动端涟漪适配 ---- */
-@media (max-width: 640px) {
-  @keyframes rippleExpand {
-    100% { transform: translate(-50%, -50%) scale(3.8); }
-  }
-  .ripple-ring:nth-child(1) { border-width: 2px; }
-  .ripple-ring:nth-child(2) { border-width: 1.5px; }
-  .ripple-ring:nth-child(3) { border-width: 1.2px; }
-  .ripple-ring:nth-child(4) { border-width: 1px; }
-  .ripple-ring:nth-child(5) { border-width: 0.8px; }
-  .ripple-ring:nth-child(6) { border-width: 0.6px; }
-}
-
-/* ============================================================
-   底部文字
-   ============================================================ */
-
+/* ---- 底部文字 ---- */
 #intro-caption {
   position: absolute;
   bottom: 80px;
@@ -377,7 +250,7 @@ a{ color:inherit; text-decoration:none; }
   z-index: 4;
   pointer-events: none;
   opacity: 0;
-  animation: captionFade 2.4s ease 2.6s forwards;
+  animation: captionFade 2.4s ease 2.8s forwards;
 }
 @keyframes captionFade {
   0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
@@ -385,6 +258,15 @@ a{ color:inherit; text-decoration:none; }
 }
 @media (max-width: 640px) {
   #intro-caption { font-size: 0.45rem; bottom: 50px; }
+  @keyframes rippleExpand {
+    100% { transform: translate(-50%, -50%) scale(3.8); }
+  }
+  .ripple-ring:nth-child(1) { border-width: 2px; }
+  .ripple-ring:nth-child(2) { border-width: 1.5px; }
+  .ripple-ring:nth-child(3) { border-width: 1.2px; }
+  .ripple-ring:nth-child(4) { border-width: 1px; }
+  .ripple-ring:nth-child(5) { border-width: 0.8px; }
+  .ripple-ring:nth-child(6) { border-width: 0.6px; }
 }
 
 /* ============================================================
@@ -432,7 +314,7 @@ a{ color:inherit; text-decoration:none; }
 .hero h1 .char.delay-20 { transition-delay: 1.00s; }
 
 /* ============================================================
-   持续飘落物
+   持续飘落物（保留少量，增加气氛）
    ============================================================ */
 
 .falling-container {
@@ -448,7 +330,7 @@ a{ color:inherit; text-decoration:none; }
 .falling-item {
   position: absolute;
   top: -60px;
-  opacity: 0.5;
+  opacity: 0.4;
   will-change: transform;
   pointer-events: none;
   animation: fall linear infinite;
@@ -461,7 +343,7 @@ a{ color:inherit; text-decoration:none; }
 @keyframes fall {
   0% {
     transform: translateY(0) rotate(0deg);
-    opacity: 0.5;
+    opacity: 0.4;
   }
   100% {
     transform: translateY(110vh) rotate(720deg);
@@ -579,7 +461,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <body>
 
 <!-- ============================================================
-   开幕动画：羽毛 + 涟漪
+   开幕动画：纯涟漪
    ============================================================ -->
 
 <div id="intro-overlay">
@@ -591,89 +473,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <span class="star"></span>
   </div>
 
-  <!-- 精细羽毛 -->
-  <svg id="feather" viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="featherGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#f8f4ef"/>
-        <stop offset="25%" stop-color="#f0ebe4"/>
-        <stop offset="55%" stop-color="#e8e2da"/>
-        <stop offset="85%" stop-color="#ddd6cc"/>
-        <stop offset="100%" stop-color="#d0c8bc"/>
-      </linearGradient>
-      <filter id="featherBlur">
-        <feGaussianBlur stdDeviation="0.3"/>
-      </filter>
-    </defs>
-
-    <!-- 羽毛主体 -->
-    <path class="feather-body" d="
-      M40,2
-      C56,10 70,28 72,52
-      C74,76 67,102 57,124
-      C50,138 46,148 40,158
-      C34,148 30,138 23,124
-      C13,102 6,76 8,52
-      C10,28 24,10 40,2Z
-    "/>
-
-    <!-- 羽轴（中心线） -->
-    <path class="feather-vein" d="M40,2 L40,158"/>
-
-    <!-- ===== 左侧羽枝（12条，弧形） ===== -->
-    <path class="feather-barb" d="M40,12 Q28,16 22,22"/>
-    <path class="feather-barb" d="M40,22 Q24,28 16,38"/>
-    <path class="feather-barb" d="M40,32 Q20,40 12,54"/>
-    <path class="feather-barb" d="M40,42 Q18,52 10,68"/>
-    <path class="feather-barb" d="M40,52 Q16,64 10,80"/>
-    <path class="feather-barb" d="M40,62 Q18,76 12,92"/>
-    <path class="feather-barb" d="M40,72 Q20,88 16,102"/>
-    <path class="feather-barb" d="M40,82 Q24,96 22,110"/>
-    <path class="feather-barb" d="M40,92 Q28,104 26,116"/>
-    <path class="feather-barb" d="M40,102 Q32,112 30,122"/>
-    <path class="feather-barb" d="M40,112 Q36,120 34,128"/>
-    <path class="feather-barb" d="M40,122 Q38,128 37,134"/>
-
-    <!-- ===== 右侧羽枝（12条，弧形） ===== -->
-    <path class="feather-barb" d="M40,12 Q52,16 58,22"/>
-    <path class="feather-barb" d="M40,22 Q56,28 64,38"/>
-    <path class="feather-barb" d="M40,32 Q60,40 68,54"/>
-    <path class="feather-barb" d="M40,42 Q62,52 70,68"/>
-    <path class="feather-barb" d="M40,52 Q64,64 70,80"/>
-    <path class="feather-barb" d="M40,62 Q62,76 68,92"/>
-    <path class="feather-barb" d="M40,72 Q60,88 64,102"/>
-    <path class="feather-barb" d="M40,82 Q56,96 58,110"/>
-    <path class="feather-barb" d="M40,92 Q52,104 54,116"/>
-    <path class="feather-barb" d="M40,102 Q48,112 50,122"/>
-    <path class="feather-barb" d="M40,112 Q44,120 46,128"/>
-    <path class="feather-barb" d="M40,122 Q42,128 43,134"/>
-
-    <!-- ===== 细小的次级羽枝（增加蓬松感） ===== -->
-    <path class="feather-barb-light" d="M32,18 L26,22 M36,18 L30,22"/>
-    <path class="feather-barb-light" d="M28,28 L20,34 M34,28 L26,34"/>
-    <path class="feather-barb-light" d="M24,40 L16,48 M32,40 L24,48"/>
-    <path class="feather-barb-light" d="M20,52 L14,60 M30,52 L22,60"/>
-    <path class="feather-barb-light" d="M18,64 L12,72 M28,64 L20,72"/>
-    <path class="feather-barb-light" d="M20,76 L14,84 M28,76 L22,84"/>
-    <path class="feather-barb-light" d="M24,88 L18,96 M30,88 L24,96"/>
-    <path class="feather-barb-light" d="M28,100 L22,108 M34,100 L28,108"/>
-    <path class="feather-barb-light" d="M32,110 L28,116 M38,110 L34,116"/>
-
-    <path class="feather-barb-light" d="M48,18 L54,22 M44,18 L50,22"/>
-    <path class="feather-barb-light" d="M52,28 L60,34 M46,28 L54,34"/>
-    <path class="feather-barb-light" d="M56,40 L64,48 M48,40 L56,48"/>
-    <path class="feather-barb-light" d="M60,52 L66,60 M50,52 L58,60"/>
-    <path class="feather-barb-light" d="M62,64 L68,72 M52,64 L60,72"/>
-    <path class="feather-barb-light" d="M60,76 L66,84 M52,76 L58,84"/>
-    <path class="feather-barb-light" d="M56,88 L62,96 M50,88 L56,96"/>
-    <path class="feather-barb-light" d="M52,100 L58,108 M46,100 L52,108"/>
-    <path class="feather-barb-light" d="M48,110 L52,116 M42,110 L46,116"/>
-
-    <!-- 金色装饰线（呼应涟漪） -->
-    <path class="feather-gold" d="M40,18 L40,140"/>
-  </svg>
-
-  <!-- 涟漪（6层波纹 + 光点） -->
+  <!-- 涟漪 -->
   <div class="ripple-container">
     <div class="ripple-center"></div>
     <div class="ripple-ring"></div>
@@ -690,7 +490,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   </div>
 
   <!-- 底部文字 -->
-  <div id="intro-caption">—— 羽落 · 涟漪 ——</div>
+  <div id="intro-caption">—— 涟漪 ——</div>
 </div>
 
 <!-- ============================================================
@@ -820,7 +620,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </div><!-- .page-content -->
 
 <!-- ============================================================
-   持续飘落物
+   持续飘落物（少量，增加气氛）
    ============================================================ -->
 
 <div class="falling-container" id="falling-container"></div>
@@ -857,18 +657,18 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
   sessionStorage.setItem('intro_ripple_shown', '1');
 
-  // 羽毛落地 → 涟漪 → 页面显现
+  // 涟漪开始扩散后，页面逐步显现
   setTimeout(function() {
     pageContent.classList.add('visible');
-  }, 5200);
+  }, 4800);
 
   setTimeout(function() {
     overlay.classList.add('hidden');
-  }, 6000);
+  }, 5600);
 
   setTimeout(function() {
     triggerTitleReveal();
-  }, 5600);
+  }, 5200);
 
 })();
 
@@ -933,14 +733,14 @@ function triggerTitleReveal() {
 }
 
 // ============================================================
-// 3. 持续飘落物
+// 3. 持续飘落物（少量）
 // ============================================================
 
 (function() {
   var container = document.getElementById('falling-container');
   if (!container) return;
 
-  var count = 10;
+  var count = 8;
   var types = ['feather', 'olive'];
 
   function createFeatherSVG(theme) {
