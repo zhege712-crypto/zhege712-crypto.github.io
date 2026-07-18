@@ -23,11 +23,12 @@
   --font-body: 'Inter', sans-serif;
   --font-mono: 'Space Mono', monospace;
   --maxw: 1100px;
-  --pop-red: #e63946;
-  --pop-blue: #2a6fdb;
-  --pop-yellow: #f4c542;
-  --pop-white: #f8f4ef;
-  --pop-black: #1a1a1a;
+  --marble: #f5f0eb;
+  --marble-dark: #e8e2da;
+  --gold: #c9a87a;
+  --gold-light: #e8d5b8;
+  --temple-dark: #1a1816;
+  --temple-bg: #12100e;
 }
 
 [data-theme="dark"] {
@@ -40,10 +41,12 @@
   --white: #222221;
   --accent-red: #e55a5f;
   --accent-gold: #d4a373;
-  --pop-red: #e8505a;
-  --pop-blue: #3a7fe8;
-  --pop-yellow: #e8b830;
-  --pop-white: #e8e4df;
+  --marble: #d4cfc8;
+  --marble-dark: #c5bfb6;
+  --gold: #b8976a;
+  --gold-light: #d4be8a;
+  --temple-dark: #1a1816;
+  --temple-bg: #0d0c0a;
 }
 [data-theme="eye-care"] {
   --paper: #f5efe0;
@@ -55,10 +58,12 @@
   --fog: #d5c8b8;
   --accent-red: #c46a52;
   --accent-gold: #c9a87a;
-  --pop-red: #d46a52;
-  --pop-blue: #5a7fa8;
-  --pop-yellow: #d4a870;
-  --pop-white: #f5f0e5;
+  --marble: #f0ebe0;
+  --marble-dark: #e5dfd0;
+  --gold: #b8976a;
+  --gold-light: #d4be8a;
+  --temple-dark: #2a2520;
+  --temple-bg: #1a1612;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -69,19 +74,19 @@ a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
 /* ============================================================
-   波普艺术风格开门动画
+   古希腊风格开门动画
    ============================================================ */
 
 #door-loader {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: var(--pop-black);
+  background: var(--temple-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.8s ease, visibility 0.8s ease;
+  transition: opacity 1.2s ease, visibility 1.2s ease;
   opacity: 1;
   visibility: visible;
   cursor: pointer;
@@ -97,54 +102,56 @@ a{ color:inherit; text-decoration:none; }
   display: none;
 }
 
-/* 波普背景光晕 */
+/* ---- 背景：深邃苍穹 ---- */
 .door-loader-bg {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  background: radial-gradient(ellipse at 50% 80%, #2a2520 0%, #0d0c0a 80%);
+}
+.door-loader-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.08), transparent),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.06), transparent),
+    radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.07), transparent),
+    radial-gradient(1px 1px at 80% 50%, rgba(255,255,255,0.05), transparent),
+    radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.04), transparent),
+    radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.06), transparent);
+  background-size: 200px 200px;
 }
 .door-loader-bg .glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.3;
+  filter: blur(120px);
+  opacity: 0.15;
 }
 .door-loader-bg .glow-1 {
-  width: 50%;
-  height: 50%;
-  top: -10%;
-  left: -10%;
-  background: var(--pop-red);
-  animation: bgPulse 4s ease-in-out infinite;
+  width: 60%;
+  height: 40%;
+  top: 20%;
+  left: 20%;
+  background: var(--gold);
 }
 .door-loader-bg .glow-2 {
-  width: 40%;
-  height: 40%;
-  bottom: -10%;
-  right: -10%;
-  background: var(--pop-blue);
-  animation: bgPulse 4s ease-in-out infinite 2s;
-}
-@keyframes bgPulse {
-  0%, 100% { transform: scale(1); opacity: 0.25; }
-  50% { transform: scale(1.2); opacity: 0.4; }
+  width: 30%;
+  height: 50%;
+  bottom: 0%;
+  right: 0%;
+  background: var(--gold-light);
+  opacity: 0.06;
 }
 
-/* 波普背景波点装饰 */
-.door-loader-bg .bg-dots {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 2px, transparent 2px);
-  background-size: 30px 30px;
-}
-
+/* ---- 场景容器 ---- */
 .door-scene {
-  perspective: 1400px;
+  perspective: 1600px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 40px;
   pointer-events: none;
   position: relative;
   z-index: 2;
@@ -153,100 +160,154 @@ a{ color:inherit; text-decoration:none; }
   pointer-events: auto;
 }
 
-/* ---- 门框 ---- */
+/* ===== 门框：古希腊神庙风格 ===== */
 .door-frame {
   position: relative;
-  width: 360px;
-  height: 440px;
-  border: 6px solid var(--pop-black);
-  background: var(--pop-black);
-  border-radius: 4px;
-  box-shadow: 
-    0 20px 60px rgba(0,0,0,0.6),
-    inset 0 0 0 2px rgba(255,255,255,0.08);
+  width: 380px;
+  height: 460px;
+  background: transparent;
   transform-style: preserve-3d;
   cursor: grab;
 }
 .door-frame:active { cursor: grabbing; }
 
-/* ---- 门楣：波普风格装饰带 ---- */
-.door-header {
+/* ---- 门框结构：多立克柱式 ---- */
+.door-frame .column-left,
+.door-frame .column-right {
   position: absolute;
-  top: -34px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% + 20px);
-  height: 30px;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--pop-black) 0px,
-    var(--pop-black) 12px,
-    var(--pop-white) 12px,
-    var(--pop-white) 24px
+  top: 0;
+  width: 24px;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    var(--marble-dark) 0%, 
+    var(--marble) 30%, 
+    var(--marble) 70%, 
+    var(--marble-dark) 100%
   );
   border-radius: 4px 4px 0 0;
+  box-shadow: 
+    inset -1px 0 0 rgba(255,255,255,0.3),
+    inset 1px 0 0 rgba(0,0,0,0.06);
+}
+.door-frame .column-left {
+  left: 0;
+  border-radius: 4px 0 0 4px;
+}
+.door-frame .column-right {
+  right: 0;
+  border-radius: 0 4px 4px 0;
+}
+
+/* 柱头（顶部装饰） */
+.door-frame .capital {
+  position: absolute;
+  top: -12px;
+  width: 40px;
+  height: 14px;
+  background: var(--marble);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 
+    0 -2px 8px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.door-frame .capital-left {
+  left: -8px;
+}
+.door-frame .capital-right {
+  right: -8px;
+}
+.door-frame .capital::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  right: 4px;
+  height: 3px;
+  background: var(--gold);
+  opacity: 0.25;
+  border-radius: 2px;
+}
+
+/* 柱础 */
+.door-frame .base {
+  position: absolute;
+  bottom: -8px;
+  width: 40px;
+  height: 10px;
+  background: var(--marble-dark);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.door-frame .base-left {
+  left: -8px;
+}
+.door-frame .base-right {
+  right: -8px;
+}
+
+/* ---- 横梁（门楣） ---- */
+.door-frame .entablature {
+  position: absolute;
+  top: -30px;
+  left: -4px;
+  right: -4px;
+  height: 18px;
+  background: linear-gradient(180deg, var(--marble) 0%, var(--marble-dark) 100%);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 
+    0 -2px 20px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
   pointer-events: none;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
 }
-.door-header .pop-text {
-  font-family: 'Fraunces', serif;
-  font-weight: 700;
-  font-size: 1.2rem;
-  letter-spacing: 0.15em;
-  color: var(--pop-red);
-  text-shadow: 
-    0 0 10px rgba(230, 57, 70, 0.3),
-    0 0 30px rgba(230, 57, 70, 0.1);
-  background: var(--pop-white);
-  padding: 0 16px;
-  border-radius: 2px;
-  line-height: 1.6;
+/* 金色装饰线 */
+.door-frame .entablature .gold-line {
+  flex: 1;
+  height: 1.5px;
+  background: var(--gold);
+  opacity: 0.3;
 }
-.door-header .pop-text span {
-  display: inline-block;
-  animation: popTextPulse 1.2s ease-in-out infinite;
+.door-frame .entablature .gold-line-center {
+  flex: 2;
+  height: 2px;
+  background: var(--gold);
+  opacity: 0.4;
 }
-.door-header .pop-text span:nth-child(2) {
-  animation-delay: 0.15s;
+/* 希腊回纹（简化） */
+.door-frame .entablature .meander {
+  display: flex;
+  gap: 2px;
+  align-items: center;
 }
-.door-header .pop-text span:nth-child(3) {
-  animation-delay: 0.30s;
+.door-frame .entablature .meander span {
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  opacity: 0.2;
+  border-radius: 1px;
 }
-@keyframes popTextPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
-
-/* 门楣两侧装饰星 */
-.door-header .star {
-  color: var(--pop-yellow);
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-.door-header .star-left { margin-right: 4px; }
-.door-header .star-right { margin-left: 4px; }
 
 /* ---- 门板 ---- */
 .door-panel-wrap {
   position: absolute;
-  top: 6px;
-  bottom: 6px;
-  width: calc(50% - 3px);
+  top: 0;
+  bottom: 0;
+  width: calc(50% - 1px);
   transform-style: preserve-3d;
   backface-visibility: hidden;
   transition: filter 0.3s ease;
 }
 .door-left-wrap {
-  left: 6px;
+  left: 12px;
   transform-origin: left center;
   cursor: ew-resize;
 }
 .door-right-wrap {
-  right: 6px;
+  right: 12px;
   transform-origin: right center;
   cursor: ew-resize;
 }
@@ -255,8 +316,16 @@ a{ color:inherit; text-decoration:none; }
   width: 100%;
   height: 100%;
   position: relative;
-  transition: box-shadow 0.3s ease;
-  border: 2px solid var(--pop-black);
+  background: linear-gradient(180deg, 
+    var(--marble) 0%, 
+    var(--marble) 40%,
+    var(--marble-dark) 100%
+  );
+  box-shadow: 
+    inset -2px 0 0 rgba(0,0,0,0.04),
+    inset 2px 0 0 rgba(255,255,255,0.15),
+    0 4px 30px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .door-left-wrap .door-panel {
   border-radius: 2px 0 0 2px;
@@ -267,174 +336,198 @@ a{ color:inherit; text-decoration:none; }
   border-left: none;
 }
 
-/* 左门：红色 + 白色波点 */
-.door-left-wrap .door-panel {
-  background-color: var(--pop-red);
-  background-image: radial-gradient(circle, rgba(255,255,255,0.3) 4px, transparent 4px);
-  background-size: 22px 22px;
-}
-
-/* 右门：蓝色 + 白色波点 */
-.door-right-wrap .door-panel {
-  background-color: var(--pop-blue);
-  background-image: radial-gradient(circle, rgba(255,255,255,0.3) 4px, transparent 4px);
-  background-size: 22px 22px;
-}
-
-/* 拖拽反馈 */
-.door-panel-wrap.dragging .door-panel {
-  box-shadow: inset 0 0 0 3px var(--pop-yellow), 0 0 40px rgba(244, 197, 66, 0.2);
-}
-.door-panel-wrap.dragging {
-  filter: brightness(1.04);
-}
-
-/* ---- 门板上的几何装饰（构成主义风格融入波普） ---- */
-.door-panel .geo-shape {
+/* ---- 大理石板缝纹理（模拟） ---- */
+.door-panel::before {
+  content: '';
   position: absolute;
-  border: 3px solid var(--pop-black);
-  opacity: 0.5;
+  inset: 0;
+  background-image: 
+    linear-gradient(90deg, transparent 50%, rgba(0,0,0,0.01) 50%),
+    linear-gradient(0deg, transparent 60%, rgba(0,0,0,0.01) 60%);
+  background-size: 80px 60px;
+  pointer-events: none;
+  opacity: 0.3;
 }
-.door-left-wrap .geo-shape {
-  top: 30%;
-  right: 16%;
-  width: 32%;
-  height: 32%;
-  border-radius: 50%;
-  background: var(--pop-yellow);
-  opacity: 0.4;
-  border-color: var(--pop-black);
-}
-.door-right-wrap .geo-shape {
-  top: 30%;
-  left: 16%;
-  width: 32%;
-  height: 32%;
-  border-radius: 4px;
-  background: var(--pop-yellow);
-  opacity: 0.4;
-  border-color: var(--pop-black);
+.door-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(ellipse at 30% 40%, rgba(255,255,255,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(0,0,0,0.02) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-/* ---- 门把手：金色波普风格 ---- */
+/* ---- 门板金色装饰（希腊回纹简化） ---- */
+.door-panel .gold-border {
+  position: absolute;
+  border: 1.5px solid var(--gold);
+  opacity: 0.3;
+}
+.door-left-wrap .gold-border {
+  top: 18%;
+  right: 12%;
+  width: 40%;
+  height: 50%;
+  border-right: none;
+  border-bottom: none;
+}
+.door-right-wrap .gold-border {
+  top: 18%;
+  left: 12%;
+  width: 40%;
+  height: 50%;
+  border-left: none;
+  border-bottom: none;
+}
+
+/* 门板中央装饰：橄榄枝抽象 */
+.door-panel .olive-motif {
+  position: absolute;
+  top: 28%;
+  width: 30%;
+  height: 40%;
+  opacity: 0.12;
+}
+.door-left-wrap .olive-motif {
+  right: 14%;
+}
+.door-right-wrap .olive-motif {
+  left: 14%;
+}
+.door-panel .olive-motif svg {
+  width: 100%;
+  height: 100%;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+/* ---- 门把手：青铜/金色 ---- */
 .door-panel .handle {
   position: absolute;
-  top: 52%;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #f5d98a, var(--accent-gold));
-  border: 3px solid var(--pop-black);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 28px;
+  background: radial-gradient(ellipse at 40% 30%, var(--gold-light), var(--gold));
+  border-radius: 4px;
   box-shadow: 
-    0 0 0 3px var(--pop-black),
-    0 4px 20px rgba(0,0,0,0.3);
+    0 0 0 2px rgba(0,0,0,0.1),
+    0 4px 20px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
 }
-.door-left-wrap .handle { right: 14%; }
-.door-right-wrap .handle { left: 14%; }
-
+.door-left-wrap .handle {
+  right: 10%;
+}
+.door-right-wrap .handle {
+  left: 10%;
+}
 .door-panel-wrap.dragging .handle {
-  transform: scale(1.2);
-  box-shadow: 
-    0 0 0 4px var(--pop-yellow),
-    0 0 30px rgba(244, 197, 66, 0.5);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 0 3px var(--gold), 0 4px 30px rgba(201, 168, 122, 0.3);
 }
 
-/* ---- 门缝光芒（波普风格射线） ---- */
+/* ---- 门缝光芒（庄重的金色光） ---- */
 .door-glow {
   position: absolute;
   top: 8%;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
+  width: 4px;
   height: 84%;
   background: linear-gradient(
     to bottom,
     transparent,
-    var(--pop-yellow) 20%,
-    var(--pop-yellow) 80%,
+    var(--gold) 15%,
+    var(--gold) 85%,
     transparent
   );
   opacity: 0;
-  border-radius: 4px;
-  filter: blur(4px);
-  transition: opacity 0.8s ease;
+  border-radius: 2px;
+  filter: blur(6px);
+  transition: opacity 1s ease;
   pointer-events: none;
 }
 .door-glow.active {
-  opacity: 0.6;
+  opacity: 0.4;
 }
-/* 光芒射线（波普风格） */
 .door-glow::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 200%;
+  width: 400%;
   height: 200%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(244, 197, 66, 0.15) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(ellipse at center, rgba(201, 168, 122, 0.08) 0%, transparent 70%);
   border-radius: 50%;
-  filter: blur(20px);
+  filter: blur(30px);
 }
 
-/* ---- 底部提示文字 ---- */
+/* ---- 底部提示 ---- */
 .door-hint {
   position: absolute;
-  bottom: -36px;
+  bottom: -40px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.2);
   white-space: nowrap;
-  transition: opacity 0.8s ease;
+  transition: opacity 1s ease;
   pointer-events: none;
   opacity: 1;
 }
 .door-hint.hidden { opacity: 0; }
 
-/* ---- 主标题文字 ---- */
+/* ---- 主标题 ---- */
 .door-caption {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.4em;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 0.85rem;
+  letter-spacing: 0.6em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.3);
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 1s ease;
   pointer-events: none;
 }
 .door-caption.show { opacity: 1; }
 
-/* ---- 倒计时指示器（波普风格圆点） ---- */
+/* ---- 倒计时 ---- */
 .door-timer {
   position: absolute;
-  bottom: -52px;
+  bottom: -56px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 6px;
+  gap: 8px;
   pointer-events: none;
 }
 .door-timer .dot {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.08);
-  transition: all 0.4s ease;
+  background: rgba(255,255,255,0.06);
+  transition: all 0.5s ease;
 }
 .door-timer .dot.active {
-  background: var(--pop-yellow);
-  border-color: var(--pop-yellow);
-  box-shadow: 0 0 12px rgba(244, 197, 66, 0.4);
+  background: var(--gold);
+  box-shadow: 0 0 16px rgba(201, 168, 122, 0.3);
+}
+
+/* ---- 拖拽反馈 ---- */
+.door-panel-wrap.dragging .door-panel {
+  box-shadow: 
+    inset 0 0 0 1px var(--gold),
+    0 0 40px rgba(201, 168, 122, 0.06);
+}
+.door-panel-wrap.dragging {
+  filter: brightness(1.02);
 }
 
 /* ---- 移动端适配 ---- */
@@ -442,57 +535,78 @@ a{ color:inherit; text-decoration:none; }
   .door-frame {
     width: 260px;
     height: 320px;
-    border-width: 4px;
   }
-  .door-header {
-    top: -26px;
-    height: 22px;
-    width: calc(100% + 16px);
+  .door-frame .column-left,
+  .door-frame .column-right {
+    width: 16px;
   }
-  .door-header .pop-text {
-    font-size: 0.85rem;
-    padding: 0 10px;
+  .door-frame .capital,
+  .door-frame .base {
+    width: 28px;
+    height: 10px;
   }
-  .door-header .star { font-size: 0.65rem; }
-  .door-panel-wrap { top: 4px; bottom: 4px; }
-  .door-left-wrap { left: 4px; }
-  .door-right-wrap { right: 4px; }
-  .door-left-wrap .door-panel { border-width: 1.5px; }
-  .door-right-wrap .door-panel { border-width: 1.5px; }
-  .door-left-wrap .door-panel {
-    background-size: 16px 16px;
+  .door-frame .capital { top: -9px; height: 10px; }
+  .door-frame .base { bottom: -6px; height: 8px; }
+  .door-frame .capital-left,
+  .door-frame .base-left { left: -6px; }
+  .door-frame .capital-right,
+  .door-frame .base-right { right: -6px; }
+  .door-frame .entablature {
+    top: -22px;
+    height: 14px;
+    left: -2px;
+    right: -2px;
   }
-  .door-right-wrap .door-panel {
-    background-size: 16px 16px;
+  .door-panel-wrap {
+    top: 0;
+    bottom: 0;
   }
-  .door-left-wrap .door-panel {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.25) 3px, transparent 3px);
+  .door-left-wrap { left: 8px; }
+  .door-right-wrap { right: 8px; }
+  .door-left-wrap .door-panel { border-width: 0.5px; }
+  .door-right-wrap .door-panel { border-width: 0.5px; }
+  .door-panel .gold-border {
+    border-width: 1px;
   }
-  .door-right-wrap .door-panel {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.25) 3px, transparent 3px);
+  .door-left-wrap .gold-border {
+    top: 20%;
+    right: 10%;
+    width: 36%;
+    height: 44%;
   }
-  .door-panel .geo-shape {
-    border-width: 2px;
-  }
-  .door-left-wrap .geo-shape {
-    width: 28%;
-    height: 28%;
-    right: 14%;
-  }
-  .door-right-wrap .geo-shape {
-    width: 28%;
-    height: 28%;
-    left: 14%;
+  .door-right-wrap .gold-border {
+    top: 20%;
+    left: 10%;
+    width: 36%;
+    height: 44%;
   }
   .door-panel .handle {
-    width: 14px;
-    height: 14px;
+    width: 10px;
+    height: 20px;
   }
-  .door-caption { font-size: 0.55rem; }
-  .door-hint { font-size: 0.5rem; bottom: -30px; }
-  .door-timer { bottom: -44px; }
-  .door-timer .dot { width: 5px; height: 5px; }
-  .door-glow { width: 5px; }
+  .door-panel .olive-motif {
+    width: 26%;
+    height: 34%;
+  }
+  .door-left-wrap .olive-motif { right: 12%; }
+  .door-right-wrap .olive-motif { left: 12%; }
+  .door-caption {
+    font-size: 0.65rem;
+  }
+  .door-hint {
+    font-size: 0.45rem;
+    bottom: -32px;
+  }
+  .door-timer {
+    bottom: -46px;
+  }
+  .door-timer .dot {
+    width: 3px;
+    height: 3px;
+  }
+  .door-glow {
+    width: 3px;
+  }
 }
 
 /* ============================================================
@@ -512,7 +626,7 @@ a{ color:inherit; text-decoration:none; }
 .falling-item {
   position: absolute;
   top: -60px;
-  opacity: 0.85;
+  opacity: 0.7;
   will-change: transform;
   pointer-events: none;
 }
@@ -530,7 +644,7 @@ a{ color:inherit; text-decoration:none; }
   display: inline-block;
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 .hero h1 .char.reveal {
   opacity: 1;
@@ -667,38 +781,83 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <body>
 
 <!-- ============================================================
-   波普艺术风格开门动画
+   古希腊风格开门动画
    ============================================================ -->
 
 <div id="door-loader">
-  <!-- 背景光晕和波点 -->
+  <!-- 背景：深邃苍穹 -->
   <div class="door-loader-bg">
     <div class="glow glow-1"></div>
     <div class="glow glow-2"></div>
-    <div class="bg-dots"></div>
   </div>
 
   <div class="door-scene">
     <div class="door-frame" id="door-frame">
-      <!-- 波普风格门楣 -->
-      <div class="door-header">
-        <span class="star star-left">✦</span>
-        <span class="pop-text"><span>P</span><span>O</span><span>P</span></span>
-        <span class="star star-right">✦</span>
+      <!-- 横梁/门楣 -->
+      <div class="entablature">
+        <span class="gold-line"></span>
+        <span class="meander">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </span>
+        <span class="gold-line-center"></span>
+        <span class="meander">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </span>
+        <span class="gold-line"></span>
       </div>
 
-      <!-- 左门：红色 + 波点 -->
+      <!-- 左柱 -->
+      <div class="column-left">
+        <div class="capital capital-left"></div>
+        <div class="base base-left"></div>
+      </div>
+
+      <!-- 右柱 -->
+      <div class="column-right">
+        <div class="capital capital-right"></div>
+        <div class="base base-right"></div>
+      </div>
+
+      <!-- 左门 -->
       <div class="door-panel-wrap door-left-wrap" id="door-left">
         <div class="door-panel">
-          <div class="geo-shape"></div>
+          <div class="gold-border"></div>
+          <div class="olive-motif">
+            <svg viewBox="0 0 60 80">
+              <path d="M30,5 Q20,20 15,35 Q10,50 18,65" stroke-linecap="round"/>
+              <path d="M30,5 Q40,20 45,35 Q50,50 42,65" stroke-linecap="round"/>
+              <ellipse cx="20" cy="20" rx="6" ry="3" transform="rotate(-30 20 20)"/>
+              <ellipse cx="14" cy="32" rx="6" ry="3" transform="rotate(-20 14 32)"/>
+              <ellipse cx="12" cy="45" rx="6" ry="3" transform="rotate(-10 12 45)"/>
+              <ellipse cx="40" cy="20" rx="6" ry="3" transform="rotate(30 40 20)"/>
+              <ellipse cx="46" cy="32" rx="6" ry="3" transform="rotate(20 46 32)"/>
+              <ellipse cx="48" cy="45" rx="6" ry="3" transform="rotate(10 48 45)"/>
+              <path d="M30,5 L30,30" stroke-width="0.8"/>
+            </svg>
+          </div>
           <div class="handle"></div>
         </div>
       </div>
 
-      <!-- 右门：蓝色 + 波点 -->
+      <!-- 右门 -->
       <div class="door-panel-wrap door-right-wrap" id="door-right">
         <div class="door-panel">
-          <div class="geo-shape"></div>
+          <div class="gold-border"></div>
+          <div class="olive-motif">
+            <svg viewBox="0 0 60 80">
+              <path d="M30,5 Q20,20 15,35 Q10,50 18,65" stroke-linecap="round"/>
+              <path d="M30,5 Q40,20 45,35 Q50,50 42,65" stroke-linecap="round"/>
+              <ellipse cx="20" cy="20" rx="6" ry="3" transform="rotate(-30 20 20)"/>
+              <ellipse cx="14" cy="32" rx="6" ry="3" transform="rotate(-20 14 32)"/>
+              <ellipse cx="12" cy="45" rx="6" ry="3" transform="rotate(-10 12 45)"/>
+              <ellipse cx="40" cy="20" rx="6" ry="3" transform="rotate(30 40 20)"/>
+              <ellipse cx="46" cy="32" rx="6" ry="3" transform="rotate(20 46 32)"/>
+              <ellipse cx="48" cy="45" rx="6" ry="3" transform="rotate(10 48 45)"/>
+              <path d="M30,5 L30,30" stroke-width="0.8"/>
+            </svg>
+          </div>
           <div class="handle"></div>
         </div>
       </div>
@@ -706,10 +865,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       <!-- 门缝金光 -->
       <div class="door-glow" id="door-glow"></div>
 
-      <!-- 提示文字 -->
+      <!-- 提示 -->
       <div class="door-hint" id="door-hint">⇆ 拖拽 · 点击</div>
 
-      <!-- 倒计时指示器 -->
+      <!-- 倒计时 -->
       <div class="door-timer" id="door-timer">
         <span class="dot active" data-i="0"></span>
         <span class="dot" data-i="1"></span>
@@ -717,7 +876,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       </div>
     </div>
 
-    <div class="door-caption" id="door-caption">—— 推开 ——</div>
+    <div class="door-caption" id="door-caption">—— 推 开 ——</div>
   </div>
 </div>
 
@@ -854,7 +1013,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 1. 波普艺术开门交互逻辑
+// 1. 开门交互逻辑
 // ============================================================
 (function(){
   var loader = document.getElementById('door-loader');
@@ -882,7 +1041,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     var el = side === 'left' ? leftWrap : rightWrap;
     var rot = side === 'left' ? -angle : angle;
     el.style.transform = 'rotateY(' + rot + 'deg)';
-    var intensity = Math.min(0.6, angle / MAX_ANGLE * 0.8);
+    var intensity = Math.min(0.45, angle / MAX_ANGLE * 0.55);
     glow.style.opacity = intensity;
     if (angle > 5) glow.classList.add('active');
     else glow.classList.remove('active');
@@ -908,7 +1067,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     clearTimeout(autoTimer);
     setDoorAngle('left', MAX_ANGLE);
     setDoorAngle('right', MAX_ANGLE);
-    glow.style.opacity = '0.6';
+    glow.style.opacity = '0.45';
     glow.classList.add('active');
     caption.classList.add('show');
     hint.classList.add('hidden');
@@ -918,9 +1077,9 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
         isClosing = true;
         loader.classList.add('closing');
         triggerFallAndText();
-        setTimeout(function(){ loader.style.display = 'none'; }, 800);
+        setTimeout(function(){ loader.style.display = 'none'; }, 1000);
       }
-    }, 600);
+    }, 700);
   }
 
   function closeDoor() {
@@ -1037,7 +1196,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 })();
 
 // ============================================================
-// 2. 文字显现 + 飘落物（无飞鸟）
+// 2. 文字显现 + 飘落物
 // ============================================================
 
 var fallTriggered = false;
@@ -1049,7 +1208,7 @@ function triggerFallAndText() {
   var titleEl = document.getElementById('hero-title');
   if (!titleEl) return;
 
-  // 拆分标题为逐字元素
+  // 拆分标题
   if (!titleEl.dataset.split) {
     var parts = [];
     var emContent = titleEl.querySelector('em');
@@ -1096,22 +1255,20 @@ function triggerFallAndText() {
     titleEl.dataset.split = '1';
   }
 
-  // 延迟显现文字
   setTimeout(function() {
     var chars = titleEl.querySelectorAll('.char');
     chars.forEach(function(el, index) {
       setTimeout(function() {
         el.classList.add('reveal');
-      }, index * 50);
+      }, index * 45);
     });
-  }, 400);
+  }, 500);
 
-  // 启动飘落物
   startFalling();
 }
 
 // ============================================================
-// 3. 飘落物系统（羽毛 + 橄榄叶，持续循环）
+// 3. 飘落物系统
 // ============================================================
 
 var fallingItems = [];
@@ -1119,21 +1276,21 @@ var fallingContainer = document.getElementById('falling-container');
 var fallAnimId = null;
 
 function createFeatherSVG(theme) {
-  var color = theme === 'dark' ? '#e0ddd6' : (theme === 'eye-care' ? '#f5efe0' : '#f5f0e8');
-  var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#b9b7b0');
-  return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.6">' +
+  var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
+  var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
+  return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.5">' +
     '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
-    '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.4"/>' +
-    '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.3"/>' +
-    '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.3"/>' +
+    '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.3"/>' +
+    '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
+    '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
     '</svg>';
 }
 
 function createOliveSVG() {
   return '<svg viewBox="0 0 30 16" fill="none">' +
-    '<ellipse cx="15" cy="8" rx="13" ry="6" fill="#6b8c5c" stroke="#4a6b3c" stroke-width="0.8"/>' +
-    '<path d="M15,2 L15,14" stroke="#4a6b3c" stroke-width="0.6"/>' +
-    '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#4a6b3c" stroke-width="0.4" opacity="0.6"/>' +
+    '<ellipse cx="15" cy="8" rx="13" ry="5.5" fill="#7a9a6a" stroke="#5a7a4a" stroke-width="0.7"/>' +
+    '<path d="M15,2.5 L15,13.5" stroke="#5a7a4a" stroke-width="0.5"/>' +
+    '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#5a7a4a" stroke-width="0.35" opacity="0.5"/>' +
     '</svg>';
 }
 
@@ -1144,22 +1301,22 @@ function startFalling() {
   var isEyeCare = document.documentElement.getAttribute('data-theme') === 'eye-care';
   var theme = isDark ? 'dark' : (isEyeCare ? 'eye-care' : 'light');
 
-  var count = 20;
+  var count = 22;
   var types = ['feather', 'olive'];
   var items = [];
 
   for (var i = 0; i < count; i++) {
     var type = types[Math.floor(Math.random() * types.length)];
-    var size = type === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
+    var size = type === 'feather' ? 12 + Math.random() * 14 : 16 + Math.random() * 16;
     var el = document.createElement('div');
     el.className = 'falling-item';
     var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
     el.innerHTML = svgContent;
     el.style.width = size + 'px';
-    el.style.height = (type === 'feather' ? size * 2.8 : size * 0.6) + 'px';
+    el.style.height = (type === 'feather' ? size * 2.8 : size * 0.55) + 'px';
     el.style.left = (Math.random() * 100) + '%';
     el.style.top = (-20 - Math.random() * 80) + '%';
-    el.style.opacity = 0.4 + Math.random() * 0.5;
+    el.style.opacity = 0.3 + Math.random() * 0.4;
 
     fallingContainer.appendChild(el);
 
@@ -1167,11 +1324,11 @@ function startFalling() {
       el: el,
       x: parseFloat(el.style.left),
       y: parseFloat(el.style.top),
-      speed: 0.25 + Math.random() * 0.7,
-      swayAmp: 12 + Math.random() * 45,
-      swaySpeed: 0.25 + Math.random() * 0.6,
+      speed: 0.2 + Math.random() * 0.6,
+      swayAmp: 10 + Math.random() * 40,
+      swaySpeed: 0.2 + Math.random() * 0.5,
       angle: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 1.4,
+      rotSpeed: (Math.random() - 0.5) * 1.2,
       type: type,
       size: size,
       phase: Math.random() * Math.PI * 2
@@ -1183,30 +1340,30 @@ function startFalling() {
   function animateFalling() {
     var viewH = window.innerHeight;
     items.forEach(function(item) {
-      item.y += item.speed * 0.5;
-      item.phase += 0.018 * item.swaySpeed;
-      var swayOffset = Math.sin(item.phase) * item.swayAmp * 0.12;
-      item.angle += item.rotSpeed * 0.4;
+      item.y += item.speed * 0.45;
+      item.phase += 0.016 * item.swaySpeed;
+      var swayOffset = Math.sin(item.phase) * item.swayAmp * 0.1;
+      item.angle += item.rotSpeed * 0.35;
 
-      var currentX = parseFloat(item.el.style.left) + swayOffset * 0.015;
+      var currentX = parseFloat(item.el.style.left) + swayOffset * 0.012;
       item.el.style.transform = 'translate(' + currentX + 'px, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
-      item.el.style.left = (parseFloat(item.el.style.left) + swayOffset * 0.015) + '%';
+      item.el.style.left = (parseFloat(item.el.style.left) + swayOffset * 0.012) + '%';
 
       if (item.y > viewH + 60) {
         item.y = -40 - Math.random() * 80;
         item.el.style.left = (Math.random() * 95 + 2) + '%';
         item.x = parseFloat(item.el.style.left);
-        item.speed = 0.25 + Math.random() * 0.7;
-        item.swayAmp = 12 + Math.random() * 45;
+        item.speed = 0.2 + Math.random() * 0.6;
+        item.swayAmp = 10 + Math.random() * 40;
         item.angle = Math.random() * 360;
-        item.rotSpeed = (Math.random() - 0.5) * 1.4;
-        item.el.style.opacity = 0.4 + Math.random() * 0.5;
+        item.rotSpeed = (Math.random() - 0.5) * 1.2;
+        item.el.style.opacity = 0.3 + Math.random() * 0.4;
         var newType = Math.random() > 0.5 ? 'feather' : 'olive';
-        var newSize = newType === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
+        var newSize = newType === 'feather' ? 12 + Math.random() * 14 : 16 + Math.random() * 16;
         var svgContent = newType === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
         item.el.innerHTML = svgContent;
         item.el.style.width = newSize + 'px';
-        item.el.style.height = (newType === 'feather' ? newSize * 2.8 : newSize * 0.6) + 'px';
+        item.el.style.height = (newType === 'feather' ? newSize * 2.8 : newSize * 0.55) + 'px';
         item.type = newType;
         item.size = newSize;
         item.el.style.transform = 'translate(0, ' + item.y + 'px) rotate(' + item.angle + 'deg)';
@@ -1235,7 +1392,7 @@ function startFalling() {
 }
 
 // ============================================================
-// 4. 原有功能：诗歌数量、音乐、主题切换
+// 4. 原有功能
 // ============================================================
 
 (function(){
@@ -1303,8 +1460,8 @@ function startFalling() {
       if (!svg) return;
       var paths = svg.querySelectorAll('path');
       if (paths.length > 0 && paths[0].getAttribute('fill')) {
-        var color = theme === 'dark' ? '#e0ddd6' : (theme === 'eye-care' ? '#f5efe0' : '#f5f0e8');
-        var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#b9b7b0');
+        var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
+        var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
         paths[0].setAttribute('fill', color);
         paths[0].setAttribute('stroke', stroke);
         for (var i = 1; i < paths.length; i++) {
@@ -1327,9 +1484,6 @@ function startFalling() {
     });
   });
 })();
-
-window.addEventListener('resize', function() {});
 </script>
-
 </body>
 </html>
