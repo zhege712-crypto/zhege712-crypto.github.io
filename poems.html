@@ -16,9 +16,35 @@
   --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'Space Mono',monospace;
   --maxw:1100px;
 }
+
+/* ===== 暗色主题 ===== */
+[data-theme="dark"] {
+  --ink: #ecece5;
+  --charcoal: #c4c4be;
+  --steel: #8a8a85;
+  --fog: #4a4a45;
+  --paper: #1a1a19;
+  --paper-2: #2a2a27;
+  --white: #222221;
+  --accent-red: #e55a5f;
+  --accent-gold: #d4a373;
+}
+/* ===== 护眼暖色主题 ===== */
+[data-theme="eye-care"] {
+  --paper: #fbf7ea;
+  --paper-2: #f3edd8;
+  --white: #fefcf5;
+  --ink: #3b3a36;
+  --charcoal: #5b5a56;
+  --steel: #8a8985;
+  --fog: #c5c0b5;
+  --accent-red: #b85a4a;
+  --accent-gold: #b8976a;
+}
+
 *{ margin:0; padding:0; box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
-body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6; overflow-x:hidden; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6; overflow-x:hidden; transition: background 0.3s ease, color 0.3s ease; }
 img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
@@ -32,13 +58,21 @@ nav.top-nav a::after{ content:''; position:absolute; left:0; bottom:0; width:0; 
 nav.top-nav a:hover::after{ width:100%; }
 @media (max-width:640px){ nav.top-nav ul{ gap:16px; } }
 
-.side-nav{ position:fixed; left:24px; top:120px; z-index:150; width:168px; background:var(--white); border:1px solid var(--paper-2); padding:10px; box-shadow:0 10px 30px rgba(28,28,27,0.06); }
+.side-nav{ position:fixed; left:24px; top:120px; z-index:150; width:168px; background:var(--white); border:1px solid var(--paper-2); padding:10px; box-shadow:0 10px 30px rgba(28,28,27,0.06); transition: background 0.3s ease, border-color 0.3s ease; }
 .side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:2px; font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal); transition:background 0.25s ease, color 0.25s ease; }
 .side-nav a:hover{ background:var(--paper-2); }
 .side-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; }
 .side-nav a svg{ width:17px; height:17px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.6; }
 .side-nav a .badge{ margin-left:auto; font-family:var(--font-mono); font-size:0.65rem; background:var(--paper); color:var(--steel); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; }
 .side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
+.side-nav .theme-selector-wrap{
+  margin-top:16px; border-top:1px solid var(--fog); padding-top:12px;
+}
+.side-nav .theme-selector-wrap select{
+  width:100%; padding:8px; background:var(--white); color:var(--ink);
+  border:1px solid var(--fog); border-radius:4px;
+  font-family:var(--font-mono); font-size:0.7rem; cursor:pointer;
+}
 @media (max-width:1180px){ .side-nav{ display:none; } }
 
 .poem-hero{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding-top:100px; }
@@ -105,7 +139,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 #loader.skip {
   display: none;
 }
-
 .book {
   width: 320px;
   height: 400px;
@@ -113,7 +146,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   perspective: 1500px;
   transform-style: preserve-3d;
 }
-
 .book-page {
   position: absolute;
   top: 0;
@@ -136,7 +168,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   border-radius: 0 4px 4px 0;
   animation: pageFlipRight 1.8s cubic-bezier(.4,0,.2,1) forwards;
 }
-
 .page-inner {
   width: 100%;
   height: 100%;
@@ -144,13 +175,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   border: 1px solid rgba(0,0,0,0.05);
   box-sizing: border-box;
 }
-.book-page.left .page-inner {
-  border-radius: 4px 0 0 4px;
-}
-.book-page.right .page-inner {
-  border-radius: 0 4px 4px 0;
-}
-
+.book-page.left .page-inner { border-radius: 4px 0 0 4px; }
+.book-page.right .page-inner { border-radius: 0 4px 4px 0; }
 .book-spine {
   position: absolute;
   left: 50%;
@@ -163,7 +189,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   box-shadow: inset -1px 0 4px rgba(0,0,0,0.1);
   z-index: 2;
 }
-
 @keyframes pageFlipLeft {
   0%   { transform: rotateY(0deg); }
   100% { transform: rotateY(-180deg); }
@@ -172,7 +197,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   0%   { transform: rotateY(0deg); }
   100% { transform: rotateY(180deg); }
 }
-
 .loader-caption {
   margin-top: 40px;
   font-family: var(--font-mono);
@@ -186,12 +210,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 @keyframes fadeInCaption {
   to { opacity: 1; }
 }
-
 @media (max-width: 640px) {
-  .book {
-    width: 200px;
-    height: 280px;
-  }
+  .book { width: 200px; height: 280px; }
 }
 </style>
 </head>
@@ -200,12 +220,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <!-- 开幕动画：书本翻开（仅首次进入） -->
 <div id="loader">
   <div class="book">
-    <div class="book-page left">
-      <div class="page-inner"></div>
-    </div>
-    <div class="book-page right">
-      <div class="page-inner"></div>
-    </div>
+    <div class="book-page left"><div class="page-inner"></div></div>
+    <div class="book-page right"><div class="page-inner"></div></div>
     <div class="book-spine"></div>
   </div>
   <div class="loader-caption">翻开 · 诗歌漂流</div>
@@ -251,6 +267,15 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     诗歌漂流
     <span class="badge" id="poem-count">·</span>
   </a>
+
+  <!-- ===== 主题切换器 ===== -->
+  <div class="theme-selector-wrap">
+    <select id="theme-selector">
+      <option value="light">☀️ 日间</option>
+      <option value="dark">🌙 夜间</option>
+      <option value="eye-care">📖 护眼</option>
+    </select>
+  </div>
 </nav>
 
 <div class="wrap">
@@ -295,34 +320,23 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <footer>© 2026 · 诗歌漂流</footer>
 
 <script>
-// ===== 书本开幕动画（仅首次进入诗歌漂流） =====
+// ===== 书本开幕动画（仅首次进入） =====
 (function(){
   var loader = document.getElementById('loader');
-  // 如果本次会话已经看过，直接跳过
   if(sessionStorage.getItem('poems_intro_shown')){
     loader.classList.add('skip');
     return;
   }
-  // 标记本次会话已看过
   sessionStorage.setItem('poems_intro_shown', '1');
-  
-  // 如果用户开启了“减少动画”偏好，直接跳过
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce) {
-    loader.classList.add('skip');
-    return;
-  }
-
-  // 等待书本翻页动画完成（1.8s），再淡出关闭
+  if(reduce) { loader.classList.add('skip'); return; }
   setTimeout(function(){
     loader.classList.add('closing');
-    setTimeout(function(){
-      loader.style.display = 'none';
-    }, 800);
+    setTimeout(function(){ loader.style.display = 'none'; }, 800);
   }, 2000);
 })();
 
-// ===== 原有逻辑 =====
+// ===== 诗歌统计数据 =====
 (function(){
   var badge = document.getElementById('poem-count');
   var statCount = document.getElementById('stat-count');
@@ -339,11 +353,47 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   }).catch(function(){
     badge.textContent = '0'; statCount.textContent = '0'; statLatest.textContent = '—';
   });
+})();
 
-  var owner = 'zhege712-crypto';  // ← 替换成你自己的 GitHub 用户名
-  var repo = 'zhege712-crypto.github.io'; // ← 替换成你自己的仓库名
+// ===== 投稿链接（请替换为你自己的 GitHub 信息） =====
+(function(){
+  var owner = 'zhege712-crypto';   // ← 改成你的用户名
+  var repo = 'zhege712-crypto.github.io'; // ← 改成你的仓库名
   document.getElementById('submit-link').href =
     'https://github.com/' + owner + '/' + repo + '/discussions/new/choose';
+})();
+
+// ===== 主题切换（智能时间 + 手动覆盖） =====
+(function(){
+  var selector = document.getElementById('theme-selector');
+  if(!selector) return;
+
+  function isNightTime() {
+    var hour = new Date().getHours();
+    return (hour >= 19 || hour < 6);
+  }
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+    selector.value = theme;
+  }
+
+  var saved = localStorage.getItem('theme');
+  if (saved && (saved === 'light' || saved === 'dark' || saved === 'eye-care')) {
+    applyTheme(saved);
+  } else {
+    var initial = isNightTime() ? 'dark' : 'light';
+    applyTheme(initial);
+  }
+
+  selector.addEventListener('change', function(){
+    applyTheme(this.value);
+  });
 })();
 </script>
 

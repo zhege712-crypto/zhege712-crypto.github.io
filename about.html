@@ -16,9 +16,35 @@
   --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'Space Mono',monospace;
   --maxw:1100px;
 }
+
+/* ===== 暗色主题 ===== */
+[data-theme="dark"] {
+  --ink: #ecece5;
+  --charcoal: #c4c4be;
+  --steel: #8a8a85;
+  --fog: #4a4a45;
+  --paper: #1a1a19;
+  --paper-2: #2a2a27;
+  --white: #222221;
+  --accent-red: #e55a5f;
+  --accent-gold: #d4a373;
+}
+/* ===== 护眼暖色主题 ===== */
+[data-theme="eye-care"] {
+  --paper: #fbf7ea;
+  --paper-2: #f3edd8;
+  --white: #fefcf5;
+  --ink: #3b3a36;
+  --charcoal: #5b5a56;
+  --steel: #8a8985;
+  --fog: #c5c0b5;
+  --accent-red: #b85a4a;
+  --accent-gold: #b8976a;
+}
+
 *{ margin:0; padding:0; box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
-body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6; overflow-x:hidden; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6; overflow-x:hidden; transition: background 0.3s ease, color 0.3s ease; }
 img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
@@ -37,6 +63,7 @@ nav.top-nav a:hover::after{ width:100%; }
   background:rgba(250,249,246,0.55); backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
   border:1px solid rgba(255,255,255,0.6); border-radius:6px; padding:10px;
   box-shadow:0 10px 34px rgba(28,28,27,0.10), inset 0 1px 0 rgba(255,255,255,0.5);
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 .side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:2px; font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal); transition:background 0.25s ease, color 0.25s ease; }
 .side-nav a:hover{ background:rgba(255,255,255,0.55); }
@@ -44,21 +71,36 @@ nav.top-nav a:hover::after{ width:100%; }
 .side-nav a svg{ width:17px; height:17px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.6; }
 .side-nav a .badge{ margin-left:auto; font-family:var(--font-mono); font-size:0.65rem; background:var(--paper); color:var(--steel); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; }
 .side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
+.side-nav .theme-selector-wrap{
+  margin-top:16px; border-top:1px solid var(--fog); padding-top:12px;
+}
+.side-nav .theme-selector-wrap select{
+  width:100%; padding:8px; background:var(--white); color:var(--ink);
+  border:1px solid var(--fog); border-radius:4px;
+  font-family:var(--font-mono); font-size:0.7rem; cursor:pointer;
+}
 @media (max-width:1180px){ .side-nav{ display:none; } }
 
-.about{ background:var(--ink); color:var(--white); min-height:100vh; display:flex; align-items:center; padding-top:100px; }
+.about{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  padding-top:100px;
+  background:var(--ink);      /* 使用变量，跟随主题 */
+  color:var(--white);          /* 默认白字，但会随 --ink 变化？我们要专门控制 */
+}
+/* 为了确保 about 页文字在深色背景下可读，我们用更具体的颜色覆盖 */
 .about .wrap{ display:grid; grid-template-columns:1fr 1fr; gap:60px; }
 .about-eyebrow{ font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-red); letter-spacing:0.1em; margin-bottom:16px; }
 .about h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.8rem,4vw,2.6rem); line-height:1.2; }
 .about h1 span{ color:var(--accent-gold); }
 .about p{ color:var(--fog); margin-top:20px; max-width:420px; }
 .contact-list{ display:flex; flex-direction:column; gap:14px; margin-top:30px; }
-.contact-list a{ font-family:var(--font-mono); font-size:0.9rem; display:inline-flex; align-items:center; gap:10px; width:fit-content; border-bottom:1px solid transparent; transition:border-color 0.3s ease, color 0.3s ease; }
+.contact-list a{ font-family:var(--font-mono); font-size:0.9rem; display:inline-flex; align-items:center; gap:10px; width:fit-content; border-bottom:1px solid transparent; transition:border-color 0.3s ease, color 0.3s ease; color:var(--white); }
 .contact-list a:hover{ border-color:var(--accent-red); color:var(--accent-red); }
 @media (max-width:720px){ .about .wrap{ grid-template-columns:1fr; } }
 
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
-
 
 </style>
 </head>
@@ -104,6 +146,14 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     诗歌漂流
     <span class="badge" id="poem-count">·</span>
   </a>
+
+  <div class="theme-selector-wrap">
+    <select id="theme-selector">
+      <option value="light">☀️ 日间</option>
+      <option value="dark">🌙 夜间</option>
+      <option value="eye-care">📖 护眼</option>
+    </select>
+  </div>
 </nav>
 
 <section class="about">
@@ -125,7 +175,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <footer>© 2026 水告示阳 · 保留所有权利</footer>
 
-
 <script>
 (function(){
   var badge = document.getElementById('poem-count');
@@ -135,6 +184,33 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   }).catch(function(){ badge.textContent = '0'; });
 })();
 
+// ===== 主题切换 =====
+(function(){
+  var selector = document.getElementById('theme-selector');
+  if(!selector) return;
+  function isNightTime() {
+    var hour = new Date().getHours();
+    return (hour >= 19 || hour < 6);
+  }
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+    selector.value = theme;
+  }
+  var saved = localStorage.getItem('theme');
+  if (saved && (saved === 'light' || saved === 'dark' || saved === 'eye-care')) {
+    applyTheme(saved);
+  } else {
+    applyTheme(isNightTime() ? 'dark' : 'light');
+  }
+  selector.addEventListener('change', function(){
+    applyTheme(this.value);
+  });
+})();
 </script>
 
 </body>
