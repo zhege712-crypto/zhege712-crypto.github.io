@@ -50,115 +50,97 @@
 
 *{ margin:0; padding:0; box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
-body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6; overflow-x:hidden; transition: background 0.3s ease, color 0.3s ease; }
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.6;
+  overflow-x:hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+body.loaded {
+  opacity: 1;
+}
 img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
 /* ============================================================
-   开幕动画：羽毛 · 涟漪
+   标题文字逐字显现
    ============================================================ */
-
-#intro-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: #0d0c0a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1), visibility 2s ease;
-  opacity: 1;
-  visibility: visible;
-  pointer-events: none;
-}
-#intro-overlay.hidden {
+.hero h1 .char {
+  display: inline-block;
   opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
-#intro-overlay.skip {
-  display: none;
+.hero h1 .char.reveal {
+  opacity: 1;
+  transform: translateY(0);
 }
+.hero h1 .char.delay-1 { transition-delay: 0.05s; }
+.hero h1 .char.delay-2 { transition-delay: 0.10s; }
+.hero h1 .char.delay-3 { transition-delay: 0.15s; }
+.hero h1 .char.delay-4 { transition-delay: 0.20s; }
+.hero h1 .char.delay-5 { transition-delay: 0.25s; }
+.hero h1 .char.delay-6 { transition-delay: 0.30s; }
+.hero h1 .char.delay-7 { transition-delay: 0.35s; }
+.hero h1 .char.delay-8 { transition-delay: 0.40s; }
+.hero h1 .char.delay-9 { transition-delay: 0.45s; }
+.hero h1 .char.delay-10 { transition-delay: 0.50s; }
+.hero h1 .char.delay-11 { transition-delay: 0.55s; }
+.hero h1 .char.delay-12 { transition-delay: 0.60s; }
+.hero h1 .char.delay-13 { transition-delay: 0.65s; }
+.hero h1 .char.delay-14 { transition-delay: 0.70s; }
+.hero h1 .char.delay-15 { transition-delay: 0.75s; }
+.hero h1 .char.delay-16 { transition-delay: 0.80s; }
+.hero h1 .char.delay-17 { transition-delay: 0.85s; }
+.hero h1 .char.delay-18 { transition-delay: 0.90s; }
+.hero h1 .char.delay-19 { transition-delay: 0.95s; }
+.hero h1 .char.delay-20 { transition-delay: 1.00s; }
 
-/* ---- Canvas: 涟漪 + 背景 ---- */
-#ripple-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  pointer-events: none;
-}
-
-/* ---- 羽毛 ---- */
-#feather-container {
-  position: absolute;
+/* ============================================================
+   飘落物（精简版）
+   ============================================================ */
+.falling-container {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 2;
+  z-index: 40;
+  overflow: hidden;
 }
-#feather {
+.falling-item {
   position: absolute;
-  width: 60px;
-  height: auto;
-  opacity: 0.95;
-  filter: drop-shadow(0 0 20px rgba(232, 163, 61, 0.15));
-  transform-origin: center center;
-  will-change: transform, left, top;
-  transition: none;
-}
-#feather .feather-body {
-  fill: url(#featherGrad);
-}
-#feather .feather-vein {
-  stroke: #d4c8b8;
-  stroke-width: 0.6;
-  fill: none;
-}
-#feather .feather-barbs {
-  stroke: #c4b8a8;
-  stroke-width: 0.4;
-  fill: none;
+  top: -60px;
   opacity: 0.6;
-}
-
-/* ---- 底部文字（淡入） ---- */
-#intro-caption {
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.5em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.15);
-  opacity: 0;
-  transition: opacity 1.5s ease;
-  z-index: 3;
+  will-change: transform;
   pointer-events: none;
+  animation: fall linear infinite;
 }
-#intro-caption.show {
-  opacity: 1;
+.falling-item svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/* ---- 移动端适配 ---- */
-@media (max-width: 640px) {
-  #feather {
-    width: 40px;
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
   }
-  #intro-caption {
-    font-size: 0.5rem;
-    bottom: 60px;
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0.2;
   }
 }
 
 /* ============================================================
-   原有首页样式（保持不变）
+   原有样式（保持不变）
    ============================================================ */
 
 header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
@@ -266,74 +248,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </head>
 <body>
 
-<!-- ============================================================
-   开幕动画：羽毛 · 涟漪
-   ============================================================ -->
-
-<div id="intro-overlay">
-  <canvas id="ripple-canvas"></canvas>
-  <div id="feather-container">
-    <svg id="feather" viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="featherGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#f5f0eb"/>
-          <stop offset="40%" stop-color="#ede8e0"/>
-          <stop offset="70%" stop-color="#e8e2da"/>
-          <stop offset="100%" stop-color="#d4c8b8"/>
-        </linearGradient>
-        <radialGradient id="featherGlow" cx="50%" cy="30%" r="60%">
-          <stop offset="0%" stop-color="rgba(232,163,61,0.15)"/>
-          <stop offset="100%" stop-color="rgba(232,163,61,0)"/>
-        </radialGradient>
-      </defs>
-      <!-- 光晕 -->
-      <ellipse cx="40" cy="50" rx="30" ry="80" fill="url(#featherGlow)"/>
-      <!-- 羽毛主体 -->
-      <path class="feather-body" d="
-        M40,2
-        C55,10 68,30 70,55
-        C72,80 65,105 55,125
-        C48,138 44,148 40,158
-        C36,148 32,138 25,125
-        C15,105 8,80 10,55
-        C12,30 25,10 40,2Z
-      "/>
-      <!-- 羽轴 -->
-      <path class="feather-vein" d="M40,2 L40,158"/>
-      <!-- 左侧羽枝 -->
-      <path class="feather-barbs" d="
-        M40,12 L25,20
-        M40,22 L18,32
-        M40,32 L14,46
-        M40,42 L12,60
-        M40,52 L14,74
-        M40,62 L18,88
-        M40,72 L24,100
-        M40,82 L30,112
-        M40,92 L36,122
-      "/>
-      <!-- 右侧羽枝 -->
-      <path class="feather-barbs" d="
-        M40,12 L55,20
-        M40,22 L62,32
-        M40,32 L66,46
-        M40,42 L68,60
-        M40,52 L66,74
-        M40,62 L62,88
-        M40,72 L56,100
-        M40,82 L50,112
-        M40,92 L44,122
-      "/>
-      <!-- 金色高光线 -->
-      <path d="M40,15 L40,140" stroke="rgba(232,163,61,0.15)" stroke-width="2" fill="none"/>
-    </svg>
-  </div>
-  <div id="intro-caption">—— 羽落 · 涟漪 ——</div>
-</div>
-
-<!-- ============================================================
-   首页内容
-   ============================================================ -->
+<!-- ===== 飘落物容器 ===== -->
+<div class="falling-container" id="falling-container"></div>
 
 <header>
   <div class="wrap">
@@ -465,292 +381,150 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 开幕动画：羽毛 · 涟漪
+// 1. 页面淡入 + 标题逐字显现 + 飘落物
 // ============================================================
 
 (function() {
-  var overlay = document.getElementById('intro-overlay');
-  var canvas = document.getElementById('ripple-canvas');
-  var ctx = canvas.getContext('2d');
-  var feather = document.getElementById('feather');
-  var caption = document.getElementById('intro-caption');
+  // ---- 页面淡入 ----
+  document.body.classList.add('loaded');
 
-  // 如果已经播放过，直接跳过
-  if (sessionStorage.getItem('intro_ripple_shown')) {
-    overlay.classList.add('skip');
-    return;
-  }
+  // ---- 标题逐字显现 ----
+  var titleEl = document.getElementById('hero-title');
+  if (titleEl && !titleEl.dataset.split) {
+    var parts = [];
+    var emContent = titleEl.querySelector('em');
+    var fullText = titleEl.textContent;
+    var emText = emContent ? emContent.textContent : '';
 
-  // 如果用户偏好减少动画，跳过
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    overlay.classList.add('skip');
-    return;
-  }
-
-  // 标记已播放
-  sessionStorage.setItem('intro_ripple_shown', '1');
-
-  // ---- 尺寸 ----
-  var W, H, cx, cy, maxR;
-
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    cx = W / 2;
-    cy = H * 0.55;
-    maxR = Math.max(W, H) * 0.8;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // ---- 羽毛状态 ----
-  var featherState = {
-    x: W * 0.30,
-    y: -60,
-    angle: 0,
-    phase: 0,
-    scale: 1
-  };
-
-  // 目标位置（涟漪中心）
-  var targetX = cx;
-  var targetY = cy;
-
-  // ---- 涟漪状态 ----
-  var ripples = [];
-  var rippleActive = false;
-  var rippleStartTime = 0;
-  var RIPPLE_DURATION = 2800; // ms
-  var NUM_RINGS = 4;
-
-  // ---- 动画控制 ----
-  var startTime = performance.now();
-  var featherDuration = 3200; // 羽毛飘落时长
-  var animId = null;
-  var overlayHidden = false;
-
-  // ---- 绘制涟漪 ----
-  function drawRipples(progress) {
-    if (!rippleActive) return;
-
-    // progress: 0 → 1
-    var p = Math.min(progress, 1);
-
-    for (var i = 0; i < NUM_RINGS; i++) {
-      var ringProgress = (p - i * 0.12) / (1 - i * 0.12);
-      if (ringProgress < 0) continue;
-      if (ringProgress > 1) ringProgress = 1;
-
-      // 缓动：先快后慢
-      var eased = 1 - Math.pow(1 - ringProgress, 1.5);
-      var radius = eased * maxR * 0.65;
-
-      // 宽度：从粗到细
-      var width = 6 * (1 - eased * 0.7) * (1 - i * 0.15);
-
-      // 透明度
-      var alpha = 0.7 * (1 - eased * 0.85) * (1 - i * 0.12);
-
-      // 颜色：金色
-      var r = 232, g = 163, b = 61;
-      if (alpha < 0.005) continue;
-
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-
-      // 外发光
-      var grad = ctx.createRadialGradient(cx, cy, radius - width * 0.5, cx, cy, radius + width * 0.5);
-      grad.addColorStop(0, 'rgba(232, 163, 61, 0)');
-      grad.addColorStop(0.3, 'rgba(232, 163, 61, ' + (alpha * 0.6) + ')');
-      grad.addColorStop(0.7, 'rgba(232, 163, 61, ' + (alpha * 0.8) + ')');
-      grad.addColorStop(1, 'rgba(232, 163, 61, 0)');
-
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = width;
-      ctx.shadowColor = 'rgba(232, 163, 61, ' + (alpha * 0.3) + ')';
-      ctx.shadowBlur = 20 * (1 - eased * 0.5);
-      ctx.stroke();
-      ctx.restore();
-
-      // 内圈微光
-      if (i === 0 && ringProgress < 0.6) {
-        ctx.save();
-        var glowAlpha = 0.15 * (1 - ringProgress / 0.6);
-        var glowRadius = radius * 0.3 * (ringProgress / 0.6);
-        var grad2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
-        grad2.addColorStop(0, 'rgba(232, 163, 61, ' + glowAlpha + ')');
-        grad2.addColorStop(1, 'rgba(232, 163, 61, 0)');
-        ctx.fillStyle = grad2;
-        ctx.beginPath();
-        ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
+    if (emContent) {
+      var before = fullText.split(emText)[0] || '';
+      var after = fullText.split(emText)[1] || '';
+      parts.push({ type: 'text', content: before });
+      parts.push({ type: 'em', content: emText });
+      parts.push({ type: 'text', content: after });
+    } else {
+      parts.push({ type: 'text', content: fullText });
     }
+
+    var finalHtml = '';
+    var charIdx = 0;
+    parts.forEach(function(part) {
+      if (part.type === 'text') {
+        for (var i = 0; i < part.content.length; i++) {
+          var ch = part.content[i];
+          if (ch === ' ' || ch === '\n' || ch === '\r') {
+            finalHtml += ch;
+          } else {
+            var cls = 'char delay-' + Math.min(charIdx + 1, 20);
+            finalHtml += '<span class="' + cls + '">' + ch + '</span>';
+            charIdx++;
+          }
+        }
+      } else if (part.type === 'em') {
+        finalHtml += '<em>';
+        for (var i = 0; i < part.content.length; i++) {
+          var ch = part.content[i];
+          var cls = 'char delay-' + Math.min(charIdx + 1, 20);
+          finalHtml += '<span class="' + cls + '">' + ch + '</span>';
+          charIdx++;
+        }
+        finalHtml += '</em>';
+      }
+    });
+
+    titleEl.innerHTML = finalHtml;
+    titleEl.dataset.split = '1';
   }
 
-  // ---- 绘制背景（黑色 + 细微星光） ----
-  function drawBackground() {
-    ctx.fillStyle = '#0d0c0a';
-    ctx.fillRect(0, 0, W, H);
+  // 延迟触发文字显现（与页面淡入同步）
+  setTimeout(function() {
+    var chars = titleEl.querySelectorAll('.char');
+    chars.forEach(function(el, index) {
+      setTimeout(function() {
+        el.classList.add('reveal');
+      }, index * 45);
+    });
+  }, 300);
 
-    // 细微星光
-    if (!window._stars) {
-      window._stars = [];
-      for (var i = 0; i < 40; i++) {
-        window._stars.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          r: 0.3 + Math.random() * 0.6,
-          a: 0.05 + Math.random() * 0.1
+  // ---- 飘落物（精简） ----
+  var container = document.getElementById('falling-container');
+  if (container) {
+    var count = 10;
+    var types = ['feather', 'olive'];
+
+    function createFeatherSVG(theme) {
+      var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
+      var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
+      return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.5">' +
+        '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
+        '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.3"/>' +
+        '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
+        '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
+        '</svg>';
+    }
+
+    function createOliveSVG() {
+      return '<svg viewBox="0 0 30 16" fill="none">' +
+        '<ellipse cx="15" cy="8" rx="13" ry="5.5" fill="#7a9a6a" stroke="#5a7a4a" stroke-width="0.7"/>' +
+        '<path d="M15,2.5 L15,13.5" stroke="#5a7a4a" stroke-width="0.5"/>' +
+        '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#5a7a4a" stroke-width="0.35" opacity="0.5"/>' +
+        '</svg>';
+    }
+
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var isEye = document.documentElement.getAttribute('data-theme') === 'eye-care';
+    var theme = isDark ? 'dark' : (isEye ? 'eye-care' : 'light');
+
+    for (var i = 0; i < count; i++) {
+      var type = types[Math.floor(Math.random() * types.length)];
+      var size = type === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
+      var el = document.createElement('div');
+      el.className = 'falling-item';
+      var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
+      el.innerHTML = svgContent;
+      el.style.width = size + 'px';
+      el.style.height = (type === 'feather' ? size * 2.8 : size * 0.55) + 'px';
+      el.style.left = (Math.random() * 100) + '%';
+      el.style.top = (-20 - Math.random() * 80) + '%';
+      el.style.opacity = 0.3 + Math.random() * 0.4;
+      // 随机动画持续时间（让它们不同步）
+      var duration = 12 + Math.random() * 18;
+      el.style.animationDuration = duration + 's';
+      el.style.animationDelay = (Math.random() * 5) + 's';
+      container.appendChild(el);
+    }
+
+    // 主题变化时更新羽毛颜色
+    var themeObserver = new MutationObserver(function() {
+      var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+      var isEyeNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
+      var newTheme = isDarkNow ? 'dark' : (isEyeNow ? 'eye-care' : 'light');
+      if (newTheme !== theme) {
+        theme = newTheme;
+        var items = container.querySelectorAll('.falling-item');
+        items.forEach(function(el) {
+          var svg = el.querySelector('svg');
+          if (!svg) return;
+          // 判断是否羽毛（通过检查是否有fill属性）
+          var paths = svg.querySelectorAll('path');
+          if (paths.length > 0 && paths[0].getAttribute('fill')) {
+            var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
+            var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
+            paths[0].setAttribute('fill', color);
+            paths[0].setAttribute('stroke', stroke);
+            for (var i = 1; i < paths.length; i++) {
+              paths[i].setAttribute('stroke', stroke);
+            }
+          }
         });
       }
-    }
-    var stars = window._stars;
-    for (var i = 0; i < stars.length; i++) {
-      ctx.beginPath();
-      ctx.arc(stars[i].x, stars[i].y, stars[i].r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,' + stars[i].a + ')';
-      ctx.fill();
-    }
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   }
-
-  // ---- 绘制羽毛（在Canvas上绘制，与DOM重叠） ----
-  // 但我们使用DOM元素来显示羽毛，所以这里不绘制
-
-  // ---- 更新羽毛位置 ----
-  function updateFeather(progress) {
-    // progress: 0 → 1
-    var p = Math.min(progress, 1);
-
-    // 起始位置：左上偏右
-    var startX = W * 0.30;
-    var startY = -60;
-    var endX = cx + (Math.random() - 0.5) * 60;
-    var endY = cy;
-
-    // 路径：S形曲线
-    var x = startX + (endX - startX) * p + Math.sin(p * Math.PI * 3) * W * 0.08 * (1 - p * 0.3);
-    var y = startY + (endY - startY) * p + Math.sin(p * Math.PI * 2.5) * 30 * (1 - p);
-
-    // 旋转
-    var angle = Math.sin(p * Math.PI * 2.5) * 20 + p * 8;
-
-    // 缩放：从稍微变小到正常
-    var scale = 0.85 + 0.15 * p;
-
-    // 透明度
-    var opacity = Math.min(1, p * 4);
-
-    feather.style.left = x + 'px';
-    feather.style.top = y + 'px';
-    feather.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg) scale(' + scale + ')';
-    feather.style.opacity = opacity;
-
-    return { x: x, y: y, angle: angle };
-  }
-
-  // ---- 主循环 ----
-  var lastTime = 0;
-  var featherProgress = 0;
-  var rippleProgress = 0;
-  var isRippleTriggered = false;
-
-  function animate(time) {
-    if (!lastTime) lastTime = time;
-    var delta = time - lastTime;
-    lastTime = time;
-
-    // 计算羽毛进度
-    var elapsed = time - startTime;
-    featherProgress = Math.min(elapsed / featherDuration, 1);
-
-    // 更新羽毛
-    var pos = updateFeather(featherProgress);
-
-    // 触发涟漪：羽毛到达目标位置附近
-    if (!isRippleTriggered && featherProgress > 0.75) {
-      isRippleTriggered = true;
-      rippleActive = true;
-      rippleStartTime = time;
-      caption.classList.add('show');
-    }
-
-    // 涟漪进度
-    if (rippleActive) {
-      var rippleElapsed = time - rippleStartTime;
-      rippleProgress = Math.min(rippleElapsed / RIPPLE_DURATION, 1);
-    }
-
-    // ---- 绘制 ----
-    drawBackground();
-
-    if (rippleActive) {
-      drawRipples(rippleProgress);
-    }
-
-    // ---- 判断是否结束 ----
-    if (featherProgress >= 1 && rippleProgress >= 1) {
-      // 动画结束，隐藏遮罩
-      if (!overlayHidden) {
-        overlayHidden = true;
-        overlay.classList.add('hidden');
-        // 释放资源
-        if (animId) {
-          cancelAnimationFrame(animId);
-          animId = null;
-        }
-        // 延迟移除Canvas
-        setTimeout(function() {
-          overlay.style.display = 'none';
-        }, 2200);
-      }
-      return;
-    }
-
-    // 继续
-    animId = requestAnimationFrame(animate);
-  }
-
-  // ---- 启动动画 ----
-  // 确保canvas尺寸正确后启动
-  setTimeout(function() {
-    animId = requestAnimationFrame(animate);
-  }, 100);
-
-  // ---- 窗口resize处理 ----
-  var resizeTimeout;
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(function() {
-      resize();
-      // 更新羽毛位置
-      if (!overlayHidden) {
-        // 重新计算位置
-        var p = featherProgress;
-        var newX = W * 0.30 + (cx - W * 0.30) * p + Math.sin(p * Math.PI * 3) * W * 0.08 * (1 - p * 0.3);
-        var newY = -60 + (cy + 60) * p + Math.sin(p * Math.PI * 2.5) * 30 * (1 - p);
-        feather.style.left = newX + 'px';
-        feather.style.top = newY + 'px';
-      }
-    }, 200);
-  });
-
-  // ---- 暴露给外部 ----
-  window.__introRipple = {
-    skip: function() {
-      overlay.classList.add('skip');
-      if (animId) cancelAnimationFrame(animId);
-    }
-  };
-
 })();
 
-
 // ============================================================
-// 原有功能：诗歌数量、音乐、主题切换
+// 2. 原有功能：诗歌数量、音乐、主题切换
 // ============================================================
 
 (function(){
