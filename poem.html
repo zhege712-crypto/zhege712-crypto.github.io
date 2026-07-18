@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>诗歌漂流</title>
+<title>诗歌漂流 · 详情</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -15,17 +15,37 @@
   --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'Space Mono',monospace;
   --maxw:680px;
 }
+[data-theme="dark"] {
+  --ink: #ecece5;
+  --charcoal: #c4c4be;
+  --steel: #8a8a85;
+  --fog: #4a4a45;
+  --paper: #1a1a19;
+  --paper-2: #2a2a27;
+  --white: #222221;
+  --accent-red: #e55a5f;
+  --accent-gold: #d4a373;
+}
+[data-theme="eye-care"] {
+  --paper: #fbf7ea;
+  --paper-2: #f3edd8;
+  --white: #fefcf5;
+  --ink: #3b3a36;
+  --charcoal: #5b5a56;
+  --steel: #8a8985;
+  --fog: #c5c0b5;
+  --accent-red: #b85a4a;
+  --accent-gold: #b8976a;
+}
 *{ margin:0; padding:0; box-sizing:border-box; }
-body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.7; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.7; transition: background 0.3s ease, color 0.3s ease; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 28px; }
-
 header{ padding:26px 0; border-bottom:1px solid var(--paper-2); }
 header .wrap{ max-width:960px; display:flex; justify-content:space-between; align-items:center; }
 .logo{ font-family:var(--font-display); font-weight:600; }
 .back-link{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); }
 .back-link:hover{ color:var(--accent-red); }
-
 .poem-detail{ padding:70px 0 20px; }
 .poem-meta{ font-family:var(--font-mono); font-size:0.72rem; color:var(--steel); margin-bottom:16px; }
 .poem-title{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:34px; }
@@ -33,7 +53,6 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
 .poem-image{ margin-top:32px; }
 .poem-image img{ width:100%; filter:grayscale(1); transition:filter 0.6s ease; cursor:zoom-in; }
 .poem-image img:hover{ filter:grayscale(0); }
-
 .lightbox{
   position:fixed; inset:0; z-index:500; background:rgba(28,28,27,0.94);
   display:none; align-items:center; justify-content:center; padding:50px;
@@ -48,49 +67,70 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
   background:transparent;
 }
 .lightbox-close:hover{ border-color:var(--accent-gold); color:var(--accent-gold); }
-
 .empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:80px 0; }
-
 .comments-section{ padding:60px 0 100px; margin-top:50px; border-top:1px solid var(--paper-2); }
 .comments-section h2{ font-family:var(--font-display); font-weight:500; font-size:1.2rem; margin-bottom:24px; }
-
 .greek-divider{ width:100px; height:10px; color:var(--fog); margin:22px 0; display:block; }
-
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+
+.side-theme{
+  position:fixed; left:24px; bottom:100px; z-index:150;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:rgba(255,255,255,0.4); backdrop-filter:blur(12px);
+  padding:10px 6px; border-radius:20px; border:1px solid var(--fog);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.side-theme .theme-btn{
+  width:28px; height:28px; border-radius:50%; border:none;
+  background:transparent; font-size:0.85rem; cursor:pointer;
+  transition:background 0.25s ease, transform 0.2s ease;
+  display:flex; align-items:center; justify-content:center;
+  padding:0;
+}
+.side-theme .theme-btn:hover{ background:var(--paper-2); transform:scale(1.1); }
+.side-theme .theme-btn.active{
+  background:var(--accent-gold); color:var(--white);
+  box-shadow:0 0 0 2px var(--accent-gold);
+}
+.side-theme .line{
+  width:2px; height:12px; background:var(--fog); border-radius:1px;
+  transition: background 0.3s ease;
+}
+@media (max-width:1180px){ .side-theme{ display:none; } }
 </style>
 </head>
 <body>
-
 <header>
   <div class="wrap">
     <div class="logo">诗歌漂流</div>
     <a class="back-link" href="poems-catalog.html">← 返回目录</a>
   </div>
 </header>
-
 <div class="wrap">
   <div class="poem-detail" id="poem-detail">
     <div class="empty-state">加载中…</div>
   </div>
 </div>
-
 <div class="wrap comments-section" id="comments-wrap" style="display:none;">
   <h2>留言</h2>
   <div id="giscus-container"></div>
 </div>
-
 <footer>© 2026 · 诗歌漂流</footer>
-
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" type="button">关闭 ✕</button>
   <img id="lightbox-img" src="" alt="">
 </div>
-
+<div class="side-theme" id="theme-side">
+  <button class="theme-btn" data-theme="light" title="日间模式">☀️</button>
+  <div class="line"></div>
+  <button class="theme-btn" data-theme="dark" title="夜间模式">🌙</button>
+  <div class="line"></div>
+  <button class="theme-btn" data-theme="eye-care" title="护眼模式">📖</button>
+</div>
 <script>
 (function(){
   var lightbox = document.getElementById('lightbox');
   var lightboxImg = document.getElementById('lightbox-img');
-
   function openLightbox(src, alt){
     lightboxImg.src = src;
     lightboxImg.alt = alt || '';
@@ -100,7 +140,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     lightbox.classList.remove('active');
     lightboxImg.src = '';
   }
-
   document.addEventListener('click', function(e){
     var img = e.target.closest('.poem-image img');
     if(img){ openLightbox(img.src, img.alt); return; }
@@ -112,33 +151,27 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     if(e.key === 'Escape') closeLightbox();
   });
 })();
-
 function getParam(name){
   return new URLSearchParams(window.location.search).get(name);
 }
-
 function escapeHtml(s){
   var d = document.createElement('div');
   d.textContent = String(s == null ? '' : s);
   return d.innerHTML;
 }
-
 var id = getParam('id');
-
 fetch('poems/poems.json?t=' + Date.now())
   .then(function(r){ return r.json(); })
   .then(function(poems){
     var poem = poems.find(function(p){ return p.id === id; });
     var detail = document.getElementById('poem-detail');
-
     if(!poem){
       detail.innerHTML = '<div class="empty-state">没找到这首诗，可能已被删除。</div>';
       return;
     }
-
-    document.title = poem.title + ' · 诗歌漂流'; // 仅影响标签页标题，不涉及网页渲染，安全
+    document.title = poem.title + ' · 诗歌漂流';
     var imgList = Array.isArray(poem.images) ? poem.images.slice() : [];
-    if(poem.image) imgList.push(poem.image); // 兼容旧数据里的单图字段
+    if(poem.image) imgList.push(poem.image);
     var img = imgList.map(function(src){
       return '<div class="poem-image"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(poem.title) + '"></div>';
     }).join('');
@@ -148,8 +181,6 @@ fetch('poems/poems.json?t=' + Date.now())
       '<svg class="greek-divider" viewBox="0 0 100 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 5 H8 V0 H16 V10 H24 V0 H32 V10 H40 V0 H48 V10 H56 V0 H64 V10 H72 V0 H80 V10 H88 V0 H100"/></svg>' +
       '<div class="poem-content">' + escapeHtml(poem.content) + '</div>' +
       img;
-
-    // 每首诗单独一个留言区（用诗的 id 区分，不会混在一起）
     document.getElementById('comments-wrap').style.display = 'block';
     var script = document.createElement('script');
     script.src = 'https://giscus.app/client.js';
@@ -172,7 +203,39 @@ fetch('poems/poems.json?t=' + Date.now())
   .catch(function(){
     document.getElementById('poem-detail').innerHTML = '<div class="empty-state">加载失败，检查 poems/poems.json 是否存在。</div>';
   });
+// ===== 主题切换 =====
+(function(){
+  var btns = document.querySelectorAll('#theme-side .theme-btn');
+  if(!btns.length) return;
+  function isNightTime() {
+    var hour = new Date().getHours();
+    return (hour >= 19 || hour < 6);
+  }
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+    btns.forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+    });
+  }
+  var saved = localStorage.getItem('theme');
+  var initial;
+  if (saved && (saved === 'light' || saved === 'dark' || saved === 'eye-care')) {
+    initial = saved;
+  } else {
+    initial = isNightTime() ? 'dark' : 'light';
+  }
+  applyTheme(initial);
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applyTheme(this.getAttribute('data-theme'));
+    });
+  });
+})();
 </script>
-
 </body>
 </html>
