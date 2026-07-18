@@ -63,19 +63,19 @@ a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
 /* ============================================================
-   开幕动画：纯涟漪
+   开幕动画遮罩
    ============================================================ */
 
 #intro-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #0d0c0a;
+  background: #0a0908;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.6s ease;
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.8s ease;
   opacity: 1;
   visibility: visible;
   pointer-events: none;
@@ -88,6 +88,35 @@ a{ color:inherit; text-decoration:none; }
   display: none;
 }
 
+/* ---- 背景微光 ---- */
+.intro-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.intro-bg .glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.08;
+}
+.intro-bg .glow-1 {
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  background: var(--accent-gold);
+}
+.intro-bg .glow-2 {
+  width: 30%;
+  height: 40%;
+  bottom: 10%;
+  right: 10%;
+  background: var(--accent-gold);
+  opacity: 0.04;
+}
+
 /* ---- 背景星光 ---- */
 .intro-stars {
   position: absolute;
@@ -97,143 +126,33 @@ a{ color:inherit; text-decoration:none; }
 }
 .intro-stars .star {
   position: absolute;
-  width: 2px;
-  height: 2px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.08);
 }
-.intro-stars .star:nth-child(1) { top: 10%; left: 6%; animation: twinkle 3.2s ease-in-out infinite; }
-.intro-stars .star:nth-child(2) { top: 22%; left: 88%; animation: twinkle 2.6s ease-in-out infinite 0.6s; }
-.intro-stars .star:nth-child(3) { top: 50%; left: 3%; animation: twinkle 3.8s ease-in-out infinite 1.4s; }
-.intro-stars .star:nth-child(4) { top: 68%; left: 94%; animation: twinkle 2.8s ease-in-out infinite 0.3s; }
-.intro-stars .star:nth-child(5) { top: 38%; left: 97%; animation: twinkle 3.4s ease-in-out infinite 0.9s; }
-.intro-stars .star:nth-child(6) { top: 82%; left: 12%; animation: twinkle 2.4s ease-in-out infinite 1.8s; }
-.intro-stars .star:nth-child(7) { top: 12%; left: 48%; animation: twinkle 4.2s ease-in-out infinite 0.2s; }
-.intro-stars .star:nth-child(8) { top: 58%; left: 45%; animation: twinkle 2.8s ease-in-out infinite 1.1s; }
-.intro-stars .star:nth-child(9) { top: 90%; left: 75%; animation: twinkle 3.0s ease-in-out infinite 0.7s; }
-.intro-stars .star:nth-child(10) { top: 32%; left: 15%; animation: twinkle 3.6s ease-in-out infinite 2.0s; }
+.intro-stars .star:nth-child(1) { width: 2px; height: 2px; top: 10%; left: 6%; animation: twinkle 3.2s ease-in-out infinite; }
+.intro-stars .star:nth-child(2) { width: 2px; height: 2px; top: 22%; left: 88%; animation: twinkle 2.6s ease-in-out infinite 0.6s; }
+.intro-stars .star:nth-child(3) { width: 2px; height: 2px; top: 50%; left: 3%; animation: twinkle 3.8s ease-in-out infinite 1.4s; }
+.intro-stars .star:nth-child(4) { width: 2px; height: 2px; top: 68%; left: 94%; animation: twinkle 2.8s ease-in-out infinite 0.3s; }
+.intro-stars .star:nth-child(5) { width: 2px; height: 2px; top: 38%; left: 97%; animation: twinkle 3.4s ease-in-out infinite 0.9s; }
+.intro-stars .star:nth-child(6) { width: 2px; height: 2px; top: 82%; left: 12%; animation: twinkle 2.4s ease-in-out infinite 1.8s; }
+.intro-stars .star:nth-child(7) { width: 2px; height: 2px; top: 12%; left: 48%; animation: twinkle 4.2s ease-in-out infinite 0.2s; }
+.intro-stars .star:nth-child(8) { width: 2px; height: 2px; top: 58%; left: 45%; animation: twinkle 2.8s ease-in-out infinite 1.1s; }
+.intro-stars .star:nth-child(9) { width: 2px; height: 2px; top: 90%; left: 75%; animation: twinkle 3.0s ease-in-out infinite 0.7s; }
+.intro-stars .star:nth-child(10) { width: 2px; height: 2px; top: 32%; left: 15%; animation: twinkle 3.6s ease-in-out infinite 2.0s; }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.10; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.4); }
+  0%, 100% { opacity: 0.08; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
 }
 
-/* ---- 涟漪容器 ---- */
-.ripple-container {
+/* ---- Canvas 涟漪 ---- */
+#ripple-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
+  display: block;
   pointer-events: none;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  animation: rippleContainerFade 5.8s ease forwards;
-}
-@keyframes rippleContainerFade {
-  0%, 30% { opacity: 0; }
-  36% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-/* ---- 涟漪发射点（中心光晕） ---- */
-.ripple-center {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(232, 163, 61, 0.5) 0%, rgba(232, 163, 61, 0.15) 40%, rgba(232, 163, 61, 0) 80%);
-  opacity: 0;
-  animation: centerPulse 2.8s ease 0.3s forwards;
-  z-index: 1;
-}
-@keyframes centerPulse {
-  0% { opacity: 0; transform: scale(0.3); }
-  25% { opacity: 1; transform: scale(1.4); }
-  60% { opacity: 0.5; transform: scale(3); }
-  100% { opacity: 0; transform: scale(5); }
-}
-
-/* ---- 涟漪波纹（6层，连续发射） ---- */
-.ripple-ring {
-  position: absolute;
-  border-radius: 50%;
-  border-style: solid;
-  border-color: rgba(232, 163, 61, 0.5);
-  box-shadow: 0 0 40px rgba(232, 163, 61, 0.04), inset 0 0 40px rgba(232, 163, 61, 0.02);
-  animation: rippleExpand 3.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
-  transform: translate(-50%, -50%) scale(0);
-  top: 50%;
-  left: 50%;
-}
-/* 每层的延迟和透明度递减 */
-.ripple-ring:nth-child(1) {
-  animation-delay: 0.0s;
-  border-color: rgba(232, 163, 61, 0.55);
-  border-width: 2.5px;
-}
-.ripple-ring:nth-child(2) {
-  animation-delay: 0.35s;
-  border-color: rgba(232, 163, 61, 0.40);
-  border-width: 2px;
-}
-.ripple-ring:nth-child(3) {
-  animation-delay: 0.70s;
-  border-color: rgba(232, 163, 61, 0.28);
-  border-width: 1.5px;
-}
-.ripple-ring:nth-child(4) {
-  animation-delay: 1.05s;
-  border-color: rgba(232, 163, 61, 0.18);
-  border-width: 1.2px;
-}
-.ripple-ring:nth-child(5) {
-  animation-delay: 1.40s;
-  border-color: rgba(232, 163, 61, 0.10);
-  border-width: 1px;
-}
-.ripple-ring:nth-child(6) {
-  animation-delay: 1.75s;
-  border-color: rgba(232, 163, 61, 0.06);
-  border-width: 0.8px;
-}
-
-@keyframes rippleExpand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0.9;
-  }
-  15% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(5.5);
-    opacity: 0;
-  }
-}
-
-/* ---- 涟漪上的细小光点（模拟水花） ---- */
-.ripple-sparkle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(232, 163, 61, 0.3);
-  opacity: 0;
-  z-index: 1;
-  animation: sparkleFloat 2.4s ease forwards;
-}
-.ripple-sparkle:nth-child(7) { top: 44%; left: 44%; width: 4px; height: 4px; animation-delay: 0.6s; }
-.ripple-sparkle:nth-child(8) { top: 54%; left: 52%; width: 3px; height: 3px; animation-delay: 0.8s; }
-.ripple-sparkle:nth-child(9) { top: 48%; left: 56%; width: 5px; height: 5px; animation-delay: 1.0s; }
-.ripple-sparkle:nth-child(10) { top: 56%; left: 44%; width: 3px; height: 3px; animation-delay: 1.2s; }
-.ripple-sparkle:nth-child(11) { top: 42%; left: 54%; width: 4px; height: 4px; animation-delay: 1.4s; }
-@keyframes sparkleFloat {
-  0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
-  30% { opacity: 0.8; transform: translate(-10px, -14px) scale(1); }
-  70% { opacity: 0.4; transform: translate(8px, -24px) scale(0.7); }
-  100% { opacity: 0; transform: translate(0, -34px) scale(0.2); }
 }
 
 /* ---- 底部文字 ---- */
@@ -246,11 +165,11 @@ a{ color:inherit; text-decoration:none; }
   font-size: 0.6rem;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.08);
   z-index: 4;
   pointer-events: none;
   opacity: 0;
-  animation: captionFade 2.4s ease 2.8s forwards;
+  animation: captionFade 2.4s ease 3.2s forwards;
 }
 @keyframes captionFade {
   0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
@@ -258,15 +177,6 @@ a{ color:inherit; text-decoration:none; }
 }
 @media (max-width: 640px) {
   #intro-caption { font-size: 0.45rem; bottom: 50px; }
-  @keyframes rippleExpand {
-    100% { transform: translate(-50%, -50%) scale(3.8); }
-  }
-  .ripple-ring:nth-child(1) { border-width: 2px; }
-  .ripple-ring:nth-child(2) { border-width: 1.5px; }
-  .ripple-ring:nth-child(3) { border-width: 1.2px; }
-  .ripple-ring:nth-child(4) { border-width: 1px; }
-  .ripple-ring:nth-child(5) { border-width: 0.8px; }
-  .ripple-ring:nth-child(6) { border-width: 0.6px; }
 }
 
 /* ============================================================
@@ -314,7 +224,7 @@ a{ color:inherit; text-decoration:none; }
 .hero h1 .char.delay-20 { transition-delay: 1.00s; }
 
 /* ============================================================
-   持续飘落物（保留少量，增加气氛）
+   持续飘落物（少量）
    ============================================================ */
 
 .falling-container {
@@ -330,7 +240,7 @@ a{ color:inherit; text-decoration:none; }
 .falling-item {
   position: absolute;
   top: -60px;
-  opacity: 0.4;
+  opacity: 0.3;
   will-change: transform;
   pointer-events: none;
   animation: fall linear infinite;
@@ -343,11 +253,11 @@ a{ color:inherit; text-decoration:none; }
 @keyframes fall {
   0% {
     transform: translateY(0) rotate(0deg);
-    opacity: 0.4;
+    opacity: 0.3;
   }
   100% {
     transform: translateY(110vh) rotate(720deg);
-    opacity: 0.05;
+    opacity: 0.03;
   }
 }
 
@@ -461,11 +371,15 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <body>
 
 <!-- ============================================================
-   开幕动画：纯涟漪
+   开幕动画：浮世绘海浪涟漪
    ============================================================ -->
 
 <div id="intro-overlay">
-  <!-- 背景星光 -->
+  <!-- 背景 -->
+  <div class="intro-bg">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+  </div>
   <div class="intro-stars">
     <span class="star"></span><span class="star"></span><span class="star"></span>
     <span class="star"></span><span class="star"></span><span class="star"></span>
@@ -473,21 +387,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <span class="star"></span>
   </div>
 
-  <!-- 涟漪 -->
-  <div class="ripple-container">
-    <div class="ripple-center"></div>
-    <div class="ripple-ring"></div>
-    <div class="ripple-ring"></div>
-    <div class="ripple-ring"></div>
-    <div class="ripple-ring"></div>
-    <div class="ripple-ring"></div>
-    <div class="ripple-ring"></div>
-    <div class="ripple-sparkle"></div>
-    <div class="ripple-sparkle"></div>
-    <div class="ripple-sparkle"></div>
-    <div class="ripple-sparkle"></div>
-    <div class="ripple-sparkle"></div>
-  </div>
+  <!-- 涟漪 Canvas -->
+  <canvas id="ripple-canvas"></canvas>
 
   <!-- 底部文字 -->
   <div id="intro-caption">—— 涟漪 ——</div>
@@ -620,7 +521,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </div><!-- .page-content -->
 
 <!-- ============================================================
-   持续飘落物（少量，增加气氛）
+   持续飘落物
    ============================================================ -->
 
 <div class="falling-container" id="falling-container"></div>
@@ -636,13 +537,352 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 1. 开幕动画时序控制
+// 浮世绘海浪涟漪（Canvas 绘制）
 // ============================================================
 
 (function() {
   var overlay = document.getElementById('intro-overlay');
+  var canvas = document.getElementById('ripple-canvas');
+  var ctx = canvas.getContext('2d');
   var pageContent = document.getElementById('page-content');
 
+  // ===== 尺寸 =====
+  var W, H, cx, cy, maxR;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cx = W / 2;
+    cy = H * 0.55;
+    maxR = Math.max(W, H) * 0.75;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ===== 配置 =====
+  var NUM_RINGS = 7;
+  var WAVES_PER_RING = 10;
+  var RING_DELAY = 0.28; // 每层延迟（秒）
+  var TOTAL_DURATION = 4.0; // 总时长
+  var startTime = null;
+  var animId = null;
+
+  // ===== 绘制单个浪尖（浮世绘风格） =====
+  function drawWaveCrest(ctx, ox, oy, radius, angle, progress, ringProgress, idx) {
+    var baseLen = radius * 0.18 * (0.85 + 0.15 * Math.sin(angle * 2 + idx));
+    var len = baseLen * (0.6 + 0.4 * ringProgress);
+    var spread = 0.4 + 0.15 * Math.sin(angle * 3 + idx * 0.7);
+
+    // 方向
+    var dirX = Math.cos(angle);
+    var dirY = Math.sin(angle);
+    var perpX = -Math.sin(angle);
+    var perpY = Math.cos(angle);
+
+    // 起点（环上）
+    var sx = ox + radius * dirX;
+    var sy = oy + radius * dirY;
+
+    // 浪尖顶点（向外延伸 + 横向偏移制造卷曲感）
+    var tipR = radius + len;
+    var tipAngle = angle + 0.25 * spread * (1 - ringProgress * 0.3);
+    var tx = ox + tipR * Math.cos(tipAngle);
+    var ty = oy + tipR * Math.sin(tipAngle);
+
+    // 卷曲控制点（向内回卷）
+    var curlR = radius + len * 0.5;
+    var curlAngle = angle + 0.7 * spread * (1 + ringProgress * 0.2);
+    var cx2 = ox + curlR * Math.cos(curlAngle);
+    var cy2 = oy + curlR * Math.sin(curlAngle);
+
+    // 内卷终点（回到环内侧）
+    var innerR = radius - len * 0.15;
+    var innerAngle = angle + 0.9 * spread * (1 + ringProgress * 0.1);
+    var ix = ox + innerR * Math.cos(innerAngle);
+    var iy = oy + innerR * Math.sin(innerAngle);
+
+    // ---- 绘制主浪 ----
+    var alpha = 0.6 * (1 - ringProgress * 0.7);
+    var lineW = 2.2 * (1 - ringProgress * 0.5) * (0.8 + 0.2 * Math.sin(angle * 2 + idx));
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = 'rgba(232, 163, 61, 0.9)';
+    ctx.lineWidth = lineW;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // 主浪：从环上到浪尖（带卷曲）
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.quadraticCurveTo(
+      sx + (tx - sx) * 0.4 + perpX * len * 0.15,
+      sy + (ty - sy) * 0.4 + perpY * len * 0.15,
+      tx, ty
+    );
+    // 卷曲回环
+    ctx.quadraticCurveTo(
+      tx + (cx2 - tx) * 0.3 + perpX * len * 0.08,
+      ty + (cy2 - ty) * 0.3 + perpY * len * 0.08,
+      cx2, cy2
+    );
+    ctx.stroke();
+
+    // ---- 浪尖的细小分支（飞沫感） ----
+    if (ringProgress > 0.3 && ringProgress < 0.8) {
+      var branchAlpha = 0.2 * (1 - Math.abs(ringProgress - 0.55) * 2);
+      ctx.globalAlpha = alpha * branchAlpha * 1.2;
+      ctx.lineWidth = lineW * 0.3;
+
+      // 分支1（外侧）
+      var b1Angle = tipAngle + 0.4 + 0.2 * Math.sin(idx * 1.3);
+      var b1Len = len * 0.25 * (0.6 + 0.4 * Math.sin(angle * 2 + idx * 1.7));
+      var b1x = tx + b1Len * Math.cos(b1Angle);
+      var b1y = ty + b1Len * Math.sin(b1Angle);
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.quadraticCurveTo(
+        tx + (b1x - tx) * 0.4 + perpX * len * 0.05,
+        ty + (b1y - ty) * 0.4 + perpY * len * 0.05,
+        b1x, b1y
+      );
+      ctx.stroke();
+
+      // 分支2（内侧）
+      var b2Angle = tipAngle - 0.4 - 0.2 * Math.sin(idx * 1.7 + 0.5);
+      var b2Len = len * 0.2 * (0.5 + 0.5 * Math.cos(angle * 2 + idx * 1.3));
+      var b2x = tx + b2Len * Math.cos(b2Angle);
+      var b2y = ty + b2Len * Math.sin(b2Angle);
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.quadraticCurveTo(
+        tx + (b2x - tx) * 0.4 - perpX * len * 0.04,
+        ty + (b2y - ty) * 0.4 - perpY * len * 0.04,
+        b2x, b2y
+      );
+      ctx.stroke();
+    }
+
+    // ---- 浪尖末端光点 ----
+    if (ringProgress > 0.2 && ringProgress < 0.7) {
+      var dotAlpha = 0.15 * (1 - Math.abs(ringProgress - 0.45) * 2.5);
+      if (dotAlpha > 0.01) {
+        ctx.globalAlpha = dotAlpha * 0.8;
+        ctx.fillStyle = 'rgba(232, 200, 120, 0.6)';
+        ctx.beginPath();
+        ctx.arc(tx, ty, 1.5 + 2 * (1 - ringProgress), 0, Math.PI * 2);
+        ctx.fill();
+        // 第二光点
+        ctx.globalAlpha = dotAlpha * 0.4;
+        ctx.beginPath();
+        ctx.arc(tx + perpX * 3 * (1 - ringProgress), ty + perpY * 3 * (1 - ringProgress), 2 + 3 * (1 - ringProgress), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    ctx.restore();
+
+    // ---- 金色光晕（浪尖周围的辉光） ----
+    if (ringProgress > 0.1 && ringProgress < 0.6) {
+      var glowAlpha = 0.03 * (1 - ringProgress * 1.5);
+      if (glowAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = glowAlpha;
+        var grad = ctx.createRadialGradient(tx, ty, 0, tx, ty, len * 0.6);
+        grad.addColorStop(0, 'rgba(232, 163, 61, 0.3)');
+        grad.addColorStop(1, 'rgba(232, 163, 61, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(tx, ty, len * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+  }
+
+  // ===== 绘制单层涟漪 =====
+  function drawRing(ctx, ringIdx, progress) {
+    // progress: 0→1 表示该层从出现到消失
+    if (progress <= 0 || progress > 1) return;
+
+    var radius = progress * maxR * 0.85;
+    if (radius < 2) return;
+
+    var alpha = 0.8 * (1 - progress * 0.8);
+    if (alpha < 0.01) return;
+
+    // 绘制主环（半透明金色环）
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.15;
+    ctx.strokeStyle = 'rgba(232, 163, 61, 0.5)';
+    ctx.lineWidth = 1.5 * (1 - progress * 0.4);
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // 绘制浪尖
+    var ringProgress = progress;
+    var count = WAVES_PER_RING + Math.floor(ringIdx * 0.5);
+
+    for (var i = 0; i < count; i++) {
+      var angle = (i / count) * Math.PI * 2 + ringIdx * 0.15;
+      drawWaveCrest(ctx, cx, cy, radius, angle, ringIdx / NUM_RINGS, ringProgress, i);
+    }
+
+    // 绘制内圈细环（增加层次）
+    if (progress > 0.05 && progress < 0.6) {
+      var innerAlpha = alpha * 0.08 * (1 - progress * 1.2);
+      if (innerAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = innerAlpha;
+        ctx.strokeStyle = 'rgba(232, 200, 140, 0.3)';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * 0.92, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // 环上的微小光点
+    if (progress > 0.05 && progress < 0.5) {
+      var dotAlpha = 0.04 * (1 - progress * 1.5);
+      if (dotAlpha > 0.005) {
+        ctx.save();
+        ctx.globalAlpha = dotAlpha;
+        for (var i = 0; i < 20; i++) {
+          var a = (i / 20) * Math.PI * 2 + ringIdx * 0.3;
+          var rOff = radius * (0.98 + 0.02 * Math.sin(i * 1.7 + ringIdx));
+          var dx = cx + rOff * Math.cos(a);
+          var dy = cy + rOff * Math.sin(a);
+          ctx.fillStyle = 'rgba(232, 200, 140, 0.5)';
+          ctx.beginPath();
+          ctx.arc(dx, dy, 0.5 + 0.8 * (1 - progress), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+  }
+
+  // ===== 动画循环 =====
+  function animate(time) {
+    if (!startTime) startTime = time;
+    var elapsed = (time - startTime) / 1000;
+
+    // 清空画布（完全透明）
+    ctx.clearRect(0, 0, W, H);
+
+    // 绘制所有涟漪层
+    for (var i = 0; i < NUM_RINGS; i++) {
+      var progress = (elapsed - i * RING_DELAY) / TOTAL_DURATION;
+      drawRing(ctx, i, progress);
+    }
+
+    // 判断是否结束
+    var allDone = true;
+    for (var i = 0; i < NUM_RINGS; i++) {
+      var p = (elapsed - i * RING_DELAY) / TOTAL_DURATION;
+      if (p < 1.0) allDone = false;
+    }
+
+    if (allDone && elapsed > TOTAL_DURATION + NUM_RINGS * RING_DELAY + 0.5) {
+      // 动画完成
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      // 触发页面显现
+      showPage();
+      return;
+    }
+
+    animId = requestAnimationFrame(animate);
+  }
+
+  // ===== 显示页面 =====
+  var pageShown = false;
+
+  function showPage() {
+    if (pageShown) return;
+    pageShown = true;
+
+    pageContent.classList.add('visible');
+    setTimeout(function() {
+      overlay.classList.add('hidden');
+      setTimeout(function() {
+        overlay.style.display = 'none';
+        // 释放Canvas资源
+        if (canvas) {
+          canvas.width = 0;
+          canvas.height = 0;
+        }
+      }, 1800);
+    }, 400);
+
+    // 触发标题显现
+    setTimeout(triggerTitleReveal, 600);
+  }
+
+  // ===== 标题逐字显现 =====
+  function triggerTitleReveal() {
+    var titleEl = document.getElementById('hero-title');
+    if (!titleEl || titleEl.dataset.split) return;
+
+    var parts = [];
+    var emContent = titleEl.querySelector('em');
+    var fullText = titleEl.textContent;
+    var emText = emContent ? emContent.textContent : '';
+
+    if (emContent) {
+      var before = fullText.split(emText)[0] || '';
+      var after = fullText.split(emText)[1] || '';
+      parts.push({ type: 'text', content: before });
+      parts.push({ type: 'em', content: emText });
+      parts.push({ type: 'text', content: after });
+    } else {
+      parts.push({ type: 'text', content: fullText });
+    }
+
+    var finalHtml = '';
+    var charIdx = 0;
+    parts.forEach(function(part) {
+      if (part.type === 'text') {
+        for (var i = 0; i < part.content.length; i++) {
+          var ch = part.content[i];
+          if (ch === ' ' || ch === '\n' || ch === '\r') {
+            finalHtml += ch;
+          } else {
+            var cls = 'char delay-' + Math.min(charIdx + 1, 20);
+            finalHtml += '<span class="' + cls + '">' + ch + '</span>';
+            charIdx++;
+          }
+        }
+      } else if (part.type === 'em') {
+        finalHtml += '<em>';
+        for (var i = 0; i < part.content.length; i++) {
+          var ch = part.content[i];
+          var cls = 'char delay-' + Math.min(charIdx + 1, 20);
+          finalHtml += '<span class="' + cls + '">' + ch + '</span>';
+          charIdx++;
+        }
+        finalHtml += '</em>';
+      }
+    });
+
+    titleEl.innerHTML = finalHtml;
+    titleEl.dataset.split = '1';
+
+    var chars = titleEl.querySelectorAll('.char');
+    chars.forEach(function(el, index) {
+      setTimeout(function() {
+        el.classList.add('reveal');
+      }, index * 45);
+    });
+  }
+
+  // ===== 启动 =====
   if (sessionStorage.getItem('intro_ripple_shown')) {
     overlay.classList.add('skip');
     pageContent.classList.add('visible');
@@ -657,83 +897,19 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
   sessionStorage.setItem('intro_ripple_shown', '1');
 
-  // 涟漪开始扩散后，页面逐步显现
-  setTimeout(function() {
-    pageContent.classList.add('visible');
-  }, 4800);
-
-  setTimeout(function() {
-    overlay.classList.add('hidden');
-  }, 5600);
-
-  setTimeout(function() {
-    triggerTitleReveal();
-  }, 5200);
+  // 等待一帧确保尺寸正确
+  requestAnimationFrame(function() {
+    // 稍微延迟，让页面渲染完成
+    setTimeout(function() {
+      startTime = null;
+      animId = requestAnimationFrame(animate);
+    }, 100);
+  });
 
 })();
 
 // ============================================================
-// 2. 标题逐字显现
-// ============================================================
-
-function triggerTitleReveal() {
-  var titleEl = document.getElementById('hero-title');
-  if (!titleEl || titleEl.dataset.split) return;
-
-  var parts = [];
-  var emContent = titleEl.querySelector('em');
-  var fullText = titleEl.textContent;
-  var emText = emContent ? emContent.textContent : '';
-
-  if (emContent) {
-    var before = fullText.split(emText)[0] || '';
-    var after = fullText.split(emText)[1] || '';
-    parts.push({ type: 'text', content: before });
-    parts.push({ type: 'em', content: emText });
-    parts.push({ type: 'text', content: after });
-  } else {
-    parts.push({ type: 'text', content: fullText });
-  }
-
-  var finalHtml = '';
-  var charIdx = 0;
-  parts.forEach(function(part) {
-    if (part.type === 'text') {
-      for (var i = 0; i < part.content.length; i++) {
-        var ch = part.content[i];
-        if (ch === ' ' || ch === '\n' || ch === '\r') {
-          finalHtml += ch;
-        } else {
-          var cls = 'char delay-' + Math.min(charIdx + 1, 20);
-          finalHtml += '<span class="' + cls + '">' + ch + '</span>';
-          charIdx++;
-        }
-      }
-    } else if (part.type === 'em') {
-      finalHtml += '<em>';
-      for (var i = 0; i < part.content.length; i++) {
-        var ch = part.content[i];
-        var cls = 'char delay-' + Math.min(charIdx + 1, 20);
-        finalHtml += '<span class="' + cls + '">' + ch + '</span>';
-        charIdx++;
-      }
-      finalHtml += '</em>';
-    }
-  });
-
-  titleEl.innerHTML = finalHtml;
-  titleEl.dataset.split = '1';
-
-  var chars = titleEl.querySelectorAll('.char');
-  chars.forEach(function(el, index) {
-    setTimeout(function() {
-      el.classList.add('reveal');
-    }, index * 45);
-  });
-}
-
-// ============================================================
-// 3. 持续飘落物（少量）
+// 持续飘落物
 // ============================================================
 
 (function() {
@@ -811,7 +987,7 @@ function triggerTitleReveal() {
 })();
 
 // ============================================================
-// 4. 原有功能
+// 原有功能
 // ============================================================
 
 (function(){
