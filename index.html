@@ -57,19 +57,280 @@ body{
   line-height:1.6;
   overflow-x:hidden;
   transition: background 0.3s ease, color 0.3s ease;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-body.loaded {
-  opacity: 1;
 }
 img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
 /* ============================================================
-   标题文字逐字显现
+   开幕动画遮罩
    ============================================================ */
+
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0d0c0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.6s ease;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+}
+#intro-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+#intro-overlay.skip {
+  display: none;
+}
+
+/* ---- 背景星光 ---- */
+.intro-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.intro-stars .star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+.intro-stars .star:nth-child(1) { top: 12%; left: 8%; animation: twinkle 3s ease-in-out infinite; }
+.intro-stars .star:nth-child(2) { top: 25%; left: 85%; animation: twinkle 2.4s ease-in-out infinite 0.5s; }
+.intro-stars .star:nth-child(3) { top: 55%; left: 5%; animation: twinkle 3.6s ease-in-out infinite 1.2s; }
+.intro-stars .star:nth-child(4) { top: 70%; left: 92%; animation: twinkle 2.8s ease-in-out infinite 0.3s; }
+.intro-stars .star:nth-child(5) { top: 40%; left: 95%; animation: twinkle 3.2s ease-in-out infinite 0.8s; }
+.intro-stars .star:nth-child(6) { top: 85%; left: 15%; animation: twinkle 2.2s ease-in-out infinite 1.6s; }
+.intro-stars .star:nth-child(7) { top: 15%; left: 50%; animation: twinkle 4s ease-in-out infinite 0.2s; }
+.intro-stars .star:nth-child(8) { top: 60%; left: 48%; animation: twinkle 2.6s ease-in-out infinite 1.0s; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.3); }
+}
+
+/* ============================================================
+   羽毛飘落
+   ============================================================ */
+
+#feather {
+  position: absolute;
+  top: 8%;
+  left: 85%;
+  width: 48px;
+  height: auto;
+  opacity: 0;
+  z-index: 3;
+  transform-origin: center center;
+  filter: drop-shadow(0 0 30px rgba(232, 163, 61, 0.08));
+  animation: featherFall 3.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+#feather .feather-body {
+  fill: url(#featherGrad);
+}
+#feather .feather-vein {
+  stroke: #d4c8b8;
+  stroke-width: 0.6;
+  fill: none;
+}
+#feather .feather-barbs {
+  stroke: #c4b8a8;
+  stroke-width: 0.4;
+  fill: none;
+  opacity: 0.6;
+}
+@keyframes featherFall {
+  0% {
+    top: 8%;
+    left: 85%;
+    opacity: 0;
+    transform: translate(0, 0) rotate(-8deg) scale(0.7);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(-3deg) scale(1);
+  }
+  40% {
+    top: 32%;
+    left: 70%;
+    transform: translate(-30px, 0) rotate(6deg) scale(1.02);
+  }
+  65% {
+    top: 52%;
+    left: 58%;
+    transform: translate(20px, 0) rotate(-4deg) scale(0.98);
+  }
+  85% {
+    top: 65%;
+    left: 50%;
+    transform: translate(-10px, 0) rotate(3deg) scale(1);
+  }
+  100% {
+    top: 72%;
+    left: 48%;
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+}
+
+/* 羽毛轻微摆动（叠加） */
+#feather .sway {
+  animation: featherSway 2.4s ease-in-out infinite alternate;
+}
+@keyframes featherSway {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(4deg); }
+}
+
+/* ============================================================
+   金色涟漪（纯 CSS）
+   ============================================================ */
+
+.ripple-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation: rippleContainer 5s ease forwards;
+}
+@keyframes rippleContainer {
+  0%, 30% { opacity: 0; }
+  35% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.ripple-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  border: 1.5px solid rgba(232, 163, 61, 0.5);
+  box-shadow: 0 0 30px rgba(232, 163, 61, 0.05), inset 0 0 30px rgba(232, 163, 61, 0.02);
+  animation: rippleExpand 2.6s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+}
+.ripple-ring:nth-child(1) { animation-delay: 0.0s; border-color: rgba(232, 163, 61, 0.5); }
+.ripple-ring:nth-child(2) { animation-delay: 0.35s; border-color: rgba(232, 163, 61, 0.35); }
+.ripple-ring:nth-child(3) { animation-delay: 0.70s; border-color: rgba(232, 163, 61, 0.20); }
+.ripple-ring:nth-child(4) { animation-delay: 1.05s; border-color: rgba(232, 163, 61, 0.10); }
+
+@keyframes rippleExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.9;
+    border-width: 2px;
+  }
+  40% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(4.5);
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+
+/* 中心光晕（涟漪源头） */
+.ripple-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 163, 61, 0.4) 0%, rgba(232, 163, 61, 0) 80%);
+  opacity: 0;
+  animation: centerGlow 2.2s ease 0.2s forwards;
+  z-index: 1;
+}
+@keyframes centerGlow {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  70% { opacity: 0.6; transform: translate(-50%, -50%) scale(2.5); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(4); }
+}
+
+/* ============================================================
+   底部文字
+   ============================================================ */
+
+#intro-caption {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.12);
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  animation: captionFade 2s ease 2.2s forwards;
+}
+@keyframes captionFade {
+  0% { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ---- 移动端适配 ---- */
+@media (max-width: 640px) {
+  #feather {
+    width: 32px;
+    top: 6%;
+    left: 78%;
+  }
+  @keyframes featherFall {
+    0% {
+      top: 6%;
+      left: 78%;
+      opacity: 0;
+      transform: translate(0, 0) rotate(-8deg) scale(0.7);
+    }
+    10% { opacity: 1; transform: translate(0, 0) rotate(-3deg) scale(1); }
+    40% { top: 30%; left: 62%; transform: translate(-20px, 0) rotate(6deg) scale(1.02); }
+    65% { top: 50%; left: 52%; transform: translate(15px, 0) rotate(-4deg) scale(0.98); }
+    85% { top: 62%; left: 48%; transform: translate(-8px, 0) rotate(3deg) scale(1); }
+    100% { top: 68%; left: 46%; opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+  }
+  #intro-caption {
+    font-size: 0.45rem;
+    bottom: 50px;
+  }
+  .ripple-ring {
+    border-width: 1px;
+  }
+  @keyframes rippleExpand {
+    100% { transform: translate(-50%, -50%) scale(3.2); }
+  }
+}
+
+/* ============================================================
+   首页内容（淡入）
+   ============================================================ */
+
+.page-content {
+  opacity: 0;
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.page-content.visible {
+  opacity: 1;
+}
+
+/* ---- 标题文字逐字显现（在主页内） ---- */
 .hero h1 .char {
   display: inline-block;
   opacity: 0;
@@ -102,8 +363,9 @@ a{ color:inherit; text-decoration:none; }
 .hero h1 .char.delay-20 { transition-delay: 1.00s; }
 
 /* ============================================================
-   飘落物（精简版）
+   飘落物（持续）
    ============================================================ */
+
 .falling-container {
   position: fixed;
   top: 0;
@@ -117,7 +379,7 @@ a{ color:inherit; text-decoration:none; }
 .falling-item {
   position: absolute;
   top: -60px;
-  opacity: 0.6;
+  opacity: 0.5;
   will-change: transform;
   pointer-events: none;
   animation: fall linear infinite;
@@ -127,20 +389,19 @@ a{ color:inherit; text-decoration:none; }
   width: 100%;
   height: 100%;
 }
-
 @keyframes fall {
   0% {
     transform: translateY(0) rotate(0deg);
-    opacity: 0.6;
+    opacity: 0.5;
   }
   100% {
     transform: translateY(110vh) rotate(720deg);
-    opacity: 0.2;
+    opacity: 0.1;
   }
 }
 
 /* ============================================================
-   原有样式（保持不变）
+   原有样式
    ============================================================ */
 
 header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
@@ -248,8 +509,86 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </head>
 <body>
 
-<!-- ===== 飘落物容器 ===== -->
-<div class="falling-container" id="falling-container"></div>
+<!-- ============================================================
+   开幕动画：羽毛 + 涟漪
+   ============================================================ -->
+
+<div id="intro-overlay">
+  <!-- 背景星光 -->
+  <div class="intro-stars">
+    <span class="star"></span>
+    <span class="star"></span>
+    <span class="star"></span>
+    <span class="star"></span>
+    <span class="star"></span>
+    <span class="star"></span>
+    <span class="star"></span>
+    <span class="star"></span>
+  </div>
+
+  <!-- 羽毛 -->
+  <svg id="feather" viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="featherGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#f5f0eb"/>
+        <stop offset="40%" stop-color="#ede8e0"/>
+        <stop offset="70%" stop-color="#e8e2da"/>
+        <stop offset="100%" stop-color="#d4c8b8"/>
+      </linearGradient>
+    </defs>
+    <path class="feather-body" d="
+      M40,2
+      C55,10 68,30 70,55
+      C72,80 65,105 55,125
+      C48,138 44,148 40,158
+      C36,148 32,138 25,125
+      C15,105 8,80 10,55
+      C12,30 25,10 40,2Z
+    "/>
+    <path class="feather-vein" d="M40,2 L40,158"/>
+    <path class="feather-barbs" d="
+      M40,12 L25,20
+      M40,22 L18,32
+      M40,32 L14,46
+      M40,42 L12,60
+      M40,52 L14,74
+      M40,62 L18,88
+      M40,72 L24,100
+      M40,82 L30,112
+      M40,92 L36,122
+    "/>
+    <path class="feather-barbs" d="
+      M40,12 L55,20
+      M40,22 L62,32
+      M40,32 L66,46
+      M40,42 L68,60
+      M40,52 L66,74
+      M40,62 L62,88
+      M40,72 L56,100
+      M40,82 L50,112
+      M40,92 L44,122
+    "/>
+    <path d="M40,15 L40,140" stroke="rgba(232,163,61,0.08)" stroke-width="3" fill="none"/>
+  </svg>
+
+  <!-- 涟漪 -->
+  <div class="ripple-container">
+    <div class="ripple-center"></div>
+    <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+  </div>
+
+  <!-- 底部文字 -->
+  <div id="intro-caption">—— 羽落 · 涟漪 ——</div>
+</div>
+
+<!-- ============================================================
+   首页内容
+   ============================================================ -->
+
+<div class="page-content" id="page-content">
 
 <header>
   <div class="wrap">
@@ -293,7 +632,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   </a>
 </nav>
 
-<!-- 主题切换器 -->
 <div class="side-theme" id="theme-side">
   <button class="theme-btn" data-theme="light" aria-label="日间模式">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -370,6 +708,14 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <footer>© 2026 水告示阳 · 保留所有权利</footer>
 
+</div><!-- .page-content -->
+
+<!-- ============================================================
+   飘落物（持续循环）
+   ============================================================ -->
+
+<div class="falling-container" id="falling-container"></div>
+
 <audio id="bg-music" loop preload="none">
   <source src="music/background.mp3" type="audio/mpeg">
 </audio>
@@ -381,150 +727,197 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <script>
 // ============================================================
-// 1. 页面淡入 + 标题逐字显现 + 飘落物
+// 1. 开幕动画时序控制
 // ============================================================
 
 (function() {
-  // ---- 页面淡入 ----
-  document.body.classList.add('loaded');
+  var overlay = document.getElementById('intro-overlay');
+  var pageContent = document.getElementById('page-content');
 
-  // ---- 标题逐字显现 ----
+  // 如果已经播放过，直接跳过
+  if (sessionStorage.getItem('intro_ripple_shown')) {
+    overlay.classList.add('skip');
+    pageContent.classList.add('visible');
+    return;
+  }
+
+  // 如果用户偏好减少动画，跳过
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    overlay.classList.add('skip');
+    pageContent.classList.add('visible');
+    return;
+  }
+
+  // 标记已播放
+  sessionStorage.setItem('intro_ripple_shown', '1');
+
+  // 时序：
+  // 0s: 开始飘落
+  // 3.8s: 羽毛到达中心
+  // 4.2s: 涟漪开始扩散
+  // 6.8s: 涟漪结束
+  // 7.0s: 遮罩开始淡出，首页淡入
+  // 8.6s: 遮罩完全消失
+
+  // 在羽毛落地后（约4s）触发首页显现
+  setTimeout(function() {
+    pageContent.classList.add('visible');
+  }, 4800);
+
+  // 遮罩淡出（比首页稍晚一点，让涟漪先扩散）
+  setTimeout(function() {
+    overlay.classList.add('hidden');
+  }, 5600);
+
+  // 标题逐字显现（由后续脚本触发，延迟到页面可见后）
+  setTimeout(function() {
+    triggerTitleReveal();
+  }, 5200);
+
+})();
+
+// ============================================================
+// 2. 标题逐字显现
+// ============================================================
+
+function triggerTitleReveal() {
   var titleEl = document.getElementById('hero-title');
-  if (titleEl && !titleEl.dataset.split) {
-    var parts = [];
-    var emContent = titleEl.querySelector('em');
-    var fullText = titleEl.textContent;
-    var emText = emContent ? emContent.textContent : '';
+  if (!titleEl || titleEl.dataset.split) return;
 
-    if (emContent) {
-      var before = fullText.split(emText)[0] || '';
-      var after = fullText.split(emText)[1] || '';
-      parts.push({ type: 'text', content: before });
-      parts.push({ type: 'em', content: emText });
-      parts.push({ type: 'text', content: after });
-    } else {
-      parts.push({ type: 'text', content: fullText });
-    }
+  var parts = [];
+  var emContent = titleEl.querySelector('em');
+  var fullText = titleEl.textContent;
+  var emText = emContent ? emContent.textContent : '';
 
-    var finalHtml = '';
-    var charIdx = 0;
-    parts.forEach(function(part) {
-      if (part.type === 'text') {
-        for (var i = 0; i < part.content.length; i++) {
-          var ch = part.content[i];
-          if (ch === ' ' || ch === '\n' || ch === '\r') {
-            finalHtml += ch;
-          } else {
-            var cls = 'char delay-' + Math.min(charIdx + 1, 20);
-            finalHtml += '<span class="' + cls + '">' + ch + '</span>';
-            charIdx++;
-          }
-        }
-      } else if (part.type === 'em') {
-        finalHtml += '<em>';
-        for (var i = 0; i < part.content.length; i++) {
-          var ch = part.content[i];
+  if (emContent) {
+    var before = fullText.split(emText)[0] || '';
+    var after = fullText.split(emText)[1] || '';
+    parts.push({ type: 'text', content: before });
+    parts.push({ type: 'em', content: emText });
+    parts.push({ type: 'text', content: after });
+  } else {
+    parts.push({ type: 'text', content: fullText });
+  }
+
+  var finalHtml = '';
+  var charIdx = 0;
+  parts.forEach(function(part) {
+    if (part.type === 'text') {
+      for (var i = 0; i < part.content.length; i++) {
+        var ch = part.content[i];
+        if (ch === ' ' || ch === '\n' || ch === '\r') {
+          finalHtml += ch;
+        } else {
           var cls = 'char delay-' + Math.min(charIdx + 1, 20);
           finalHtml += '<span class="' + cls + '">' + ch + '</span>';
           charIdx++;
         }
-        finalHtml += '</em>';
       }
-    });
+    } else if (part.type === 'em') {
+      finalHtml += '<em>';
+      for (var i = 0; i < part.content.length; i++) {
+        var ch = part.content[i];
+        var cls = 'char delay-' + Math.min(charIdx + 1, 20);
+        finalHtml += '<span class="' + cls + '">' + ch + '</span>';
+        charIdx++;
+      }
+      finalHtml += '</em>';
+    }
+  });
 
-    titleEl.innerHTML = finalHtml;
-    titleEl.dataset.split = '1';
-  }
+  titleEl.innerHTML = finalHtml;
+  titleEl.dataset.split = '1';
 
-  // 延迟触发文字显现（与页面淡入同步）
-  setTimeout(function() {
-    var chars = titleEl.querySelectorAll('.char');
-    chars.forEach(function(el, index) {
-      setTimeout(function() {
-        el.classList.add('reveal');
-      }, index * 45);
-    });
-  }, 300);
+  // 触发显现
+  var chars = titleEl.querySelectorAll('.char');
+  chars.forEach(function(el, index) {
+    setTimeout(function() {
+      el.classList.add('reveal');
+    }, index * 45);
+  });
+}
 
-  // ---- 飘落物（精简） ----
+// ============================================================
+// 3. 飘落物（持续循环）
+// ============================================================
+
+(function() {
   var container = document.getElementById('falling-container');
-  if (container) {
-    var count = 10;
-    var types = ['feather', 'olive'];
+  if (!container) return;
 
-    function createFeatherSVG(theme) {
-      var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
-      var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
-      return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.5">' +
-        '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
-        '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.3"/>' +
-        '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
-        '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
-        '</svg>';
-    }
+  var count = 10;
+  var types = ['feather', 'olive'];
 
-    function createOliveSVG() {
-      return '<svg viewBox="0 0 30 16" fill="none">' +
-        '<ellipse cx="15" cy="8" rx="13" ry="5.5" fill="#7a9a6a" stroke="#5a7a4a" stroke-width="0.7"/>' +
-        '<path d="M15,2.5 L15,13.5" stroke="#5a7a4a" stroke-width="0.5"/>' +
-        '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#5a7a4a" stroke-width="0.35" opacity="0.5"/>' +
-        '</svg>';
-    }
-
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var isEye = document.documentElement.getAttribute('data-theme') === 'eye-care';
-    var theme = isDark ? 'dark' : (isEye ? 'eye-care' : 'light');
-
-    for (var i = 0; i < count; i++) {
-      var type = types[Math.floor(Math.random() * types.length)];
-      var size = type === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
-      var el = document.createElement('div');
-      el.className = 'falling-item';
-      var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
-      el.innerHTML = svgContent;
-      el.style.width = size + 'px';
-      el.style.height = (type === 'feather' ? size * 2.8 : size * 0.55) + 'px';
-      el.style.left = (Math.random() * 100) + '%';
-      el.style.top = (-20 - Math.random() * 80) + '%';
-      el.style.opacity = 0.3 + Math.random() * 0.4;
-      // 随机动画持续时间（让它们不同步）
-      var duration = 12 + Math.random() * 18;
-      el.style.animationDuration = duration + 's';
-      el.style.animationDelay = (Math.random() * 5) + 's';
-      container.appendChild(el);
-    }
-
-    // 主题变化时更新羽毛颜色
-    var themeObserver = new MutationObserver(function() {
-      var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-      var isEyeNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
-      var newTheme = isDarkNow ? 'dark' : (isEyeNow ? 'eye-care' : 'light');
-      if (newTheme !== theme) {
-        theme = newTheme;
-        var items = container.querySelectorAll('.falling-item');
-        items.forEach(function(el) {
-          var svg = el.querySelector('svg');
-          if (!svg) return;
-          // 判断是否羽毛（通过检查是否有fill属性）
-          var paths = svg.querySelectorAll('path');
-          if (paths.length > 0 && paths[0].getAttribute('fill')) {
-            var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
-            var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
-            paths[0].setAttribute('fill', color);
-            paths[0].setAttribute('stroke', stroke);
-            for (var i = 1; i < paths.length; i++) {
-              paths[i].setAttribute('stroke', stroke);
-            }
-          }
-        });
-      }
-    });
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  function createFeatherSVG(theme) {
+    var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
+    var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
+    return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.5">' +
+      '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
+      '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.3"/>' +
+      '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
+      '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
+      '</svg>';
   }
+
+  function createOliveSVG() {
+    return '<svg viewBox="0 0 30 16" fill="none">' +
+      '<ellipse cx="15" cy="8" rx="13" ry="5.5" fill="#7a9a6a" stroke="#5a7a4a" stroke-width="0.7"/>' +
+      '<path d="M15,2.5 L15,13.5" stroke="#5a7a4a" stroke-width="0.5"/>' +
+      '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#5a7a4a" stroke-width="0.35" opacity="0.5"/>' +
+      '</svg>';
+  }
+
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var isEye = document.documentElement.getAttribute('data-theme') === 'eye-care';
+  var theme = isDark ? 'dark' : (isEye ? 'eye-care' : 'light');
+
+  for (var i = 0; i < count; i++) {
+    var type = types[Math.floor(Math.random() * types.length)];
+    var size = type === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
+    var el = document.createElement('div');
+    el.className = 'falling-item';
+    var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
+    el.innerHTML = svgContent;
+    el.style.width = size + 'px';
+    el.style.height = (type === 'feather' ? size * 2.8 : size * 0.55) + 'px';
+    el.style.left = (Math.random() * 100) + '%';
+    el.style.top = (-20 - Math.random() * 80) + '%';
+    el.style.opacity = 0.3 + Math.random() * 0.4;
+    var duration = 12 + Math.random() * 18;
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = (Math.random() * 5) + 's';
+    container.appendChild(el);
+  }
+
+  // 主题变化时更新羽毛颜色
+  var themeObserver = new MutationObserver(function() {
+    var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+    var isEyeNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
+    var newTheme = isDarkNow ? 'dark' : (isEyeNow ? 'eye-care' : 'light');
+    if (newTheme !== theme) {
+      theme = newTheme;
+      var items = container.querySelectorAll('.falling-item');
+      items.forEach(function(el) {
+        var svg = el.querySelector('svg');
+        if (!svg) return;
+        var paths = svg.querySelectorAll('path');
+        if (paths.length > 0 && paths[0].getAttribute('fill')) {
+          var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
+          var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
+          paths[0].setAttribute('fill', color);
+          paths[0].setAttribute('stroke', stroke);
+          for (var i = 1; i < paths.length; i++) {
+            paths[i].setAttribute('stroke', stroke);
+          }
+        }
+      });
+    }
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 
 // ============================================================
-// 2. 原有功能：诗歌数量、音乐、主题切换
+// 4. 原有功能
 // ============================================================
 
 (function(){
@@ -596,6 +989,5 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   });
 })();
 </script>
-
 </body>
 </html>
