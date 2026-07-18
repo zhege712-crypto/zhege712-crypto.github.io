@@ -100,96 +100,135 @@ a{ color:inherit; text-decoration:none; }
   width: 2px;
   height: 2px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.12);
 }
-.intro-stars .star:nth-child(1) { top: 12%; left: 8%; animation: twinkle 3s ease-in-out infinite; }
-.intro-stars .star:nth-child(2) { top: 25%; left: 85%; animation: twinkle 2.4s ease-in-out infinite 0.5s; }
-.intro-stars .star:nth-child(3) { top: 55%; left: 5%; animation: twinkle 3.6s ease-in-out infinite 1.2s; }
-.intro-stars .star:nth-child(4) { top: 70%; left: 92%; animation: twinkle 2.8s ease-in-out infinite 0.3s; }
-.intro-stars .star:nth-child(5) { top: 40%; left: 95%; animation: twinkle 3.2s ease-in-out infinite 0.8s; }
-.intro-stars .star:nth-child(6) { top: 85%; left: 15%; animation: twinkle 2.2s ease-in-out infinite 1.6s; }
-.intro-stars .star:nth-child(7) { top: 15%; left: 50%; animation: twinkle 4s ease-in-out infinite 0.2s; }
-.intro-stars .star:nth-child(8) { top: 60%; left: 48%; animation: twinkle 2.6s ease-in-out infinite 1.0s; }
+.intro-stars .star:nth-child(1) { top: 10%; left: 6%; animation: twinkle 3.2s ease-in-out infinite; }
+.intro-stars .star:nth-child(2) { top: 22%; left: 88%; animation: twinkle 2.6s ease-in-out infinite 0.6s; }
+.intro-stars .star:nth-child(3) { top: 50%; left: 3%; animation: twinkle 3.8s ease-in-out infinite 1.4s; }
+.intro-stars .star:nth-child(4) { top: 68%; left: 94%; animation: twinkle 2.8s ease-in-out infinite 0.3s; }
+.intro-stars .star:nth-child(5) { top: 38%; left: 97%; animation: twinkle 3.4s ease-in-out infinite 0.9s; }
+.intro-stars .star:nth-child(6) { top: 82%; left: 12%; animation: twinkle 2.4s ease-in-out infinite 1.8s; }
+.intro-stars .star:nth-child(7) { top: 12%; left: 48%; animation: twinkle 4.2s ease-in-out infinite 0.2s; }
+.intro-stars .star:nth-child(8) { top: 58%; left: 45%; animation: twinkle 2.8s ease-in-out infinite 1.1s; }
+.intro-stars .star:nth-child(9) { top: 90%; left: 75%; animation: twinkle 3.0s ease-in-out infinite 0.7s; }
+.intro-stars .star:nth-child(10) { top: 32%; left: 15%; animation: twinkle 3.6s ease-in-out infinite 2.0s; }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.3); }
+  0%, 100% { opacity: 0.12; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.4); }
 }
 
 /* ============================================================
-   羽毛飘落
+   羽毛（精细版）
    ============================================================ */
 
 #feather {
   position: absolute;
-  top: 8%;
-  left: 85%;
-  width: 48px;
+  top: 6%;
+  left: 82%;
+  width: 56px;
   height: auto;
   opacity: 0;
   z-index: 3;
   transform-origin: center center;
-  filter: drop-shadow(0 0 30px rgba(232, 163, 61, 0.08));
-  animation: featherFall 3.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  filter: drop-shadow(0 0 40px rgba(232, 163, 61, 0.06));
+  animation: featherFall 4.2s cubic-bezier(0.22, 0.68, 0.35, 1) forwards;
 }
 #feather .feather-body {
   fill: url(#featherGrad);
 }
 #feather .feather-vein {
   stroke: #d4c8b8;
-  stroke-width: 0.6;
+  stroke-width: 0.8;
   fill: none;
+  stroke-linecap: round;
 }
-#feather .feather-barbs {
-  stroke: #c4b8a8;
-  stroke-width: 0.4;
+#feather .feather-barb {
+  stroke: #c8bcac;
+  stroke-width: 0.5;
   fill: none;
-  opacity: 0.6;
+  stroke-linecap: round;
+  opacity: 0.7;
+}
+#feather .feather-barb-light {
+  stroke: #d8d0c4;
+  stroke-width: 0.3;
+  fill: none;
+  stroke-linecap: round;
+  opacity: 0.4;
+}
+#feather .feather-gold {
+  stroke: rgba(232, 163, 61, 0.12);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
 }
 @keyframes featherFall {
   0% {
-    top: 8%;
-    left: 85%;
+    top: 6%;
+    left: 82%;
     opacity: 0;
-    transform: translate(0, 0) rotate(-8deg) scale(0.7);
+    transform: translate(0, 0) rotate(-12deg) scale(0.7);
   }
   10% {
     opacity: 1;
-    transform: translate(0, 0) rotate(-3deg) scale(1);
+    transform: translate(0, 0) rotate(-5deg) scale(1);
   }
-  40% {
-    top: 32%;
-    left: 70%;
-    transform: translate(-30px, 0) rotate(6deg) scale(1.02);
+  35% {
+    top: 28%;
+    left: 65%;
+    transform: translate(-40px, 0) rotate(8deg) scale(1.03);
   }
-  65% {
-    top: 52%;
-    left: 58%;
-    transform: translate(20px, 0) rotate(-4deg) scale(0.98);
+  55% {
+    top: 46%;
+    left: 56%;
+    transform: translate(25px, 0) rotate(-6deg) scale(0.97);
   }
-  85% {
-    top: 65%;
+  75% {
+    top: 60%;
     left: 50%;
-    transform: translate(-10px, 0) rotate(3deg) scale(1);
+    transform: translate(-15px, 0) rotate(4deg) scale(1.01);
   }
   100% {
-    top: 72%;
-    left: 48%;
+    top: 68%;
+    left: 46%;
     opacity: 1;
     transform: translate(0, 0) rotate(0deg) scale(1);
   }
 }
 
-/* 羽毛轻微摆动（叠加） */
+/* 羽毛自身摆动 */
 #feather .sway {
-  animation: featherSway 2.4s ease-in-out infinite alternate;
+  animation: featherSway 2.8s ease-in-out infinite alternate;
 }
 @keyframes featherSway {
-  0% { transform: rotate(-2deg); }
-  100% { transform: rotate(4deg); }
+  0% { transform: rotate(-3deg); }
+  100% { transform: rotate(5deg); }
+}
+
+/* ---- 移动端羽毛适配 ---- */
+@media (max-width: 640px) {
+  #feather {
+    width: 38px;
+    top: 4%;
+    left: 76%;
+  }
+  @keyframes featherFall {
+    0% {
+      top: 4%;
+      left: 76%;
+      opacity: 0;
+      transform: translate(0, 0) rotate(-12deg) scale(0.7);
+    }
+    10% { opacity: 1; transform: translate(0, 0) rotate(-5deg) scale(1); }
+    35% { top: 26%; left: 60%; transform: translate(-28px, 0) rotate(8deg) scale(1.03); }
+    55% { top: 44%; left: 52%; transform: translate(18px, 0) rotate(-6deg) scale(0.97); }
+    75% { top: 58%; left: 48%; transform: translate(-10px, 0) rotate(4deg) scale(1.01); }
+    100% { top: 66%; left: 44%; opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+  }
 }
 
 /* ============================================================
-   金色涟漪（纯 CSS）
+   金色涟漪（多层波纹）
    ============================================================ */
 
 .ripple-container {
@@ -201,12 +240,12 @@ a{ color:inherit; text-decoration:none; }
   pointer-events: none;
   z-index: 2;
   opacity: 0;
-  animation: rippleContainer 5s ease forwards;
+  animation: rippleContainer 5.6s ease forwards;
 }
 @keyframes rippleContainer {
-  0%, 30% { opacity: 0; }
-  35% { opacity: 1; }
-  80% { opacity: 1; }
+  0%, 32% { opacity: 0; }
+  38% { opacity: 1; }
+  78% { opacity: 1; }
   100% { opacity: 0; }
 }
 
@@ -214,52 +253,111 @@ a{ color:inherit; text-decoration:none; }
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0);
   border-radius: 50%;
-  border: 1.5px solid rgba(232, 163, 61, 0.5);
-  box-shadow: 0 0 30px rgba(232, 163, 61, 0.05), inset 0 0 30px rgba(232, 163, 61, 0.02);
-  animation: rippleExpand 2.6s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+  border-style: solid;
+  border-color: rgba(232, 163, 61, 0.5);
+  box-shadow: 0 0 40px rgba(232, 163, 61, 0.04), inset 0 0 40px rgba(232, 163, 61, 0.02);
+  animation: rippleExpand 2.8s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
+  transform: translate(-50%, -50%) scale(0);
 }
-.ripple-ring:nth-child(1) { animation-delay: 0.0s; border-color: rgba(232, 163, 61, 0.5); }
-.ripple-ring:nth-child(2) { animation-delay: 0.35s; border-color: rgba(232, 163, 61, 0.35); }
-.ripple-ring:nth-child(3) { animation-delay: 0.70s; border-color: rgba(232, 163, 61, 0.20); }
-.ripple-ring:nth-child(4) { animation-delay: 1.05s; border-color: rgba(232, 163, 61, 0.10); }
+.ripple-ring:nth-child(1) {
+  animation-delay: 0.0s;
+  border-color: rgba(232, 163, 61, 0.55);
+  border-width: 2.5px;
+}
+.ripple-ring:nth-child(2) {
+  animation-delay: 0.30s;
+  border-color: rgba(232, 163, 61, 0.40);
+  border-width: 2px;
+}
+.ripple-ring:nth-child(3) {
+  animation-delay: 0.60s;
+  border-color: rgba(232, 163, 61, 0.28);
+  border-width: 1.5px;
+}
+.ripple-ring:nth-child(4) {
+  animation-delay: 0.90s;
+  border-color: rgba(232, 163, 61, 0.18);
+  border-width: 1.2px;
+}
+.ripple-ring:nth-child(5) {
+  animation-delay: 1.20s;
+  border-color: rgba(232, 163, 61, 0.10);
+  border-width: 1px;
+}
+.ripple-ring:nth-child(6) {
+  animation-delay: 1.50s;
+  border-color: rgba(232, 163, 61, 0.06);
+  border-width: 0.8px;
+}
 
 @keyframes rippleExpand {
   0% {
     transform: translate(-50%, -50%) scale(0);
     opacity: 0.9;
-    border-width: 2px;
   }
-  40% {
-    opacity: 0.8;
+  15% {
+    opacity: 0.95;
   }
   100% {
-    transform: translate(-50%, -50%) scale(4.5);
+    transform: translate(-50%, -50%) scale(5.2);
     opacity: 0;
-    border-width: 0.5px;
   }
 }
 
-/* 中心光晕（涟漪源头） */
+/* ---- 涟漪中心光晕 ---- */
 .ripple-center {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(232, 163, 61, 0.4) 0%, rgba(232, 163, 61, 0) 80%);
+  background: radial-gradient(circle, rgba(232, 163, 61, 0.5) 0%, rgba(232, 163, 61, 0.15) 40%, rgba(232, 163, 61, 0) 80%);
   opacity: 0;
-  animation: centerGlow 2.2s ease 0.2s forwards;
   z-index: 1;
+  animation: centerGlow 2.6s ease 0.3s forwards;
 }
 @keyframes centerGlow {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
-  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-  70% { opacity: 0.6; transform: translate(-50%, -50%) scale(2.5); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(4); }
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
+  60% { opacity: 0.5; transform: translate(-50%, -50%) scale(3); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(5); }
+}
+
+/* ---- 涟漪上的细小光点（模拟水花） ---- */
+.ripple-sparkle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(232, 163, 61, 0.3);
+  opacity: 0;
+  z-index: 1;
+  animation: sparkleFloat 2.2s ease forwards;
+}
+.ripple-sparkle:nth-child(7) { top: 44%; left: 44%; width: 4px; height: 4px; animation-delay: 0.5s; }
+.ripple-sparkle:nth-child(8) { top: 54%; left: 52%; width: 3px; height: 3px; animation-delay: 0.7s; }
+.ripple-sparkle:nth-child(9) { top: 48%; left: 56%; width: 5px; height: 5px; animation-delay: 0.9s; }
+.ripple-sparkle:nth-child(10) { top: 56%; left: 44%; width: 3px; height: 3px; animation-delay: 1.1s; }
+.ripple-sparkle:nth-child(11) { top: 42%; left: 54%; width: 4px; height: 4px; animation-delay: 1.3s; }
+@keyframes sparkleFloat {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+  30% { opacity: 0.8; transform: translate(-8px, -12px) scale(1); }
+  70% { opacity: 0.4; transform: translate(6px, -20px) scale(0.7); }
+  100% { opacity: 0; transform: translate(0, -30px) scale(0.2); }
+}
+
+/* ---- 移动端涟漪适配 ---- */
+@media (max-width: 640px) {
+  @keyframes rippleExpand {
+    100% { transform: translate(-50%, -50%) scale(3.8); }
+  }
+  .ripple-ring:nth-child(1) { border-width: 2px; }
+  .ripple-ring:nth-child(2) { border-width: 1.5px; }
+  .ripple-ring:nth-child(3) { border-width: 1.2px; }
+  .ripple-ring:nth-child(4) { border-width: 1px; }
+  .ripple-ring:nth-child(5) { border-width: 0.8px; }
+  .ripple-ring:nth-child(6) { border-width: 0.6px; }
 }
 
 /* ============================================================
@@ -275,47 +373,18 @@ a{ color:inherit; text-decoration:none; }
   font-size: 0.6rem;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.10);
   z-index: 4;
   pointer-events: none;
   opacity: 0;
-  animation: captionFade 2s ease 2.2s forwards;
+  animation: captionFade 2.4s ease 2.6s forwards;
 }
 @keyframes captionFade {
-  0% { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
   100% { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
-
-/* ---- 移动端适配 ---- */
 @media (max-width: 640px) {
-  #feather {
-    width: 32px;
-    top: 6%;
-    left: 78%;
-  }
-  @keyframes featherFall {
-    0% {
-      top: 6%;
-      left: 78%;
-      opacity: 0;
-      transform: translate(0, 0) rotate(-8deg) scale(0.7);
-    }
-    10% { opacity: 1; transform: translate(0, 0) rotate(-3deg) scale(1); }
-    40% { top: 30%; left: 62%; transform: translate(-20px, 0) rotate(6deg) scale(1.02); }
-    65% { top: 50%; left: 52%; transform: translate(15px, 0) rotate(-4deg) scale(0.98); }
-    85% { top: 62%; left: 48%; transform: translate(-8px, 0) rotate(3deg) scale(1); }
-    100% { top: 68%; left: 46%; opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
-  }
-  #intro-caption {
-    font-size: 0.45rem;
-    bottom: 50px;
-  }
-  .ripple-ring {
-    border-width: 1px;
-  }
-  @keyframes rippleExpand {
-    100% { transform: translate(-50%, -50%) scale(3.2); }
-  }
+  #intro-caption { font-size: 0.45rem; bottom: 50px; }
 }
 
 /* ============================================================
@@ -330,7 +399,7 @@ a{ color:inherit; text-decoration:none; }
   opacity: 1;
 }
 
-/* ---- 标题文字逐字显现（在主页内） ---- */
+/* ---- 标题文字逐字显现 ---- */
 .hero h1 .char {
   display: inline-block;
   opacity: 0;
@@ -363,7 +432,7 @@ a{ color:inherit; text-decoration:none; }
 .hero h1 .char.delay-20 { transition-delay: 1.00s; }
 
 /* ============================================================
-   飘落物（持续）
+   持续飘落物
    ============================================================ */
 
 .falling-container {
@@ -396,7 +465,7 @@ a{ color:inherit; text-decoration:none; }
   }
   100% {
     transform: translateY(110vh) rotate(720deg);
-    opacity: 0.1;
+    opacity: 0.05;
   }
 }
 
@@ -516,68 +585,108 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 <div id="intro-overlay">
   <!-- 背景星光 -->
   <div class="intro-stars">
-    <span class="star"></span>
-    <span class="star"></span>
-    <span class="star"></span>
-    <span class="star"></span>
-    <span class="star"></span>
-    <span class="star"></span>
-    <span class="star"></span>
+    <span class="star"></span><span class="star"></span><span class="star"></span>
+    <span class="star"></span><span class="star"></span><span class="star"></span>
+    <span class="star"></span><span class="star"></span><span class="star"></span>
     <span class="star"></span>
   </div>
 
-  <!-- 羽毛 -->
+  <!-- 精细羽毛 -->
   <svg id="feather" viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="featherGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#f5f0eb"/>
-        <stop offset="40%" stop-color="#ede8e0"/>
-        <stop offset="70%" stop-color="#e8e2da"/>
-        <stop offset="100%" stop-color="#d4c8b8"/>
+        <stop offset="0%" stop-color="#f8f4ef"/>
+        <stop offset="25%" stop-color="#f0ebe4"/>
+        <stop offset="55%" stop-color="#e8e2da"/>
+        <stop offset="85%" stop-color="#ddd6cc"/>
+        <stop offset="100%" stop-color="#d0c8bc"/>
       </linearGradient>
+      <filter id="featherBlur">
+        <feGaussianBlur stdDeviation="0.3"/>
+      </filter>
     </defs>
+
+    <!-- 羽毛主体 -->
     <path class="feather-body" d="
       M40,2
-      C55,10 68,30 70,55
-      C72,80 65,105 55,125
-      C48,138 44,148 40,158
-      C36,148 32,138 25,125
-      C15,105 8,80 10,55
-      C12,30 25,10 40,2Z
+      C56,10 70,28 72,52
+      C74,76 67,102 57,124
+      C50,138 46,148 40,158
+      C34,148 30,138 23,124
+      C13,102 6,76 8,52
+      C10,28 24,10 40,2Z
     "/>
+
+    <!-- 羽轴（中心线） -->
     <path class="feather-vein" d="M40,2 L40,158"/>
-    <path class="feather-barbs" d="
-      M40,12 L25,20
-      M40,22 L18,32
-      M40,32 L14,46
-      M40,42 L12,60
-      M40,52 L14,74
-      M40,62 L18,88
-      M40,72 L24,100
-      M40,82 L30,112
-      M40,92 L36,122
-    "/>
-    <path class="feather-barbs" d="
-      M40,12 L55,20
-      M40,22 L62,32
-      M40,32 L66,46
-      M40,42 L68,60
-      M40,52 L66,74
-      M40,62 L62,88
-      M40,72 L56,100
-      M40,82 L50,112
-      M40,92 L44,122
-    "/>
-    <path d="M40,15 L40,140" stroke="rgba(232,163,61,0.08)" stroke-width="3" fill="none"/>
+
+    <!-- ===== 左侧羽枝（12条，弧形） ===== -->
+    <path class="feather-barb" d="M40,12 Q28,16 22,22"/>
+    <path class="feather-barb" d="M40,22 Q24,28 16,38"/>
+    <path class="feather-barb" d="M40,32 Q20,40 12,54"/>
+    <path class="feather-barb" d="M40,42 Q18,52 10,68"/>
+    <path class="feather-barb" d="M40,52 Q16,64 10,80"/>
+    <path class="feather-barb" d="M40,62 Q18,76 12,92"/>
+    <path class="feather-barb" d="M40,72 Q20,88 16,102"/>
+    <path class="feather-barb" d="M40,82 Q24,96 22,110"/>
+    <path class="feather-barb" d="M40,92 Q28,104 26,116"/>
+    <path class="feather-barb" d="M40,102 Q32,112 30,122"/>
+    <path class="feather-barb" d="M40,112 Q36,120 34,128"/>
+    <path class="feather-barb" d="M40,122 Q38,128 37,134"/>
+
+    <!-- ===== 右侧羽枝（12条，弧形） ===== -->
+    <path class="feather-barb" d="M40,12 Q52,16 58,22"/>
+    <path class="feather-barb" d="M40,22 Q56,28 64,38"/>
+    <path class="feather-barb" d="M40,32 Q60,40 68,54"/>
+    <path class="feather-barb" d="M40,42 Q62,52 70,68"/>
+    <path class="feather-barb" d="M40,52 Q64,64 70,80"/>
+    <path class="feather-barb" d="M40,62 Q62,76 68,92"/>
+    <path class="feather-barb" d="M40,72 Q60,88 64,102"/>
+    <path class="feather-barb" d="M40,82 Q56,96 58,110"/>
+    <path class="feather-barb" d="M40,92 Q52,104 54,116"/>
+    <path class="feather-barb" d="M40,102 Q48,112 50,122"/>
+    <path class="feather-barb" d="M40,112 Q44,120 46,128"/>
+    <path class="feather-barb" d="M40,122 Q42,128 43,134"/>
+
+    <!-- ===== 细小的次级羽枝（增加蓬松感） ===== -->
+    <path class="feather-barb-light" d="M32,18 L26,22 M36,18 L30,22"/>
+    <path class="feather-barb-light" d="M28,28 L20,34 M34,28 L26,34"/>
+    <path class="feather-barb-light" d="M24,40 L16,48 M32,40 L24,48"/>
+    <path class="feather-barb-light" d="M20,52 L14,60 M30,52 L22,60"/>
+    <path class="feather-barb-light" d="M18,64 L12,72 M28,64 L20,72"/>
+    <path class="feather-barb-light" d="M20,76 L14,84 M28,76 L22,84"/>
+    <path class="feather-barb-light" d="M24,88 L18,96 M30,88 L24,96"/>
+    <path class="feather-barb-light" d="M28,100 L22,108 M34,100 L28,108"/>
+    <path class="feather-barb-light" d="M32,110 L28,116 M38,110 L34,116"/>
+
+    <path class="feather-barb-light" d="M48,18 L54,22 M44,18 L50,22"/>
+    <path class="feather-barb-light" d="M52,28 L60,34 M46,28 L54,34"/>
+    <path class="feather-barb-light" d="M56,40 L64,48 M48,40 L56,48"/>
+    <path class="feather-barb-light" d="M60,52 L66,60 M50,52 L58,60"/>
+    <path class="feather-barb-light" d="M62,64 L68,72 M52,64 L60,72"/>
+    <path class="feather-barb-light" d="M60,76 L66,84 M52,76 L58,84"/>
+    <path class="feather-barb-light" d="M56,88 L62,96 M50,88 L56,96"/>
+    <path class="feather-barb-light" d="M52,100 L58,108 M46,100 L52,108"/>
+    <path class="feather-barb-light" d="M48,110 L52,116 M42,110 L46,116"/>
+
+    <!-- 金色装饰线（呼应涟漪） -->
+    <path class="feather-gold" d="M40,18 L40,140"/>
   </svg>
 
-  <!-- 涟漪 -->
+  <!-- 涟漪（6层波纹 + 光点） -->
   <div class="ripple-container">
     <div class="ripple-center"></div>
     <div class="ripple-ring"></div>
     <div class="ripple-ring"></div>
     <div class="ripple-ring"></div>
     <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+    <div class="ripple-ring"></div>
+    <div class="ripple-sparkle"></div>
+    <div class="ripple-sparkle"></div>
+    <div class="ripple-sparkle"></div>
+    <div class="ripple-sparkle"></div>
+    <div class="ripple-sparkle"></div>
   </div>
 
   <!-- 底部文字 -->
@@ -711,7 +820,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </div><!-- .page-content -->
 
 <!-- ============================================================
-   飘落物（持续循环）
+   持续飘落物
    ============================================================ -->
 
 <div class="falling-container" id="falling-container"></div>
@@ -734,45 +843,32 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   var overlay = document.getElementById('intro-overlay');
   var pageContent = document.getElementById('page-content');
 
-  // 如果已经播放过，直接跳过
   if (sessionStorage.getItem('intro_ripple_shown')) {
     overlay.classList.add('skip');
     pageContent.classList.add('visible');
     return;
   }
 
-  // 如果用户偏好减少动画，跳过
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     overlay.classList.add('skip');
     pageContent.classList.add('visible');
     return;
   }
 
-  // 标记已播放
   sessionStorage.setItem('intro_ripple_shown', '1');
 
-  // 时序：
-  // 0s: 开始飘落
-  // 3.8s: 羽毛到达中心
-  // 4.2s: 涟漪开始扩散
-  // 6.8s: 涟漪结束
-  // 7.0s: 遮罩开始淡出，首页淡入
-  // 8.6s: 遮罩完全消失
-
-  // 在羽毛落地后（约4s）触发首页显现
+  // 羽毛落地 → 涟漪 → 页面显现
   setTimeout(function() {
     pageContent.classList.add('visible');
-  }, 4800);
+  }, 5200);
 
-  // 遮罩淡出（比首页稍晚一点，让涟漪先扩散）
   setTimeout(function() {
     overlay.classList.add('hidden');
-  }, 5600);
+  }, 6000);
 
-  // 标题逐字显现（由后续脚本触发，延迟到页面可见后）
   setTimeout(function() {
     triggerTitleReveal();
-  }, 5200);
+  }, 5600);
 
 })();
 
@@ -828,7 +924,6 @@ function triggerTitleReveal() {
   titleEl.innerHTML = finalHtml;
   titleEl.dataset.split = '1';
 
-  // 触发显现
   var chars = titleEl.querySelectorAll('.char');
   chars.forEach(function(el, index) {
     setTimeout(function() {
@@ -838,7 +933,7 @@ function triggerTitleReveal() {
 }
 
 // ============================================================
-// 3. 飘落物（持续循环）
+// 3. 持续飘落物
 // ============================================================
 
 (function() {
@@ -889,7 +984,6 @@ function triggerTitleReveal() {
     container.appendChild(el);
   }
 
-  // 主题变化时更新羽毛颜色
   var themeObserver = new MutationObserver(function() {
     var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
     var isEyeNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
