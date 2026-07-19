@@ -27,15 +27,16 @@
   --accent-gold: #d4a373;
 }
 [data-theme="eye-care"] {
-  --paper: #f5efe0;
-  --paper-2: #ede5d0;
-  --white: #faf5e8;
-  --ink: #4a3f35;
-  --charcoal: #6b5f52;
-  --steel: #9a8b7a;
-  --fog: #d5c8b8;
-  --accent-red: #c46a52;
-  --accent-gold: #c9a87a;
+  --paper: #e9f0e1;
+  --paper-2: #dce6cf;
+  --white: #f4f8ee;
+  --ink: #3a4632;
+  --charcoal: #5c6a4f;
+  --steel: #82906f;
+  --fog: #c6d3b4;
+  --accent-red: #b2674f;
+  --accent-cobalt: #5f7f92;
+  --accent-gold: #bda26c;
 }
 *{ margin:0; padding:0; box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
@@ -51,19 +52,13 @@ nav.top-nav a{ font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0
 nav.top-nav a::after{ content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--white); transition:width 0.3s ease; }
 nav.top-nav a:hover::after{ width:100%; }
 @media (max-width:640px){ nav.top-nav ul{ gap:16px; } }
-.side-nav{ position:fixed; left:24px; top:120px; z-index:150; width:168px; background:var(--white); border:1px solid var(--paper-2); padding:10px; box-shadow:0 10px 30px rgba(28,28,27,0.06); transition: background 0.3s ease, border-color 0.3s ease; }
-.side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:2px; font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal); transition:background 0.25s ease, color 0.25s ease; }
-.side-nav a:hover{ background:var(--paper-2); }
-.side-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; }
-.side-nav a svg{ width:17px; height:17px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.6; }
-.side-nav a .badge{ margin-left:auto; font-family:var(--font-mono); font-size:0.65rem; background:var(--paper); color:var(--steel); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; }
-.side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
-@media (max-width:1180px){ .side-nav{ display:none; } }
-
 .side-theme{
   position:fixed; left:24px; bottom:100px; z-index:150;
   display:flex; flex-direction:column; align-items:center; gap:6px;
-  background:rgba(255,255,255,0.4); backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.4);
+  background:color-mix(in srgb, var(--white) 55%, transparent);
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:0 8px 24px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.35);
   padding:10px 8px; border-radius:28px; border:1px solid var(--fog);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
@@ -248,33 +243,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     </nav>
   </div>
 </header>
-<nav class="side-nav">
-  <a href="index.html">
-    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
-    首页
-  </a>
-  <a href="work.html">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-    作品
-  </a>
-  <a href="video.html">
-    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="1"/><path d="M17 9l4-2v10l-4-2z"/></svg>
-    视频
-  </a>
-  <a href="writing.html">
-    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
-    文章
-  </a>
-  <a href="about.html">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-    关于
-  </a>
-  <a href="poems.html" class="active">
-    <svg viewBox="0 0 24 24"><path d="M20 4L9 15l-5 1 1-5L16 0z"/><path d="M3 21h18"/></svg>
-    诗歌漂流
-    <span class="badge" id="poem-count">·</span>
-  </a>
-</nav>
 <div class="side-theme" id="theme-side">
   <button class="theme-btn" data-theme="light" aria-label="日间模式">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -338,11 +306,9 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   }, 2000);
 })();
 (function(){
-  var badge = document.getElementById('poem-count');
   var statCount = document.getElementById('stat-count');
   var statLatest = document.getElementById('stat-latest');
   fetch('poems/poems.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(list){
-    badge.textContent = list.length;
     statCount.textContent = list.length;
     if(list.length){
       var latest = list.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); })[0];
@@ -351,7 +317,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       statLatest.textContent = '—';
     }
   }).catch(function(){
-    badge.textContent = '0'; statCount.textContent = '0'; statLatest.textContent = '—';
+    statCount.textContent = '0'; statLatest.textContent = '—';
   });
 })();
 (function(){

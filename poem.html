@@ -27,15 +27,16 @@
   --accent-gold: #d4a373;
 }
 [data-theme="eye-care"] {
-  --paper: #f5efe0;
-  --paper-2: #ede5d0;
-  --white: #faf5e8;
-  --ink: #4a3f35;
-  --charcoal: #6b5f52;
-  --steel: #9a8b7a;
-  --fog: #d5c8b8;
-  --accent-red: #c46a52;
-  --accent-gold: #c9a87a;
+  --paper: #e9f0e1;
+  --paper-2: #dce6cf;
+  --white: #f4f8ee;
+  --ink: #3a4632;
+  --charcoal: #5c6a4f;
+  --steel: #82906f;
+  --fog: #c6d3b4;
+  --accent-red: #b2674f;
+  --accent-cobalt: #5f7f92;
+  --accent-gold: #bda26c;
 }
 *{ margin:0; padding:0; box-sizing:border-box; }
 body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.7; transition: background 0.3s ease, color 0.3s ease; }
@@ -76,7 +77,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 .side-theme{
   position:fixed; left:24px; bottom:100px; z-index:150;
   display:flex; flex-direction:column; align-items:center; gap:6px;
-  background:rgba(255,255,255,0.4); backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.4);
+  background:color-mix(in srgb, var(--white) 55%, transparent);
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:0 8px 24px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.35);
   padding:10px 8px; border-radius:28px; border:1px solid var(--fog);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
@@ -188,7 +192,7 @@ fetch('poems/poems.json?t=' + Date.now())
       return '<div class="poem-image"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(poem.title) + '"></div>';
     }).join('');
     detail.innerHTML =
-      '<div class="poem-meta">' + (poem.author ? escapeHtml(poem.author) + ' · ' : '') + escapeHtml(poem.date) + (poem.series ? ' · ' + escapeHtml(poem.series) : '') + '</div>' +
+      '<div class="poem-meta">' + (poem.author ? escapeHtml(poem.author) + ' · ' : '') + escapeHtml(poem.date) + (poem.series ? ' · ' + escapeHtml(poem.series) : '') + (poem.subseries ? ' · ' + escapeHtml(poem.subseries) : '') + '</div>' +
       '<div class="poem-title">' + escapeHtml(poem.title) + '</div>' +
       '<svg class="greek-divider" viewBox="0 0 100 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 5 H8 V0 H16 V10 H24 V0 H32 V10 H40 V0 H48 V10 H56 V0 H64 V10 H72 V0 H80 V10 H88 V0 H100"/></svg>' +
       '<div class="poem-content">' + escapeHtml(poem.content) + '</div>' +

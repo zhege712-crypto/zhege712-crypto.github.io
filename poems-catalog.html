@@ -27,15 +27,16 @@
   --accent-gold: #d4a373;
 }
 [data-theme="eye-care"] {
-  --paper: #f5efe0;
-  --paper-2: #ede5d0;
-  --white: #faf5e8;
-  --ink: #4a3f35;
-  --charcoal: #6b5f52;
-  --steel: #9a8b7a;
-  --fog: #d5c8b8;
-  --accent-red: #c46a52;
-  --accent-gold: #c9a87a;
+  --paper: #e9f0e1;
+  --paper-2: #dce6cf;
+  --white: #f4f8ee;
+  --ink: #3a4632;
+  --charcoal: #5c6a4f;
+  --steel: #82906f;
+  --fog: #c6d3b4;
+  --accent-red: #b2674f;
+  --accent-cobalt: #5f7f92;
+  --accent-gold: #bda26c;
 }
 *{ margin:0; padding:0; box-sizing:border-box; }
 body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6; transition: background 0.3s ease, color 0.3s ease; }
@@ -52,6 +53,17 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
 .series-block{ margin-bottom:50px; }
 .series-block h2{ font-family:var(--font-display); font-weight:500; font-size:1.25rem; margin:36px 0 4px; color:var(--accent-red); }
 .series-block:first-child h2{ margin-top:0; }
+.subseries-head{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.12em; color:var(--charcoal);
+  margin:26px 0 4px; padding:7px 16px; border-radius:20px;
+  background:var(--white);
+  background:color-mix(in srgb, var(--white) 55%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--fog);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.subseries-head::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--accent-gold); flex-shrink:0; }
 .catalog-list{ padding-bottom:120px; }
 .catalog-row{
   display:grid; grid-template-columns:90px 1fr auto; gap:20px; align-items:baseline;
@@ -80,7 +92,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 .side-theme{
   position:fixed; left:24px; bottom:100px; z-index:150;
   display:flex; flex-direction:column; align-items:center; gap:6px;
-  background:rgba(255,255,255,0.4); backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.4);
+  background:color-mix(in srgb, var(--white) 55%, transparent);
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:0 8px 24px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.35);
   padding:10px 8px; border-radius:28px; border:1px solid var(--fog);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
@@ -156,6 +171,13 @@ function escapeHtml(s){
 var allPoems = [];
 var listEl = document.getElementById('catalog-list');
 var hintEl = document.getElementById('search-hint');
+function rowHtml(p){
+  return '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
+      '<span class="c-date">' + escapeHtml(p.date) + (p.author ? '<br>' + escapeHtml(p.author) : '') + '</span>' +
+      '<h3>' + escapeHtml(p.title) + '</h3>' +
+      '<span class="c-arrow">阅读 →</span>' +
+    '</a>';
+}
 function renderCatalog(poems){
   if(!poems || poems.length === 0){
     listEl.innerHTML = '<div class="empty-state">没有匹配的诗。</div>';
@@ -170,13 +192,25 @@ function renderCatalog(poems){
     groups[s].push(p);
   });
   listEl.innerHTML = order.map(function(series){
-    var rows = groups[series].map(function(p){
-      return '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
-          '<span class="c-date">' + escapeHtml(p.date) + (p.author ? '<br>' + escapeHtml(p.author) : '') + '</span>' +
-          '<h3>' + escapeHtml(p.title) + '</h3>' +
-          '<span class="c-arrow">阅读 →</span>' +
-        '</a>';
-    }).join('');
+    var list = groups[series];
+    var rows;
+    if(list.some(function(p){ return p.subseries; })){
+      // 有子分类：未填子分类的排在前面，其余按子分类分组（子分类为可选字段）
+      rows = list.filter(function(p){ return !p.subseries; }).map(rowHtml).join('');
+      var subGroups = {};
+      var subOrder = [];
+      list.forEach(function(p){
+        if(!p.subseries) return;
+        if(!subGroups[p.subseries]){ subGroups[p.subseries] = []; subOrder.push(p.subseries); }
+        subGroups[p.subseries].push(p);
+      });
+      rows += subOrder.map(function(sub){
+        return '<div class="subseries-head">' + escapeHtml(sub) + '</div>' +
+               subGroups[sub].map(rowHtml).join('');
+      }).join('');
+    } else {
+      rows = list.map(rowHtml).join('');
+    }
     return '<div class="series-block"><h2>' + escapeHtml(series) + '</h2>' + rows + '</div>';
   }).join('');
 }
@@ -190,7 +224,8 @@ function doSearch(query){
   var matched = allPoems.filter(function(p){
     return (p.title || '').toLowerCase().indexOf(query) !== -1 ||
            (p.content || '').toLowerCase().indexOf(query) !== -1 ||
-           (p.author || '').toLowerCase().indexOf(query) !== -1;
+           (p.author || '').toLowerCase().indexOf(query) !== -1 ||
+           (p.subseries || '').toLowerCase().indexOf(query) !== -1;
   });
   hintEl.textContent = '找到 ' + matched.length + ' 首';
   renderCatalog(matched);
