@@ -70,7 +70,7 @@ a{ color:inherit; text-decoration:none; }
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: radial-gradient(ellipse at 50% 70%, #1a1a1e, #0a0a0c);
+  background: #17171a;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -92,55 +92,58 @@ a{ color:inherit; text-decoration:none; }
   display: none;
 }
 
-/* ---- 背景微光 ---- */
-.intro-bg {
+/* ---- 平涂色块：太阳圆（对角构图，非居中放置） ---- */
+.intro-sun {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-.intro-bg .glow {
-  position: absolute;
+  top: 14%;
+  right: 12%;
+  width: clamp(90px, 14vw, 180px);
+  height: clamp(90px, 14vw, 180px);
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.06;
+  background: var(--accent-red);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 1s ease, transform 1.4s cubic-bezier(0.2,0.8,0.2,1);
 }
-.intro-bg .glow-1 {
-  width: 50%;
-  height: 40%;
-  top: 30%;
-  left: 25%;
-  background: #c4b8a8;
-}
-.intro-bg .glow-2 {
-  width: 60%;
-  height: 30%;
-  bottom: 10%;
-  right: 0;
-  background: #8a7a6a;
-  opacity: 0.04;
-}
+.intro-sun.show { opacity: 0.92; transform: scale(1); }
 
-/* ---- 极简星点 ---- */
-.intro-stars {
+/* ---- 希腊回纹边框（顶部+底部） ---- */
+.intro-meander {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
+  left: 0; width: 100%; height: 14px;
+  color: var(--accent-gold);
+  opacity: 0;
+  transition: opacity 1s ease 0.3s;
+}
+.intro-meander.top { top: 28px; }
+.intro-meander.bottom { bottom: 28px; }
+.intro-meander.show { opacity: 0.85; }
+
+/* ---- 斜切排版文字带（构成主义手法） ---- */
+.intro-diagonal {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  top: 78%;
+  transform: rotate(-4deg) translateY(-50%) scaleX(1.02);
+  background: var(--accent-red);
+  padding: 7px 0;
   overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.2,0.8,0.2,1);
 }
-.intro-stars .star {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+.intro-diagonal.show { opacity: 1; }
+.intro-diagonal span {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #17171a;
+  text-align: center;
+  white-space: nowrap;
 }
-.intro-stars .star:nth-child(1) { width: 2px; height: 2px; top: 8%; left: 12%; }
-.intro-stars .star:nth-child(2) { width: 2px; height: 2px; top: 18%; left: 82%; }
-.intro-stars .star:nth-child(3) { width: 2px; height: 2px; top: 48%; left: 6%; }
-.intro-stars .star:nth-child(4) { width: 2px; height: 2px; top: 72%; left: 88%; }
-.intro-stars .star:nth-child(5) { width: 2px; height: 2px; top: 35%; left: 90%; }
-.intro-stars .star:nth-child(6) { width: 2px; height: 2px; top: 85%; left: 15%; }
-.intro-stars .star:nth-child(7) { width: 2px; height: 2px; top: 10%; left: 45%; }
-.intro-stars .star:nth-child(8) { width: 2px; height: 2px; top: 55%; left: 38%; }
 
 /* ---- Canvas ---- */
 #wave-canvas {
@@ -171,14 +174,13 @@ a{ color:inherit; text-decoration:none; }
 
 #brand-char {
   font-family: 'Fraunces', serif;
-  font-weight: 300;
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
-  color: #e8dcc8;
-  text-shadow: 0 0 30px rgba(200, 180, 160, 0.08);
-  letter-spacing: 0.05em;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  color: #faf7f0;
+  letter-spacing: 0.02em;
   opacity: 0;
   transform: scale(0.85);
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 #brand-char.show {
   opacity: 1;
@@ -187,13 +189,14 @@ a{ color:inherit; text-decoration:none; }
 
 #brand-sub {
   font-family: var(--font-mono);
-  font-size: clamp(0.45rem, 1vw, 0.7rem);
+  font-size: clamp(0.55rem, 1.1vw, 0.75rem);
+  font-weight: 700;
   letter-spacing: 0.5em;
   text-transform: uppercase;
-  color: rgba(232, 220, 200, 0.15);
-  margin-top: 4px;
+  color: var(--accent-gold);
+  margin-top: 8px;
   opacity: 0;
-  transition: opacity 1s ease 0.2s;
+  transition: opacity 0.6s ease 0.15s;
 }
 #brand-sub.show {
   opacity: 1;
@@ -202,26 +205,28 @@ a{ color:inherit; text-decoration:none; }
 /* ---- 底部文字 ---- */
 #intro-caption {
   position: absolute;
-  bottom: 48px;
+  bottom: 56px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
-  font-size: 0.4rem;
-  letter-spacing: 0.5em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.04);
+  color: rgba(250, 247, 240, 0.55);
   z-index: 4;
   pointer-events: none;
   opacity: 0;
-  animation: captionFade 1.6s ease 2.8s forwards;
+  animation: captionFade 1s ease 2.4s forwards;
 }
 @keyframes captionFade {
   0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
   100% { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 @media (max-width: 640px) {
-  #intro-caption { font-size: 0.3rem; bottom: 32px; }
-  #brand-char { font-size: clamp(2rem, 8vw, 3rem); }
+  #intro-caption { font-size: 0.55rem; bottom: 40px; }
+  #brand-char { font-size: clamp(2.2rem, 8vw, 3rem); }
+  .intro-diagonal span { font-size: 0.6rem; letter-spacing: 0.2em; }
 }
 
 /* ============================================================
@@ -409,18 +414,22 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
    ============================================================ -->
 
 <div id="intro-overlay">
-  <div class="intro-bg">
-    <div class="glow glow-1"></div>
-    <div class="glow glow-2"></div>
-  </div>
-  <div class="intro-stars">
-    <span class="star"></span><span class="star"></span><span class="star"></span>
-    <span class="star"></span><span class="star"></span><span class="star"></span>
-    <span class="star"></span><span class="star"></span>
-  </div>
+  <div class="intro-sun" id="intro-sun"></div>
+
+  <svg class="intro-meander top" id="meander-top" viewBox="0 0 400 14" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M0 7 H14 V0 H28 V14 H42 V0 H56 V14 H70 V0 H84 V14 H98 V0 H112 V14 H126 V0 H140 V14 H154 V0 H168 V14 H182 V0 H196 V14 H210 V0 H224 V14 H238 V0 H252 V14 H266 V0 H280 V14 H294 V0 H308 V14 H322 V0 H336 V14 H350 V0 H364 V14 H378 V0 H400"/>
+  </svg>
+  <svg class="intro-meander bottom" id="meander-bottom" viewBox="0 0 400 14" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M0 7 H14 V0 H28 V14 H42 V0 H56 V14 H70 V0 H84 V14 H98 V0 H112 V14 H126 V0 H140 V14 H154 V0 H168 V14 H182 V0 H196 V14 H210 V0 H224 V14 H238 V0 H252 V14 H266 V0 H280 V14 H294 V0 H308 V14 H322 V0 H336 V14 H350 V0 H364 V14 H378 V0 H400"/>
+  </svg>
+
   <canvas id="wave-canvas"></canvas>
 
-  <!-- 品牌浮现（精致缩小版） -->
+  <div class="intro-diagonal" id="intro-diagonal">
+    <span>浮世絵 · 波 · ΚΥΜΑ · UKIYO-E</span>
+  </div>
+
+  <!-- 品牌浮现 -->
   <div id="brand-container">
     <div id="brand-char">伞</div>
     <div id="brand-sub">umbrella</div>
@@ -583,6 +592,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   var brandContainer = document.getElementById('brand-container');
   var brandChar = document.getElementById('brand-char');
   var brandSub = document.getElementById('brand-sub');
+  var introSun = document.getElementById('intro-sun');
+  var meanderTop = document.getElementById('meander-top');
+  var meanderBottom = document.getElementById('meander-bottom');
+  var introDiagonal = document.getElementById('intro-diagonal');
 
   // ===== 尺寸 =====
   var W, H, cx, cy;
@@ -596,156 +609,110 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   resize();
   window.addEventListener('resize', resize);
 
-  // ===== 波浪配置 =====
-  var NUM_WAVES = 5;
+  // ===== 波浪配置（平涂硬边，2层） =====
+  var NUM_WAVES = 2;
   var waves = [];
   var startTime = null;
   var animId = null;
   var brandRevealed = false;
+  var decorRevealed = false;
   var pageShown = false;
 
   function rand(min, max) { return min + Math.random() * (max - min); }
   function lerp(a, b, t) { return a + (b - a) * t; }
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
+  var WAVE_COLORS = [
+    { fill: '#e0393e', name: 'red' },   // 前浪：朱红
+    { fill: '#e8a33d', name: 'gold' }   // 后浪：金黄
+  ];
+
   function initWaves() {
     waves = [];
     for (var i = 0; i < NUM_WAVES; i++) {
       waves.push({
-        progress: -0.2 - i * 0.08,
-        speed: 0.008 + rand(0.002, 0.008),
-        amplitude: 35 + rand(15, 45) + i * 2,
-        frequency: 0.012 + rand(0.003, 0.007),
+        progress: -0.25 - i * 0.18,
+        speed: 0.010 + i * 0.002,
+        amplitude: 46 - i * 8,
+        frequency: 0.010 + i * 0.002,
         phase: rand(0, Math.PI * 2),
-        // 暖金色系（夜间模式）
-        baseR: 180 + i * 5,
-        baseG: 165 - i * 2,
-        baseB: 145 - i * 4,
-        foamR: 190 + i * 3,
-        foamG: 175 - i * 2,
-        foamB: 155 - i * 3,
-        foamMin: 0.3 + rand(0.1, 0.3),
-        foamMax: 1.6 + rand(0.4, 1.2) + i * 0.2,
-        baseY: 0.88 - i * 0.04,
-        triggered: false,
-        amplitudeDecay: 1.0
+        color: WAVE_COLORS[i % WAVE_COLORS.length].fill,
+        baseY: 0.86 - i * 0.10,
+        triggered: false
       });
     }
   }
   initWaves();
 
-  // ===== 绘制单层波浪 =====
+  // ===== 绘制单层波浪（平涂硬边 + 浪爪，木刻版画风格） =====
   function drawWave(ctx, wave, time) {
     var p = wave.progress;
-    if (p < -0.1 || p > 1.2) return;
+    if (p < -0.15 || p > 1.15) return;
 
     var progressY = clamp(p, 0, 1);
     var eased = 1 - Math.pow(1 - progressY, 1.2);
     var baseY = wave.baseY * H;
-    var targetY = H * 0.35;
+    var targetY = H * 0.34;
     var currentY = lerp(baseY, targetY, eased);
 
-    var amp = wave.amplitude * wave.amplitudeDecay * (0.5 + 0.5 * (1 - progressY));
+    var amp = wave.amplitude * (0.55 + 0.45 * (1 - progressY));
     var freq = wave.frequency;
-    var phase = wave.phase + time * 0.00025;
+    var phase = wave.phase + time * 0.00028;
+    var fadeOut = progressY > 0.85 ? clamp(1 - (progressY - 0.85) / 0.15, 0, 1) : 1;
 
-    // ---- 波浪主体 ----
-    var alpha = 0.15 * (1 - progressY * 0.3) * (0.7 + 0.3 * Math.sin(time * 0.0002 + wave.progress * 2));
-    var r = wave.baseR, g = wave.baseG, b = wave.baseB;
-
-    ctx.save();
-    ctx.globalAlpha = Math.min(alpha, 0.25);
-
-    var steps = 50;
+    // ---- 主体轮廓点（尖锐一些，贴近木刻版画的浪形） ----
+    var steps = 34;
     var points = [];
     for (var i = 0; i <= steps; i++) {
       var t = i / steps;
       var x = t * W;
-      var yOffset = Math.sin(t * W * freq + phase) * amp * (1 - t * 0.2);
-      var y = currentY + yOffset;
+      var raw = Math.sin(t * W * freq + phase);
+      var peak = Math.sign(raw) * Math.pow(Math.abs(raw), 0.7); // 让波峰更尖
+      var y = currentY + peak * amp * (1 - t * 0.15);
       points.push({ x: x, y: y });
     }
 
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, H);
-    for (var i = 0; i < points.length; i++) {
-      ctx.lineTo(points[i].x, points[i].y);
-    }
-    ctx.lineTo(points[points.length - 1].x, H);
-    ctx.closePath();
-
-    var grad = ctx.createLinearGradient(0, currentY, 0, H);
-    grad.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ',0.2)');
-    grad.addColorStop(0.5, 'rgba(' + r + ',' + g + ',' + b + ',0.08)');
-    grad.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',0.01)');
-    ctx.fillStyle = grad;
-    ctx.fill();
-    ctx.restore();
-
-    // ---- 泡沫边缘 ----
-    var foamAlpha = 0.4 * (1 - progressY * 0.3) * (0.6 + 0.4 * Math.sin(time * 0.0003 + wave.progress * 3));
-    if (foamAlpha < 0.02) return;
-
     ctx.save();
-    ctx.globalAlpha = Math.min(foamAlpha, 0.6);
+    ctx.globalAlpha = 0.94 * fadeOut;
 
-    var fr = wave.foamR, fg = wave.foamG, fb = wave.foamB;
-    var foamColor = 'rgba(' + fr + ',' + fg + ',' + fb + ',';
+    // ---- 平涂主体 ----
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    for (var i = 0; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    ctx.fillStyle = wave.color;
+    ctx.fill();
 
-    var segments = 55;
-    for (var i = 0; i < segments; i++) {
-      var t1 = i / segments;
-      var t2 = (i + 1) / segments;
-      var idx1 = Math.floor(t1 * steps);
-      var idx2 = Math.floor(t2 * steps);
-      idx1 = Math.min(idx1, points.length - 2);
-      idx2 = Math.min(idx2, points.length - 2);
+    // ---- 粗墨线轮廓（木刻版画标志性描边） ----
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (var i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = '#17171a';
+    ctx.lineJoin = 'miter';
+    ctx.stroke();
 
-      var p1 = points[idx1];
-      var p2 = points[idx2];
-      if (!p1 || !p2) continue;
-
-      var noise1 = Math.sin(i * 0.4 + wave.progress * 7) * 0.5 + 0.5;
-      var noise2 = Math.sin(i * 0.11 + wave.progress * 5 + 1.2) * 0.5 + 0.5;
-      var mix = (noise1 * 0.6 + noise2 * 0.4);
-      var edgeFactor = 1 - Math.abs(t1 - 0.5) * 0.3;
-      var width = lerp(wave.foamMin, wave.foamMax, mix) * edgeFactor * (0.7 + 0.3 * (1 - progressY));
-      var segAlpha = 0.3 + 0.7 * (width / wave.foamMax);
+    // ---- 浪爪（Hokusai 式尖刺，硬边三角） ----
+    var clawCount = 5;
+    for (var c = 0; c < clawCount; c++) {
+      var t = (c + 0.5) / clawCount;
+      var idx = Math.min(Math.floor(t * steps), points.length - 1);
+      var base = points[idx];
+      if (!base) continue;
+      var clawH = amp * (0.32 + 0.18 * Math.sin(c * 2.1 + wave.progress * 6));
+      if (clawH < 6) continue;
 
       ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.lineWidth = width;
-      ctx.strokeStyle = foamColor + (segAlpha * 0.6) + ')';
-      ctx.lineCap = 'round';
+      ctx.moveTo(base.x - 9, base.y + 4);
+      ctx.quadraticCurveTo(base.x - 3, base.y - clawH * 0.6, base.x, base.y - clawH);
+      ctx.quadraticCurveTo(base.x + 3, base.y - clawH * 0.6, base.x + 9, base.y + 4);
+      ctx.closePath();
+      ctx.fillStyle = '#faf7f0';
+      ctx.fill();
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = '#17171a';
       ctx.stroke();
-    }
-
-    // ---- 卷曲浪尖（夜间更含蓄） ----
-    if (progressY > 0.2 && progressY < 0.6) {
-      var curlAlpha = 0.2 * (1 - Math.abs(progressY - 0.4) * 2) * 0.7;
-      if (curlAlpha > 0.04) {
-        var curlPos = 0.3 + 0.4 * Math.sin(time * 0.0002 + wave.progress * 5 + 1.2) * 0.5 + 0.5;
-        var curlIdx = Math.floor(curlPos * steps);
-        curlIdx = Math.min(curlIdx, points.length - 3);
-        var cp = points[curlIdx];
-        if (cp) {
-          ctx.globalAlpha = curlAlpha;
-          ctx.strokeStyle = 'rgba(200, 185, 165, 0.2)';
-          ctx.lineWidth = 0.8 + 0.4 * (1 - progressY);
-          ctx.beginPath();
-          var curlLen = 12 + 20 * (1 - progressY);
-          var angle = -0.7 + 0.5 * Math.sin(time * 0.0003 + wave.progress * 6 + curlIdx);
-          ctx.moveTo(cp.x, cp.y);
-          ctx.quadraticCurveTo(
-            cp.x + Math.cos(angle) * curlLen * 0.5,
-            cp.y + Math.sin(angle) * curlLen * 0.5 - 4,
-            cp.x + Math.cos(angle + 0.5) * curlLen * 0.7,
-            cp.y + Math.sin(angle + 0.5) * curlLen * 0.7 - 8
-          );
-          ctx.stroke();
-        }
-      }
     }
 
     ctx.restore();
@@ -755,6 +722,14 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   function animate(time) {
     if (!startTime) startTime = time;
     var elapsed = time - startTime;
+
+    if (!decorRevealed && elapsed > 120) {
+      decorRevealed = true;
+      introSun.classList.add('show');
+      meanderTop.classList.add('show');
+      meanderBottom.classList.add('show');
+      introDiagonal.classList.add('show');
+    }
 
     ctx.clearRect(0, 0, W, H);
 
