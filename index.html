@@ -102,8 +102,8 @@ a{ color:inherit; text-decoration:none; }
 .intro-glow.g1 { width: 46%; height: 42%; top: 18%; left: 8%; background: var(--accent-gold); opacity: 0; }
 .intro-glow.g2 { width: 50%; height: 38%; bottom: 6%; right: 4%; background: var(--accent-cobalt); opacity: 0; }
 .intro-glow.g3 { width: 34%; height: 30%; top: 40%; right: 30%; background: var(--accent-red); opacity: 0; }
-.intro-glow.show { opacity: 0.08; transition: opacity 1.6s ease; }
-.intro-glow.g2.show, .intro-glow.g3.show { opacity: 0.06; }
+.intro-glow.show { opacity: 0.04; transition: opacity 1.6s ease; }
+.intro-glow.g2.show, .intro-glow.g3.show { opacity: 0.03; }
 
 /* ---- 希腊回纹边框（顶部+底部） ---- */
 .intro-meander {
@@ -225,8 +225,7 @@ a{ color:inherit; text-decoration:none; }
 @media (max-width: 640px) {
   #intro-caption { font-size: 0.55rem; bottom: 40px; }
   #brand-char { font-size: clamp(2.2rem, 8vw, 3rem); }
-  .intro-diagonal span { font-size: 0.6rem; letter-spacing: 0.2em; }
-}
+  }
 
 /* ============================================================
    首页内容
@@ -405,6 +404,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 #music-toggle:hover .label{ opacity:1; }
 @media (max-width:640px){ #music-toggle{ right:18px; bottom:18px; width:50px; height:50px; } #music-toggle .label{ display:none; } }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -417,18 +417,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   <div class="intro-glow g2" id="glow-2"></div>
   <div class="intro-glow g3" id="glow-3"></div>
 
-  <svg class="intro-meander top" id="meander-top" viewBox="0 0 400 14" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M0 7 H14 V0 H28 V14 H42 V0 H56 V14 H70 V0 H84 V14 H98 V0 H112 V14 H126 V0 H140 V14 H154 V0 H168 V14 H182 V0 H196 V14 H210 V0 H224 V14 H238 V0 H252 V14 H266 V0 H280 V14 H294 V0 H308 V14 H322 V0 H336 V14 H350 V0 H364 V14 H378 V0 H400"/>
-  </svg>
-  <svg class="intro-meander bottom" id="meander-bottom" viewBox="0 0 400 14" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M0 7 H14 V0 H28 V14 H42 V0 H56 V14 H70 V0 H84 V14 H98 V0 H112 V14 H126 V0 H140 V14 H154 V0 H168 V14 H182 V0 H196 V14 H210 V0 H224 V14 H238 V0 H252 V14 H266 V0 H280 V14 H294 V0 H308 V14 H322 V0 H336 V14 H350 V0 H364 V14 H378 V0 H400"/>
-  </svg>
-
   <canvas id="wave-canvas"></canvas>
-
-  <div class="intro-diagonal" id="intro-diagonal">
-    <span>浮世絵 · 波 · ΚΥΜΑ · UKIYO-E</span>
-  </div>
 
   <!-- 品牌浮现 -->
   <div id="brand-container">
@@ -596,10 +585,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   var glow1 = document.getElementById('glow-1');
   var glow2 = document.getElementById('glow-2');
   var glow3 = document.getElementById('glow-3');
-  var meanderTop = document.getElementById('meander-top');
-  var meanderBottom = document.getElementById('meander-bottom');
-  var introDiagonal = document.getElementById('intro-diagonal');
-
   // ===== 尺寸 =====
   var W, H, cx, cy;
 
@@ -737,9 +722,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     if (!decorRevealed && elapsed > 120) {
       decorRevealed = true;
       glow1.classList.add('show');
-      meanderTop.classList.add('show');
-      meanderBottom.classList.add('show');
-      introDiagonal.classList.add('show');
       setTimeout(function(){ glow2.classList.add('show'); }, 300);
       setTimeout(function(){ glow3.classList.add('show'); }, 600);
     }
