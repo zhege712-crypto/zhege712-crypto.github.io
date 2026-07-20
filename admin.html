@@ -13,8 +13,31 @@
   --accent-red:#e0393e; --accent-gold:#e8a33d; --accent-cobalt:#2f5fa8;
   --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'Space Mono',monospace;
 }
+[data-theme="dark"] {
+  --ink: #ecece5;
+  --charcoal: #c4c4be;
+  --steel: #8a8a85;
+  --fog: #4a4a45;
+  --paper: #1a1a19;
+  --paper-2: #2a2a27;
+  --white: #222221;
+  --accent-red: #e55a5f;
+  --accent-gold: #d4a373;
+}
+[data-theme="eye-care"] {
+  --paper: #e9f0e1;
+  --paper-2: #dce6cf;
+  --white: #f4f8ee;
+  --ink: #3a4632;
+  --charcoal: #5c6a4f;
+  --steel: #82906f;
+  --fog: #c6d3b4;
+  --accent-red: #b2674f;
+  --accent-cobalt: #5f7f92;
+  --accent-gold: #bda26c;
+}
 *{ box-sizing:border-box; }
-body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); margin:0; padding:40px 20px 100px; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); margin:0; padding:40px 20px 100px; transition: background 0.3s ease, color 0.3s ease; }
 .wrap{ max-width:640px; margin:0 auto; }
 h1{ font-family:var(--font-display); font-weight:500; font-size:1.8rem; margin-bottom:6px; }
 .sub{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); margin-bottom:36px; }
@@ -97,6 +120,41 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 .photo-item .pi-save{ margin-top:0; padding:8px 14px; font-size:0.7rem; }
 .photo-item .pi-del{ margin-top:0; padding:8px 12px; font-size:0.7rem; background:transparent; color:var(--accent-red); border:1px solid var(--accent-red); }
 .photo-item .pi-del:hover{ background:var(--accent-red); color:var(--white); }
+
+.side-theme{
+  position:fixed; left:24px; bottom:100px; z-index:150;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  background:rgba(255,255,255,0.4);
+  background:color-mix(in srgb, var(--white) 55%, transparent);
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:0 8px 24px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.35);
+  padding:10px 8px; border-radius:28px; border:1px solid var(--fog);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.side-theme .theme-btn{
+  width:34px; height:34px; border-radius:50%; border:none;
+  margin-top:0;
+  background:transparent; cursor:pointer;
+  transition:background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  display:flex; align-items:center; justify-content:center;
+  padding:0; position:relative;
+}
+.side-theme .theme-btn svg{
+  width:22px; height:22px; stroke:var(--charcoal); stroke-width:1.8;
+  fill:none; display:block;
+  transition: stroke 0.25s ease;
+}
+.side-theme .theme-btn:hover{ background:var(--paper-2); transform:scale(1.08); }
+.side-theme .theme-btn.active{
+  background:var(--accent-gold);
+  box-shadow:0 0 0 2px var(--accent-gold);
+}
+.side-theme .theme-btn.active svg{ stroke:var(--white); }
+.side-theme .line{
+  width:2px; height:10px; background:var(--fog); border-radius:1px;
+  transition: background 0.3s ease;
+}
+@media (max-width:1180px){ .side-theme{ display:none; } }
 </style>
 </head>
 <body>
@@ -193,6 +251,35 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <button id="refresh-photo-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
     <div class="status" id="photo-manage-status"></div>
   </div>
+
+  <div class="panel">
+    <h2>⑥ 发布文章</h2>
+    <div class="row">
+      <div>
+        <label>标题</label>
+        <input type="text" id="w-title" placeholder="给这篇文章起个名字">
+      </div>
+      <div>
+        <label>日期</label>
+        <input type="date" id="w-date">
+      </div>
+    </div>
+    <label>标签（可选）</label>
+    <input type="text" id="w-tag" placeholder="例如：随笔 / 创作笔记 / 影像" list="w-tag-list">
+    <datalist id="w-tag-list"></datalist>
+    <label>正文</label>
+    <textarea id="w-content" placeholder="在这里写文章，换行会保留"></textarea>
+    <button id="writing-btn">发布</button>
+    <div class="status" id="w-status"></div>
+  </div>
+
+  <div class="panel">
+    <h2>⑦ 管理文章</h2>
+    <div class="hint" style="margin-top:0;">填好上面①的仓库信息和密钥后，这里会列出所有已发布的文章，点删除即可移除。</div>
+    <div id="writing-manage-list" style="margin-top:16px;"></div>
+    <button id="refresh-writing-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
+    <div class="status" id="writing-manage-status"></div>
+  </div>
 </div>
 
 <script>
@@ -215,7 +302,13 @@ var els = {
   phDate: document.getElementById('ph-date'),
   phFile: document.getElementById('ph-file'),
   phBtn: document.getElementById('photo-upload-btn'),
-  phStatus: document.getElementById('photo-status')
+  phStatus: document.getElementById('photo-status'),
+  wTitle: document.getElementById('w-title'),
+  wDate: document.getElementById('w-date'),
+  wTag: document.getElementById('w-tag'),
+  wContent: document.getElementById('w-content'),
+  wBtn: document.getElementById('writing-btn'),
+  wStatus: document.getElementById('w-status')
 };
 
 // 页面打开时，如果之前记住过，就自动填入
@@ -232,6 +325,7 @@ var els = {
   }
   els.date.value = new Date().toISOString().slice(0,10);
   els.phDate.value = new Date().toISOString().slice(0,10);
+  els.wDate.value = new Date().toISOString().slice(0,10);
   els.author.value = '水告示阳'; // 默认署名，写投稿人的名字就把这里改掉
 })();
 
@@ -579,6 +673,7 @@ document.getElementById('refresh-list-btn').addEventListener('click', loadManage
 if(els.owner.value && els.repo.value && els.token.value){
   loadManageList();
   loadPhotoManageList();
+  loadWritingManageList();
 }
 
 // ============================================================
@@ -795,7 +890,233 @@ async function deletePhoto(id){
 
 document.getElementById('refresh-photo-btn').addEventListener('click', loadPhotoManageList);
 
+// ============================================================
+// ⑥ 发布文章
+// ============================================================
+function setWStatus(text, type){
+  els.wStatus.textContent = text;
+  els.wStatus.className = 'status show ' + type;
+}
+
+els.wBtn.addEventListener('click', async function(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  var title = els.wTitle.value.trim();
+  var date = els.wDate.value;
+  var tag = els.wTag.value.trim();
+  var content = els.wContent.value.trim();
+
+  if(!owner || !repo || !token){ setWStatus('请先填写①的仓库信息和密钥', 'err'); return; }
+  if(!title || !content){ setWStatus('标题和正文不能为空', 'err'); return; }
+
+  els.wBtn.disabled = true;
+  setWStatus('发布中，请稍候…', 'loading');
+
+  try{
+    if(els.remember.checked){
+      localStorage.setItem('gh_admin_creds', JSON.stringify({owner:owner, repo:repo, token:token}));
+    } else {
+      localStorage.removeItem('gh_admin_creds');
+    }
+
+    // 读取现有的 writings.json（404 说明还没发布过文章，当作空数组）
+    var sha = null;
+    var writings = [];
+    var getRes = await ghRequest('writings.json', {}, owner, repo, token);
+    if(getRes.ok){
+      var fileData = await getRes.json();
+      sha = fileData.sha;
+      writings = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+    } else if(getRes.status !== 404){
+      throw new Error('读取 writings.json 失败');
+    }
+
+    var newWriting = {
+      id: String(Date.now()),
+      title: title,
+      date: date,
+      content: content
+    };
+    if(tag){ newWriting.tag = tag; }
+    writings.push(newWriting);
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(writings, null, 2))));
+    var putBody = {
+      message: '发布文章: ' + title,
+      content: newContentB64
+    };
+    if(sha){ putBody.sha = sha; }
+
+    var putRes = await ghRequest('writings.json', {
+      method: 'PUT',
+      body: JSON.stringify(putBody)
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('保存 writings.json 失败：' + (await putRes.text())); }
+
+    setWStatus('✓ 发布成功！大约1分钟后刷新文章页面就能看到。', 'ok');
+    els.wTitle.value = '';
+    els.wTag.value = '';
+    els.wContent.value = '';
+    loadWritingManageList();
+
+  } catch(err){
+    setWStatus('✗ 出错了：' + err.message, 'err');
+  } finally {
+    els.wBtn.disabled = false;
+  }
+});
+
+// ============================================================
+// ⑦ 管理文章：列出 + 删除
+// ============================================================
+var writingListEl = document.getElementById('writing-manage-list');
+var writingManageStatusEl = document.getElementById('writing-manage-status');
+
+function setWManageStatus(text, type){
+  writingManageStatusEl.textContent = text;
+  writingManageStatusEl.className = 'status show ' + type;
+}
+
+async function loadWritingManageList(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  if(!owner || !repo || !token){
+    writingListEl.innerHTML = '<div class="hint">先填好①的仓库信息和密钥</div>';
+    return;
+  }
+  writingListEl.innerHTML = '<div class="hint">加载中…</div>';
+  try{
+    var res = await ghRequest('writings.json', {}, owner, repo, token);
+    var writings = [];
+    if(res.ok){
+      var fileData = await res.json();
+      writings = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+    } else if(res.status !== 404){
+      throw new Error('找不到 writings.json');
+    }
+
+    // 顺手更新标签建议列表
+    var tagList = document.getElementById('w-tag-list');
+    var tagSet = Array.from(new Set(writings.map(function(w){ return w.tag || ''; }).filter(function(t){ return t; })));
+    tagList.innerHTML = tagSet.map(function(t){ return '<option value="' + escapeHtml(t) + '">'; }).join('');
+
+    if(writings.length === 0){
+      writingListEl.innerHTML = '<div class="hint">目前没有已发布的文章</div>';
+      return;
+    }
+
+    writings.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+
+    writingListEl.innerHTML = '';
+    writings.forEach(function(w){
+      var row = document.createElement('div');
+      row.className = 'manage-item';
+      row.innerHTML =
+        '<div class="mi-info">' + escapeHtml(w.title) +
+          '<span class="mi-date">' + escapeHtml(w.date) + (w.tag ? ' · ' + escapeHtml(w.tag) : '') + '</span>' +
+        '</div>' +
+        '<button class="mi-del" type="button">删除</button>';
+      row.querySelector('.mi-del').addEventListener('click', function(){
+        deleteWriting(w.id);
+      });
+      writingListEl.appendChild(row);
+    });
+
+  } catch(err){
+    writingListEl.innerHTML = '<div class="hint">加载失败：' + err.message + '</div>';
+  }
+}
+
+async function deleteWriting(id){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+
+  if(!confirm('确定要删除这篇文章吗？此操作不可撤销。')) return;
+
+  setWManageStatus('删除中…', 'loading');
+  try{
+    var getRes = await ghRequest('writings.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 writings.json 失败'); }
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var writings = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+
+    var target = writings.find(function(w){ return w.id === id; });
+    var remaining = writings.filter(function(w){ return w.id !== id; });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(remaining, null, 2))));
+    var putRes = await ghRequest('writings.json', {
+      method: 'PUT',
+      body: JSON.stringify({
+        message: '删除文章: ' + (target ? target.title : id),
+        content: newContentB64,
+        sha: sha
+      })
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 writings.json 失败'); }
+
+    setWManageStatus('✓ 已删除', 'ok');
+    loadWritingManageList();
+
+  } catch(err){
+    setWManageStatus('✗ 删除失败：' + err.message, 'err');
+  }
+}
+
+document.getElementById('refresh-writing-btn').addEventListener('click', loadWritingManageList);
+
+// ============================================================
+// 主题切换（与全站共用 localStorage 的 theme 键）
+// ============================================================
+(function(){
+  var btns = document.querySelectorAll('#theme-side .theme-btn');
+  if(!btns.length) return;
+  function isNightTime() {
+    var hour = new Date().getHours();
+    return (hour >= 19 || hour < 6);
+  }
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+    btns.forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+    });
+  }
+  var saved = localStorage.getItem('theme');
+  var initial;
+  if (saved && (saved === 'light' || saved === 'dark' || saved === 'eye-care')) {
+    initial = saved;
+  } else {
+    initial = isNightTime() ? 'dark' : 'light';
+  }
+  applyTheme(initial);
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applyTheme(this.getAttribute('data-theme'));
+    });
+  });
+})();
 
 </script>
+<div class="side-theme" id="theme-side">
+  <button class="theme-btn" data-theme="light" aria-label="日间模式" type="button">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  </button>
+  <div class="line"></div>
+  <button class="theme-btn" data-theme="dark" aria-label="夜间模式" type="button">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0 0 20 10 10 0 0 0 0-20z" style="fill:rgba(0,0,0,0.1);"/><path d="M12 2a10 10 0 0 1 0 20 10 10 0 0 1 0-20z" style="fill:rgba(0,0,0,0.1);"/><path d="M12 4a8 8 0 0 0 0 16 8 8 0 0 0 0-16z" fill="var(--charcoal)" opacity="0.2"/><path d="M12 6a6 6 0 0 1 0 12 6 6 0 0 1 0-12z" fill="var(--charcoal)" opacity="0.4"/><path d="M12 8a4 4 0 0 0 0 8 4 4 0 0 0 0-8z" fill="var(--charcoal)" opacity="0.6"/></svg>
+  </button>
+  <div class="line"></div>
+  <button class="theme-btn" data-theme="eye-care" aria-label="护眼模式" type="button">
+    <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path d="M12 9c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z" fill="var(--charcoal)" opacity="0.3"/><path d="M12 10.5c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5 1.5-.7 1.5-1.5-.7-1.5-1.5-1.5z" fill="var(--charcoal)" opacity="0.5"/></svg>
+  </button>
+</div>
 </body>
 </html>

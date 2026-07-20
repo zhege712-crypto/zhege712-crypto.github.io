@@ -64,6 +64,57 @@ header .wrap{ max-width:960px; display:flex; justify-content:space-between; alig
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 .subseries-head::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--accent-gold); flex-shrink:0; }
+
+::selection{ background:var(--accent-gold); color:#fff; }
+.catalog-row .c-author{ font-family:'Kaiti SC','STKaiti','KaiTi',serif; font-size:0.88rem; color:var(--charcoal); }
+
+.catalog-controls{ display:flex; justify-content:space-between; align-items:center; gap:14px; margin:36px 0 0; flex-wrap:wrap; }
+.view-toggle{
+  display:inline-flex; gap:2px; padding:4px; border-radius:24px; border:1px solid var(--fog);
+  background:var(--white); background:color-mix(in srgb, var(--white) 55%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+.view-toggle button{
+  border:none; background:transparent; padding:8px 18px; border-radius:20px;
+  font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.06em; color:var(--steel);
+  cursor:pointer; transition:background 0.25s ease, color 0.25s ease;
+}
+.view-toggle button.active{ background:var(--ink); color:var(--paper); }
+.random-btn{
+  font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.06em;
+  padding:11px 20px; border-radius:22px; border:1px solid var(--fog);
+  background:transparent; color:var(--charcoal); cursor:pointer;
+  transition:background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.random-btn:hover{ background:var(--accent-red); color:var(--white); border-color:var(--accent-red); }
+
+/* 树状图模式 */
+.tree-branch > .branch-head{
+  display:flex; align-items:center; gap:10px; width:100%; padding:16px 6px;
+  background:none; border:none; cursor:pointer; text-align:left;
+  font-family:var(--font-display); font-weight:500; font-size:1.15rem; color:var(--accent-red);
+}
+.branch-head .tri{ font-size:0.62rem; color:var(--steel); transition:transform 0.25s ease; }
+.tree-branch.collapsed > .branch-head .tri{ transform:rotate(-90deg); }
+.branch-count{
+  font-family:var(--font-mono); font-size:0.62rem; font-weight:400; color:var(--steel);
+  border:1px solid var(--fog); border-radius:12px; padding:2px 10px;
+}
+.branch-children{ margin-left:10px; padding-left:20px; border-left:1px solid var(--fog); }
+.tree-branch.collapsed > .branch-children{ display:none; }
+.tree-branch.sub > .branch-head{
+  font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.1em;
+  color:var(--charcoal); padding:12px 6px;
+}
+.tree-leaf{
+  display:flex; justify-content:space-between; align-items:baseline; gap:16px;
+  padding:9px 6px; position:relative;
+  transition:color 0.25s ease, padding-left 0.25s ease;
+}
+.tree-leaf::before{ content:''; position:absolute; left:-20px; top:50%; width:13px; height:1px; background:var(--fog); }
+.tree-leaf:hover{ color:var(--accent-red); padding-left:12px; }
+.tree-leaf .leaf-title{ font-size:0.95rem; }
+.tree-leaf .leaf-meta{ font-family:var(--font-mono); font-size:0.62rem; color:var(--steel); white-space:nowrap; }
 .catalog-list{ padding-bottom:120px; }
 .catalog-row{
   display:grid; grid-template-columns:90px 1fr auto; gap:20px; align-items:baseline;
@@ -139,6 +190,13 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       <path d="M0 5 H8 V0 H16 V10 H24 V0 H32 V10 H40 V0 H48 V10 H56 V0 H64 V10 H72 V0 H80 V10 H88 V0 H100"/>
     </svg>
   </div>
+  <div class="catalog-controls">
+    <div class="view-toggle" id="view-toggle">
+      <button type="button" data-view="list" class="active">列表</button>
+      <button type="button" data-view="tree">树状图</button>
+    </div>
+    <button class="random-btn" id="random-btn" type="button">随机阅读 →</button>
+  </div>
   <div class="search-box">
     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
     <input type="text" id="search-input" placeholder="搜索标题、正文关键字或作者…">
@@ -173,7 +231,7 @@ var listEl = document.getElementById('catalog-list');
 var hintEl = document.getElementById('search-hint');
 function rowHtml(p){
   return '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
-      '<span class="c-date">' + escapeHtml(p.date) + (p.author ? '<br>' + escapeHtml(p.author) : '') + '</span>' +
+      '<span class="c-date">' + escapeHtml(p.date) + (p.author ? '<br><span class="c-author">' + escapeHtml(p.author) + '</span>' : '') + '</span>' +
       '<h3>' + escapeHtml(p.title) + '</h3>' +
       '<span class="c-arrow">阅读 →</span>' +
     '</a>';
@@ -214,11 +272,92 @@ function renderCatalog(poems){
     return '<div class="series-block"><h2>' + escapeHtml(series) + '</h2>' + rows + '</div>';
   }).join('');
 }
+
+/* ---------- 树状图模式 ---------- */
+var viewMode = localStorage.getItem('catalog_view') === 'tree' ? 'tree' : 'list';
+var collapsed = {};
+try{ collapsed = JSON.parse(localStorage.getItem('catalog_collapsed') || '{}'); }catch(e){ collapsed = {}; }
+function leafHtml(p){
+  return '<a class="tree-leaf" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
+      '<span class="leaf-title">' + escapeHtml(p.title) + '</span>' +
+      '<span class="leaf-meta">' + escapeHtml(p.date) + (p.author ? ' · ' + escapeHtml(p.author) : '') + '</span>' +
+    '</a>';
+}
+function renderTree(poems){
+  if(!poems || poems.length === 0){
+    listEl.innerHTML = '<div class="empty-state">没有匹配的诗。</div>';
+    return;
+  }
+  poems = poems.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+  var groups = {};
+  var order = [];
+  poems.forEach(function(p){
+    var s = p.series || '未分类';
+    if(!groups[s]){ groups[s] = []; order.push(s); }
+    groups[s].push(p);
+  });
+  listEl.innerHTML = order.map(function(series){
+    var list = groups[series];
+    var inner = list.filter(function(p){ return !p.subseries; }).map(leafHtml).join('');
+    var subGroups = {};
+    var subOrder = [];
+    list.forEach(function(p){
+      if(!p.subseries) return;
+      if(!subGroups[p.subseries]){ subGroups[p.subseries] = []; subOrder.push(p.subseries); }
+      subGroups[p.subseries].push(p);
+    });
+    inner += subOrder.map(function(sub){
+      var subKey = series + '/' + sub;
+      return '<div class="tree-branch sub' + (collapsed[subKey] ? ' collapsed' : '') + '" data-key="' + escapeHtml(subKey) + '">' +
+          '<button class="branch-head" type="button"><span class="tri">▼</span>' + escapeHtml(sub) +
+            '<span class="branch-count">' + subGroups[sub].length + '</span></button>' +
+          '<div class="branch-children">' + subGroups[sub].map(leafHtml).join('') + '</div>' +
+        '</div>';
+    }).join('');
+    return '<div class="tree-branch' + (collapsed[series] ? ' collapsed' : '') + '" data-key="' + escapeHtml(series) + '">' +
+        '<button class="branch-head" type="button"><span class="tri">▼</span>' + escapeHtml(series) +
+          '<span class="branch-count">' + list.length + '</span></button>' +
+        '<div class="branch-children">' + inner + '</div>' +
+      '</div>';
+  }).join('');
+}
+function render(poems){
+  if(viewMode === 'tree'){ renderTree(poems); } else { renderCatalog(poems); }
+}
+// 分支折叠/展开（状态持久化）
+listEl.addEventListener('click', function(e){
+  var head = e.target.closest('.branch-head');
+  if(!head) return;
+  var branch = head.parentElement;
+  var key = branch.getAttribute('data-key');
+  branch.classList.toggle('collapsed');
+  if(branch.classList.contains('collapsed')){ collapsed[key] = true; } else { delete collapsed[key]; }
+  localStorage.setItem('catalog_collapsed', JSON.stringify(collapsed));
+});
+// 列表 / 树状图 切换
+(function(){
+  var toggleBtns = document.querySelectorAll('#view-toggle button');
+  toggleBtns.forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('data-view') === viewMode);
+    btn.addEventListener('click', function(){
+      viewMode = this.getAttribute('data-view');
+      localStorage.setItem('catalog_view', viewMode);
+      toggleBtns.forEach(function(b){ b.classList.toggle('active', b === btn); });
+      render(allPoems);
+    });
+  });
+})();
+// 随机阅读
+document.getElementById('random-btn').addEventListener('click', function(){
+  if(!allPoems.length) return;
+  var pick = allPoems[Math.floor(Math.random() * allPoems.length)];
+  window.location.href = 'poem.html?id=' + encodeURIComponent(pick.id);
+});
 function doSearch(query){
   query = query.trim().toLowerCase();
   if(!query){
     hintEl.textContent = '';
-    renderCatalog(allPoems);
+    render(allPoems);
     return;
   }
   var matched = allPoems.filter(function(p){
@@ -228,7 +367,7 @@ function doSearch(query){
            (p.subseries || '').toLowerCase().indexOf(query) !== -1;
   });
   hintEl.textContent = '找到 ' + matched.length + ' 首';
-  renderCatalog(matched);
+  render(matched);
 }
 document.getElementById('search-input').addEventListener('input', function(e){
   doSearch(e.target.value);
@@ -241,7 +380,7 @@ fetch('poems/poems.json?t=' + Date.now())
       listEl.innerHTML = '<div class="empty-state">暂时还没有诗，敬请期待。</div>';
       return;
     }
-    renderCatalog(allPoems);
+    render(allPoems);
   })
   .catch(function(){
     listEl.innerHTML = '<div class="empty-state">目录加载失败，检查 poems/poems.json 是否存在。</div>';

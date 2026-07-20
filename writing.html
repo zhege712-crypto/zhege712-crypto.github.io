@@ -113,6 +113,14 @@ nav.top-nav a:hover::after{ width:100%; }
 .article-row:hover h3{ color:var(--accent-red); }
 .article-row .a-tag{ font-family:var(--font-mono); font-size:0.68rem; color:var(--white); background:var(--charcoal); padding:5px 10px; letter-spacing:0.05em; white-space:nowrap; height:fit-content; }
 @media (max-width:640px){ .article-row{ grid-template-columns:1fr; gap:8px; } }
+.empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:60px 0; }
+.article-detail{ padding-bottom:140px; }
+.back-link{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); display:inline-block; margin-bottom:44px; }
+.back-link:hover{ color:var(--accent-red); }
+.poem-meta{ font-family:var(--font-mono); font-size:0.72rem; color:var(--steel); margin-bottom:16px; }
+.poem-title{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:34px; }
+.greek-divider{ width:100px; height:10px; color:var(--fog); margin:22px 0; display:block; }
+.article-content{ white-space:pre-line; font-size:1.02rem; line-height:1.9; color:var(--charcoal); }
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 </style>
 </head>
@@ -176,26 +184,73 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <h1>文章</h1>
     <p class="page-note">关于创作、观察与技术的记录</p>
   </div>
-  <div class="article-list">
-    <a class="article-row" href="#">
-      <span class="a-date">2024.06</span>
-      <h3>to be</h3>
-      <span class="a-tag">随笔</span>
-    </a>
-    <a class="article-row" href="#">
-      <span class="a-date">2024.02</span>
-      <h3>to be</h3>
-      <span class="a-tag">创作笔记</span>
-    </a>
-    <a class="article-row" href="#">
-      <span class="a-date">2023.11</span>
-      <h3>to be</h3>
-      <span class="a-tag">影像</span>
-    </a>
+  <div class="article-list" id="article-list">
+    <div class="empty-state">加载中…</div>
   </div>
+  <div class="article-detail" id="article-detail" style="display:none;"></div>
 </div>
 <footer>© 2026 水告示阳 · 保留所有权利</footer>
 <script>
+(function(){
+  var listEl = document.getElementById('article-list');
+  var detailEl = document.getElementById('article-detail');
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = String(s == null ? '' : s);
+    return d.innerHTML;
+  }
+  function rowHtml(w){
+    return '<a class="article-row" href="writing.html?id=' + encodeURIComponent(w.id) + '">' +
+        '<span class="a-date">' + escapeHtml(w.date) + '</span>' +
+        '<h3>' + escapeHtml(w.title) + '</h3>' +
+        (w.tag ? '<span class="a-tag">' + escapeHtml(w.tag) + '</span>' : '<span></span>') +
+      '</a>';
+  }
+  function renderDetail(w){
+    listEl.style.display = 'none';
+    detailEl.style.display = 'block';
+    if(!w){
+      detailEl.innerHTML =
+        '<a class="back-link" href="writing.html">← 返回文章列表</a>' +
+        '<div class="empty-state">没找到这篇文章。</div>';
+      return;
+    }
+    detailEl.innerHTML =
+      '<a class="back-link" href="writing.html">← 返回文章列表</a>' +
+      '<div class="poem-meta">' + escapeHtml(w.date) + (w.tag ? ' · ' + escapeHtml(w.tag) : '') + '</div>' +
+      '<div class="poem-title">' + escapeHtml(w.title) + '</div>' +
+      '<svg class="greek-divider" viewBox="0 0 100 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 5 H8 V0 H16 V10 H24 V0 H32 V10 H40 V0 H48 V10 H56 V0 H64 V10 H72 V0 H80 V10 H88 V0 H100"/></svg>' +
+      '<div class="article-content">' + escapeHtml(w.content) + '</div>';
+  }
+  var params = new URLSearchParams(window.location.search);
+  var wantId = params.get('id');
+  fetch('writings.json?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(writings){
+      writings = writings || [];
+      if(wantId){
+        var target = null;
+        for(var i = 0; i < writings.length; i++){
+          if(String(writings[i].id) === wantId){ target = writings[i]; break; }
+        }
+        renderDetail(target);
+        return;
+      }
+      if(writings.length === 0){
+        listEl.innerHTML = '<div class="empty-state">暂时还没有文章，敬请期待。</div>';
+        return;
+      }
+      writings = writings.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+      listEl.innerHTML = writings.map(rowHtml).join('');
+    })
+    .catch(function(){
+      if(wantId){
+        renderDetail(null);
+      } else {
+        listEl.innerHTML = '<div class="empty-state">文章加载失败，检查 writings.json 是否存在。</div>';
+      }
+    });
+})();
 (function(){
   var badge = document.getElementById('poem-count');
   if(!badge) return;
