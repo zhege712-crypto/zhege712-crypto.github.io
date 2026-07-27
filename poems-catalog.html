@@ -221,6 +221,35 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   </button>
 </div>
 <script>
+// ===== 日期格式化 =====
+function formatPoemDate(dateStr) {
+  if (!dateStr || dateStr.trim() === '') return '年代不详';
+  var parts = dateStr.trim().split('-');
+  var year = parts[0];
+  var month = parts[1];
+  var day = parts[2];
+  if (!month) return year + '年';
+  if (!day) return year + '年' + parseInt(month) + '月';
+  return year + '年' + parseInt(month) + '月' + parseInt(day) + '日';
+}
+
+function getDateWeight(dateStr) {
+  if (!dateStr || dateStr.trim() === '') return -1;
+  var parts = dateStr.trim().split('-');
+  var weight = 0;
+  if (parts[0]) weight += 10000;
+  if (parts[1]) weight += 100;
+  if (parts[2]) weight += 1;
+  return weight;
+}
+
+function sortByDate(a, b) {
+  var wA = getDateWeight(a.date);
+  var wB = getDateWeight(b.date);
+  if (wA !== wB) return wB - wA;
+  return (a.date || '').localeCompare(b.date || '');
+}
+
 function escapeHtml(s){
   var d = document.createElement('div');
   d.textContent = String(s == null ? '' : s);
@@ -231,7 +260,7 @@ var listEl = document.getElementById('catalog-list');
 var hintEl = document.getElementById('search-hint');
 function rowHtml(p){
   return '<a class="catalog-row" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
-      '<span class="c-date">' + escapeHtml(p.date) + (p.author ? '<br><span class="c-author">' + escapeHtml(p.author) + '</span>' : '') + '</span>' +
+      '<span class="c-date">' + formatPoemDate(p.date) + (p.author ? '<br><span class="c-author">' + escapeHtml(p.author) + '</span>' : '') + '</span>' +
       '<h3>' + escapeHtml(p.title) + '</h3>' +
       '<span class="c-arrow">阅读 →</span>' +
     '</a>';
@@ -241,7 +270,7 @@ function renderCatalog(poems){
     listEl.innerHTML = '<div class="empty-state">没有匹配的诗。</div>';
     return;
   }
-  poems = poems.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+  poems = poems.slice().sort(sortByDate);
   var groups = {};
   var order = [];
   poems.forEach(function(p){
@@ -253,7 +282,6 @@ function renderCatalog(poems){
     var list = groups[series];
     var rows;
     if(list.some(function(p){ return p.subseries; })){
-      // 有子分类：未填子分类的排在前面，其余按子分类分组（子分类为可选字段）
       rows = list.filter(function(p){ return !p.subseries; }).map(rowHtml).join('');
       var subGroups = {};
       var subOrder = [];
@@ -280,7 +308,7 @@ try{ collapsed = JSON.parse(localStorage.getItem('catalog_collapsed') || '{}'); 
 function leafHtml(p){
   return '<a class="tree-leaf" href="poem.html?id=' + encodeURIComponent(p.id) + '">' +
       '<span class="leaf-title">' + escapeHtml(p.title) + '</span>' +
-      '<span class="leaf-meta">' + escapeHtml(p.date) + (p.author ? ' · ' + escapeHtml(p.author) : '') + '</span>' +
+      '<span class="leaf-meta">' + formatPoemDate(p.date) + (p.author ? ' · ' + escapeHtml(p.author) : '') + '</span>' +
     '</a>';
 }
 function renderTree(poems){
@@ -288,7 +316,7 @@ function renderTree(poems){
     listEl.innerHTML = '<div class="empty-state">没有匹配的诗。</div>';
     return;
   }
-  poems = poems.slice().sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+  poems = poems.slice().sort(sortByDate);
   var groups = {};
   var order = [];
   poems.forEach(function(p){
@@ -324,7 +352,6 @@ function renderTree(poems){
 function render(poems){
   if(viewMode === 'tree'){ renderTree(poems); } else { renderCatalog(poems); }
 }
-// 分支折叠/展开（状态持久化）
 listEl.addEventListener('click', function(e){
   var head = e.target.closest('.branch-head');
   if(!head) return;
@@ -334,7 +361,6 @@ listEl.addEventListener('click', function(e){
   if(branch.classList.contains('collapsed')){ collapsed[key] = true; } else { delete collapsed[key]; }
   localStorage.setItem('catalog_collapsed', JSON.stringify(collapsed));
 });
-// 列表 / 树状图 切换
 (function(){
   var toggleBtns = document.querySelectorAll('#view-toggle button');
   toggleBtns.forEach(function(btn){
@@ -347,7 +373,6 @@ listEl.addEventListener('click', function(e){
     });
   });
 })();
-// 随机阅读
 document.getElementById('random-btn').addEventListener('click', function(){
   if(!allPoems.length) return;
   var pick = allPoems[Math.floor(Math.random() * allPoems.length)];

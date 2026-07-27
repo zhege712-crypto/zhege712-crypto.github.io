@@ -150,6 +150,18 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   </button>
 </div>
 <script>
+// ===== 日期格式化 =====
+function formatPoemDate(dateStr) {
+  if (!dateStr || dateStr.trim() === '') return '年代不详';
+  var parts = dateStr.trim().split('-');
+  var year = parts[0];
+  var month = parts[1];
+  var day = parts[2];
+  if (!month) return year + '年';
+  if (!day) return year + '年' + parseInt(month) + '月';
+  return year + '年' + parseInt(month) + '月' + parseInt(day) + '日';
+}
+
 (function(){
   var lightbox = document.getElementById('lightbox');
   var lightboxImg = document.getElementById('lightbox-img');
@@ -197,8 +209,12 @@ fetch('poems/poems.json?t=' + Date.now())
     var img = imgList.map(function(src){
       return '<div class="poem-image"><img src="' + escapeHtml(src) + '" alt="' + escapeHtml(poem.title) + '"></div>';
     }).join('');
+    var metaDate = formatPoemDate(poem.date);
     detail.innerHTML =
-      '<div class="poem-meta">' + (poem.author ? '<span class="p-author">' + escapeHtml(poem.author) + '</span> · ' : '') + escapeHtml(poem.date) + (poem.series ? ' · ' + escapeHtml(poem.series) : '') + (poem.subseries ? ' · ' + escapeHtml(poem.subseries) : '') + '</div>' +
+      '<div class="poem-meta">' + (poem.author ? '<span class="p-author">' + escapeHtml(poem.author) + '</span> · ' : '') + 
+      metaDate + 
+      (poem.series ? ' · ' + escapeHtml(poem.series) : '') + 
+      (poem.subseries ? ' · ' + escapeHtml(poem.subseries) : '') + '</div>' +
       '<div class="poem-title">' + escapeHtml(poem.title) + '</div>' +
       '<svg class="greek-divider" viewBox="0 0 100 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M0 5 H8 V0 H16 V10 H24 V0 H32 V10 H40 V0 H48 V10 H56 V0 H64 V10 H72 V0 H80 V10 H88 V0 H100"/></svg>' +
       '<div class="poem-content">' + escapeHtml(poem.content) + '</div>' +
