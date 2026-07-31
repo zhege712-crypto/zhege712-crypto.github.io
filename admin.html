@@ -131,7 +131,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 .photo-item .pi-del:hover{ background:var(--accent-red); color:var(--white); }
 
 .side-theme{
-  position:fixed; left:24px; bottom:100px; z-index:150;
+  position:fixed; left:24px; bottom:100px; z-index:100000; /* 提升至遮罩之上 */
   display:flex; flex-direction:column; align-items:center; gap:6px;
   background:rgba(255,255,255,0.4);
   background:color-mix(in srgb, var(--white) 55%, transparent);
@@ -396,7 +396,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 <footer style="padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); margin-top:40px;">© 2026 水告示阳 · 保留所有权利</footer>
 </div> <!-- .content-wrapper -->
 
-<!-- ====== 主题切换按钮（一直可见） ====== -->
+<!-- ====== 主题切换按钮（一直可见，且置于遮罩之上） ====== -->
 <div class="side-theme" id="theme-side">
   <button class="theme-btn" data-theme="light" aria-label="日间模式" type="button">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -413,7 +413,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 
 <script>
 // ============================================================
-// 密码门逻辑（使用 SHA-256 哈希比对）
+// 密码门逻辑（明文比对，防君子不防小人）
 // ============================================================
 (function() {
   var overlay = document.getElementById('password-overlay');
@@ -422,12 +422,8 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
   var errorMsg = document.getElementById('password-error');
   var contentWrapper = document.querySelector('.content-wrapper');
 
-  // ---------- 设置你的密码（修改这里） ----------
-  // 预设密码为 "umbrella2026"，其 SHA-256 哈希值为：
-  // 9285f7e3b4c8f9a2d1c4e6b8a0f3d1e2c4b6a8f0d9e7c3b5a1d2f4e6c8b0a2d3
-  // 你可以用任何在线工具生成新密码的哈希值，然后替换下面的 HASH。
-  // 注意：前端哈希只能防君子，真正安全需配合服务端验证。
-  var PASSWORD_HASH = '9285f7e3b4c8f9a2d1c4e6b8a0f3d1e2c4b6a8f0d9e7c3b5a1d2f4e6c8b0a2d3'; // "umbrella2026"
+  // ---------- 在这里修改你的密码（直接写明文） ----------
+  var PASSWORD = 'umbrella2026'; // 你可以把 umbrella2026 改成你喜欢的任何密码
 
   // 检查 sessionStorage 是否已登录
   if (sessionStorage.getItem('admin_authenticated') === 'true') {
@@ -436,43 +432,23 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     return;
   }
 
-  // SHA-256 哈希函数（使用 Web Crypto API）
-  async function sha256(message) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-  }
-
-  // 验证密码
-  async function verifyPassword() {
-    var input = pwInput.value;
+  // 验证密码（直接比对，自动去除首尾空格）
+  function verifyPassword() {
+    var input = pwInput.value.trim(); // 去掉首尾空格，避免你复制时多带空格
     if (!input) {
       errorMsg.textContent = '请输入密码';
       return;
     }
-    errorMsg.textContent = '验证中...';
-    pwSubmit.disabled = true;
-    try {
-      var inputHash = await sha256(input);
-      if (inputHash === PASSWORD_HASH) {
-        // 正确
-        sessionStorage.setItem('admin_authenticated', 'true');
-        overlay.classList.add('hidden');
-        contentWrapper.style.display = 'block';
-        // 聚焦到第一个输入框（可选）
-        document.getElementById('gh-owner').focus();
-      } else {
-        errorMsg.textContent = '密码错误，请重试';
-        pwInput.value = '';
-        pwInput.focus();
-        pwSubmit.disabled = false;
-      }
-    } catch (e) {
-      errorMsg.textContent = '系统错误，请刷新重试';
-      pwSubmit.disabled = false;
+    if (input === PASSWORD) {
+      // 正确
+      sessionStorage.setItem('admin_authenticated', 'true');
+      overlay.classList.add('hidden');
+      contentWrapper.style.display = 'block';
+      document.getElementById('gh-owner').focus();
+    } else {
+      errorMsg.textContent = '密码错误，请重试';
+      pwInput.value = '';
+      pwInput.focus();
     }
   }
 
