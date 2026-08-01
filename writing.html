@@ -159,11 +159,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
     关于
   </a>
-  <a href="poems.html">
-    <svg viewBox="0 0 24 24"><path d="M20 4L9 15l-5 1 1-5L16 0z"/><path d="M3 21h18"/></svg>
-    诗歌漂流
-    <span class="badge" id="poem-count">·</span>
-  </a>
 </nav>
 <div class="side-theme" id="theme-side">
   <button class="theme-btn" data-theme="light" aria-label="日间模式">
@@ -250,13 +245,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
         listEl.innerHTML = '<div class="empty-state">文章加载失败，检查 writings.json 是否存在。</div>';
       }
     });
-})();
-(function(){
-  var badge = document.getElementById('poem-count');
-  if(!badge) return;
-  fetch('poems/poems.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(list){
-    badge.textContent = list.length;
-  }).catch(function(){ badge.textContent = '0'; });
 })();
 (function(){
   var btns = document.querySelectorAll('#theme-side .theme-btn');

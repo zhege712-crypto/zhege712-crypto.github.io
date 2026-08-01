@@ -188,11 +188,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
     关于
   </a>
-  <a href="poems.html">
-    <svg viewBox="0 0 24 24"><path d="M20 4L9 15l-5 1 1-5L16 0z"/><path d="M3 21h18"/></svg>
-    诗歌漂流
-    <span class="badge" id="poem-count">·</span>
-  </a>
 </nav>
 <div class="side-theme" id="theme-side">
   <button class="theme-btn" data-theme="light" aria-label="日间模式">
@@ -229,22 +224,19 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       <h2>联系方式</h2>
       <div class="contact-list">
         <a href="mailto:zhege712@gmail.com">✉️ zhege712@gmail.com</a>
-        <a href="#" target="_blank">📱 1014199514@qq.com</a>
-        <a href="#" target="_blank">📺 bilibili 水告示阳</a>
-        <a href="#" target="_blank">📷 steam 1907515243</a>
+        <a href="#" target="_blank">📷 Instagram</a>
+        <a href="#" target="_blank">📕 小红书</a>
+        <a href="#" target="_blank">📱 微博</a>
+      </div>
+      <h2 style="margin-top:40px;">友站</h2>
+      <div class="contact-list">
+        <a href="https://zhege712-crypto.github.io/Poem_Ulysses/" target="_blank" rel="noopener">⛵ 诗歌漂流 · Poem's Ulysses</a>
       </div>
     </div>
   </div>
 </div>
 <footer>© 2026 水告示阳 · 保留所有权利</footer>
 <script>
-(function(){
-  var badge = document.getElementById('poem-count');
-  if(!badge) return;
-  fetch('poems/poems.json?t=' + Date.now()).then(function(r){ return r.json(); }).then(function(list){
-    badge.textContent = list.length;
-  }).catch(function(){ badge.textContent = '0'; });
-})();
 (function(){
   var btns = document.querySelectorAll('#theme-side .theme-btn');
   if(!btns.length) return;
