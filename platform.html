@@ -153,10 +153,13 @@ nav.top-nav a:hover::after{ width:100%; }
 .album-view{
   --av-accent: var(--accent-cobalt);
   --av-head: var(--ink);
+  --bg-dim: 0.86;
   position:relative; margin-bottom:140px;
 }
+.album-view.has-img{ --bg-dim: 0.68; }
 .album-view-bg{ position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; border-radius:12px; }
-.album-view::after{ content:''; position:absolute; inset:0; z-index:0; background:color-mix(in srgb, var(--paper) 86%, transparent); border-radius:12px; }
+.album-view-tint{ position:absolute; inset:0; z-index:0; opacity:0.5; border-radius:12px; }
+.album-view::after{ content:''; position:absolute; inset:0; z-index:0; background:color-mix(in srgb, var(--paper) calc(var(--bg-dim) * 100%), transparent); border-radius:12px; }
 .album-view-inner{ position:relative; z-index:1; padding:44px 40px 60px; }
 .av-head{ margin-bottom:28px; }
 .av-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.9rem,4.5vw,2.8rem); line-height:1.1; color:var(--av-head); transition:color 0.3s ease; }
@@ -210,17 +213,13 @@ nav.top-nav a:hover::after{ width:100%; }
 }
 .load-more:hover{ border-color:var(--av-accent, var(--accent-red)); color:var(--av-accent, var(--accent-red)); }
 
-/* 档案专属音乐（置于档案视图内） */
-.music-box.album-music-box{ position:absolute; right:24px; bottom:20px; z-index:2; }
-
 .empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:60px 0; }
 @media (max-width:640px){
   .memo-item{ grid-template-columns:1fr; gap:8px; padding:24px 0; }
   .album-view-inner{ padding:34px 24px 46px; }
-  .music-box.album-music-box{ right:16px; bottom:12px; }
 }
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
-.footer-stats{ margin-bottom:10px; color:var(--steel); font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; }
+.footer-counter{ margin-bottom:10px; font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); letter-spacing:0.05em; display:none; }
 </style>
 </head>
 <body>
@@ -288,9 +287,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   </div>
 </div>
 <footer>
-  <div class="footer-stats">
-    <span id="busuanzi_container_site_uv" style="display:none;">访客 <span id="busuanzi_value_site_uv"></span></span>
-    <span id="busuanzi_container_site_pv" style="display:none;"> · 浏览 <span id="busuanzi_value_site_pv"></span></span>
+  <div class="footer-counter" id="counter-box">
+    <span>浏览 <span id="counter-pv">–</span> · 访客 <span id="counter-uv">–</span></span>
   </div>
   <div>© 2026 水告示阳 · 保留所有权利</div>
 </footer>
@@ -307,7 +305,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 (function(){
   var viewEl = document.getElementById('platform-view');
   var PAGE_SIZE = 10;
-  var state = { q: '', page: 0 };
+  var state = { q: '', page: 0, albumAutoDone: false };
 
   function esc(s){
     var d = document.createElement('div');
@@ -379,10 +377,15 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     }
     state.albums.forEach(function(a){
       var c = memos.filter(function(m){ return String(m.album || '') === String(a.id); }).length;
-      var hasBg = a.bg || a.bgStyle;
+      var hasBg = false;
       var bgHTML = '';
-      if(a.bg){ bgHTML = '<div class="ac-bg" style="background-image:url(\'' + a.bg + '\')"></div><div class="ac-overlay"></div>'; }
-      else if(a.bgStyle){ bgHTML = '<div class="ac-bg" style="background:' + safeStyle(a.bgStyle) + '"></div><div class="ac-overlay"></div>'; }
+      if(a.bgStyle){
+        bgHTML = '<div class="ac-bg" style="background:' + safeStyle(a.bgStyle) + '"></div><div class="ac-overlay"></div>';
+        hasBg = true;
+      } else if(a.bg){
+        bgHTML = '<div class="ac-bg" style="background-image:url(\'' + a.bg + '\')"></div><div class="ac-overlay"></div>';
+        hasBg = true;
+      }
       html += '<a class="album-card' + (hasBg ? ' has-bg' : '') + '" href="platform.html?album=' + encodeURIComponent(a.id) + '">' +
         bgHTML +
         '<span class="ac-tab">' + (a.layout === 'grid' ? '网格卡片' : '时间线') + '</span>' +
@@ -415,6 +418,9 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       '</div></div>';
 
     viewEl.innerHTML = html;
+    if(window.__musicWidget){
+      window.__musicWidget.setSrc('music/background.mp3');
+    }
   }
 
   function renderAlbumView(){
@@ -442,7 +448,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     var layout = (!unfiled && album.layout === 'grid') ? 'grid' : 'timeline';
     var accent = (!unfiled && album.accent) ? safeStyle(album.accent) : '';
     var albumMusic = (!unfiled && album.music) ? album.music : '';
-
     var list = filteredMemos(unfiled ? null : albumKey);
     var visible = list.slice(0, (state.page + 1) * PAGE_SIZE);
     var hasMore = list.length > visible.length;
@@ -459,22 +464,17 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     }
 
     var bgHTML = '';
-    if(bgImg){ bgHTML = '<div class="album-view-bg" style="background-image:url(\'' + bgImg + '\')"></div>'; }
-    else if(bgStyle){ bgHTML = '<div class="album-view-bg" style="background:' + bgStyle + '"></div>'; }
-
-    var musicHTML = '';
-    if(albumMusic){
-      musicHTML =
-        '<div class="music-box album-music-box" id="album-music-box">' +
-          '<button id="album-music-toggle" type="button" aria-label="播放档案音乐">' +
-            '<span class="ring"></span><span class="bars"><span></span><span></span><span></span></span>' +
-          '</button>' +
-        '</div>' +
-        '<audio id="album-music-audio" loop preload="none"><source src="' + esc(albumMusic) + '" type="audio/mpeg"></audio>';
+    if(bgImg && bgStyle){
+      bgHTML = '<div class="album-view-bg" style="background-image:url(\'' + bgImg + '\')"></div>' +
+               '<div class="album-view-tint" style="background:' + bgStyle + '"></div>';
+    } else if(bgImg){
+      bgHTML = '<div class="album-view-bg" style="background-image:url(\'' + bgImg + '\')"></div>';
+    } else if(bgStyle){
+      bgHTML = '<div class="album-view-bg" style="background:' + bgStyle + '"></div>';
     }
 
     viewEl.innerHTML =
-      '<div class="album-view"' + (accent ? ' style="--av-accent:' + accent + ';--av-head:' + accent + '"' : '') + '>' + bgHTML +
+      '<div class="album-view' + (bgImg ? ' has-img' : '') + '"' + (accent ? ' style="--av-accent:' + accent + ';--av-head:' + accent + '"' : '') + '>' + bgHTML +
         '<div class="album-view-inner">' +
           '<a class="back-link" href="platform.html">← Platform 总览</a>' +
           '<div class="av-head"><h1>' + esc(name) + '</h1>' +
@@ -482,7 +482,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
           '<input class="pl-search" id="pl-search" type="text" placeholder="搜索此档案…" value="' + esc(state.q) + '">' +
           listHtml +
           (hasMore ? '<button class="load-more" id="pl-load-more" type="button">加载更多（还有 ' + (list.length - visible.length) + ' 条）</button>' : '') +
-          musicHTML +
         '</div>' +
       '</div>';
 
@@ -503,16 +502,15 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
         renderAlbumView();
       });
     }
-    if(albumMusic){ wireAlbumMusic(); }
-  }
-
-  function wireAlbumMusic(){
-    var audio = document.getElementById('album-music-audio');
-    var btn = document.getElementById('album-music-toggle');
-    if(!audio || !btn || !window.__createMusicWidget) return;
-    window.__createMusicWidget(btn, audio, 'album_music_volume', function(){
-      if(window.__pauseMusic){ window.__pauseMusic(); }
-    });
+    if(window.__musicWidget){
+      var session = null;
+      try{ session = JSON.parse(sessionStorage.getItem('music_session') || 'null'); }catch(err){}
+      var src = albumMusic || 'music/background.mp3';
+      var auto = !state.albumAutoDone && !!(session && session.playing);
+      var time = (session && session.src === src && typeof session.time === 'number' && isFinite(session.time)) ? session.time : null;
+      state.albumAutoDone = true;
+      window.__musicWidget.setSrc(src, auto, time);
+    }
   }
 })();
 (function(){
@@ -548,7 +546,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   });
 })();
 </script>
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c5f3dfcb5f9d4b40a886b16b5fea24af"}'></script><!-- End Cloudflare Web Analytics -->
+<script src="counter.js"></script>
 <script src="music.js"></script>
 </body>
 </html>

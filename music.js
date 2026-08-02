@@ -10,6 +10,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   audio.volume = volVal;
 
   var playing = false;
+  window.__musicWidgets = window.__musicWidgets || [];
 
   function setOpen(open){ box.classList.toggle('volume-open', open); }
 
@@ -161,9 +162,10 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   chip.addEventListener('pointercancel', chipEnd);
   chip.addEventListener('click', function(e){ e.stopPropagation(); });
 
-  // ---- 播放控制（可反复暂停/继续） ----
+  // ---- 播放控制（可反复暂停/继续，同页音乐互斥） ----
   function start(){
     if(!audio.paused) return;
+    pauseOthers();
     if(onStart){ onStart(); }
     resetChip();
     audio.play().then(function(){
@@ -186,6 +188,43 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
       start();
       setOpen(true);
     }
+  }
+  var api = { start: start, stop: stop, setSrc: setSrc };
+  window.__musicWidgets.push(api);
+  function pauseOthers(){
+    window.__musicWidgets.forEach(function(w){
+      if(w !== api) w.stop();
+    });
+  }
+
+  // 切曲时的进度恢复（等待元数据加载后定位）
+  var pendingSeek = null;
+  audio.addEventListener('loadedmetadata', function(){
+    if(pendingSeek !== null){
+      try{ audio.currentTime = pendingSeek; }catch(err){}
+      pendingSeek = null;
+    }
+  });
+  function startWithTime(t){
+    if(t !== null && t !== undefined && isFinite(t)){ pendingSeek = t; }
+    start();
+  }
+  function setSrc(url, autoPlay, restoreTime){
+    if(!url) return;
+    if(url === audio.getAttribute('data-src')){
+      if(autoPlay && !playing && audio.paused){ startWithTime(restoreTime); }
+      return;
+    }
+    var wasPlaying = playing;
+    audio.pause();
+    playing = false;
+    btn.classList.remove('playing');
+    setOpen(false);
+    hideChip();
+    audio.setAttribute('data-src', url);
+    audio.src = url;
+    try{ audio.load(); }catch(err){}
+    if(autoPlay || wasPlaying){ startWithTime(restoreTime); }
   }
 
   // ---- 全屏自由拖动（拖动整球到屏幕任意位置） ----
@@ -256,27 +295,63 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     }catch(err){}
   }
 
-  return { start: start, stop: stop };
+  return api;
 };
 
-// 全站音乐实例（位置记忆 + 音量记忆 + 首次手势自动播放 + 视频页避让）
+// 全站音乐实例（唯一播放器：位置/音量记忆 + 首次手势自动播放 + 视频页避让 + 跨页续播）
 (function(){
   var btn = document.getElementById('music-toggle');
   var audio = document.getElementById('bg-music');
   if(!btn || !audio) return;
 
+  audio.setAttribute('data-src', 'music/background.mp3');
+
   var widget = window.__createMusicWidget(btn, audio, 'music_volume', null, { persistPos: true });
   window.__pauseMusic = widget.stop;
+  window.__musicWidget = widget;
+
+  // ---- 跨页续播（同一曲目 music/background.mp3 时恢复进度并尝试续播） ----
+  var resumeTime = null;
+  var wantResume = false;
+  try{
+    var saved = JSON.parse(sessionStorage.getItem('music_session') || 'null');
+    if(saved && typeof saved.time === 'number' && isFinite(saved.time) &&
+       saved.src === 'music/background.mp3'){
+      resumeTime = saved.time;
+      wantResume = !!saved.playing;
+    }
+  }catch(err){}
+  audio.addEventListener('loadedmetadata', function(){
+    if(resumeTime !== null){
+      try{ audio.currentTime = resumeTime; }catch(err){}
+      resumeTime = null;
+    }
+  });
+  function saveSession(){
+    try{
+      sessionStorage.setItem('music_session', JSON.stringify({
+        time: audio.currentTime,
+        playing: !audio.paused,
+        src: audio.getAttribute('data-src') || 'music/background.mp3'
+      }));
+    }catch(err){}
+  }
+  window.addEventListener('pagehide', saveSession);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'hidden') saveSession();
+  });
 
   var gestureUsed = false;
   function maybeStart(e){
-    if(gestureUsed) return;
     if(e.type === 'click' && window.__musicExclude && e.target &&
        e.target.closest && e.target.closest(window.__musicExclude)) return;
+    if(gestureUsed) return;
     gestureUsed = true;
     widget.start();
   }
   ['click','touchstart','keydown','scroll'].forEach(function(evt){
     window.addEventListener(evt, maybeStart, { passive:true });
   });
+
+  if(wantResume){ widget.start(); }
 })();

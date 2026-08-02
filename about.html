@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -183,7 +183,7 @@ nav.top-nav a:hover::after{ width:100%; }
   .about-gallery-grid{ grid-template-columns:repeat(2,1fr); }
 }
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
-.footer-stats{ margin-bottom:10px; color:var(--steel); font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; }
+.footer-counter{ margin-bottom:10px; font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); letter-spacing:0.05em; display:none; }
 </style>
 </head>
 <body>
@@ -301,9 +301,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   </div>
 </div>
 <footer>
-  <div class="footer-stats">
-    <span id="busuanzi_container_site_uv" style="display:none;">访客 <span id="busuanzi_value_site_uv"></span></span>
-    <span id="busuanzi_container_site_pv" style="display:none;"> · 浏览 <span id="busuanzi_value_site_pv"></span></span>
+  <div class="footer-counter" id="counter-box">
+    <span>浏览 <span id="counter-pv">–</span> · 访客 <span id="counter-uv">–</span></span>
   </div>
   <div>© 2026 水告示阳 · 保留所有权利</div>
 </footer>
@@ -378,7 +377,8 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <span class="bars"><span></span><span></span><span></span></span>
   </button>
 </div>
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c5f3dfcb5f9d4b40a886b16b5fea24af"}'></script><!-- End Cloudflare Web Analytics -->
+<script src="counter.js"></script>
 <script src="music.js"></script>
 </body>
 </html>

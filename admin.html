@@ -428,9 +428,9 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     </div>
     <label>描述（可选）</label>
     <input type="text" id="al-desc" placeholder="一句话简介">
-    <label>背景渐变（可选，CSS）</label>
+    <label>背景渐变（可选，CSS；用于总览卡片，并叠加在内容页背景图上）</label>
     <input type="text" id="al-bgstyle" placeholder="例如 linear-gradient(160deg,#0e1116,#20262e)">
-    <label>背景图片（可选）</label>
+    <label>背景图片（可选；用于档案内容页背景，与渐变叠加）</label>
     <input type="file" id="al-bgfile" accept="image/*">
     <label>强调色（可选，CSS 颜色）</label>
     <input type="text" id="al-accent" placeholder="例如 #b23a3a">
@@ -1581,9 +1581,9 @@ async function loadAlbumManageList(){
           '<label>名称</label><input class="al-e-name" value="' + escapeHtml(a.name) + '">' +
           '<label>描述</label><input class="al-e-desc" value="' + escapeHtml(a.desc || '') + '">' +
           '<label>排版</label><select class="al-e-layout"><option value="timeline"' + (a.layout === 'grid' ? '' : ' selected') + '>时间线</option><option value="grid"' + (a.layout === 'grid' ? ' selected' : '') + '>网格卡片</option></select>' +
-          '<label>背景渐变（CSS）</label><input class="al-e-bgstyle" value="' + escapeHtml(a.bgStyle || '') + '">' +
+          '<label>背景渐变（CSS；总览卡片 + 叠加内容页）</label><input class="al-e-bgstyle" value="' + escapeHtml(a.bgStyle || '') + '">' +
           '<label>强调色（CSS 颜色）</label><input class="al-e-accent" value="' + escapeHtml(a.accent || '') + '">' +
-          '<label>背景图（可选，重新上传会替换）</label><input class="al-e-bgfile" type="file" accept="image/*">' +
+          '<label>背景图（可选，内容页用；重新上传会替换）</label><input class="al-e-bgfile" type="file" accept="image/*">' +
           '<label>档案音乐（可选，重新上传会替换）</label><input class="al-e-musicfile" type="file" accept="audio/*">' +
           '<div class="row"><button class="mi-f-save" type="button">保存</button><button class="mi-f-cancel" type="button">取消</button></div>';
         editBox.querySelector('.mi-f-save').addEventListener('click', async function(){

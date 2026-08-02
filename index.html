@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -445,7 +445,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 .footer-links a svg{ width:16px; height:16px; stroke:var(--steel); fill:none; stroke-width:1.6; transition:stroke 0.3s ease; }
 .footer-links a:hover{ border-color:var(--accent-gold); }
 .footer-links a:hover svg{ stroke:var(--accent-gold); }
-.footer-stats{ margin-bottom:10px; color:var(--steel); font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; }
+.footer-counter{ margin-bottom:10px; font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); letter-spacing:0.05em; display:none; }
 </style>
 </head>
 <body>
@@ -636,9 +636,8 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
       <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M6 11v4M4 13h4M16 11h.01M19 13h.01"/></svg>
     </a>
   </div>
-  <div class="footer-stats">
-    <span id="busuanzi_container_site_uv" style="display:none;">访客 <span id="busuanzi_value_site_uv"></span></span>
-    <span id="busuanzi_container_site_pv" style="display:none;"> · 浏览 <span id="busuanzi_value_site_pv"></span></span>
+  <div class="footer-counter" id="counter-box">
+    <span>浏览 <span id="counter-pv">–</span> · 访客 <span id="counter-uv">–</span></span>
   </div>
   <div>© 2026 水告示阳 · 保留所有权利</div>
 </footer>
@@ -1179,7 +1178,8 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
   });
 })();
 </script>
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c5f3dfcb5f9d4b40a886b16b5fea24af"}'></script><!-- End Cloudflare Web Analytics -->
+<script src="counter.js"></script>
 <script src="music.js"></script>
 </body>
 </html>
