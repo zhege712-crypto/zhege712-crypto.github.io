@@ -305,6 +305,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   if(!btn || !audio) return;
 
   audio.setAttribute('data-src', 'music/background.mp3');
+  audio.preload = 'auto';
 
   var widget = window.__createMusicWidget(btn, audio, 'music_volume', null, { persistPos: true });
   window.__pauseMusic = widget.stop;
@@ -341,15 +342,14 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     if(document.visibilityState === 'hidden') saveSession();
   });
 
-  var gestureUsed = false;
+  // 每次激活手势（点击/触摸/按键）都尝试自动播放；已播放时自动跳过
+  // 注意：不使用一次性标志，避免"首次滚动吃掉自动播放机会"的问题
   function maybeStart(e){
     if(e.type === 'click' && window.__musicExclude && e.target &&
        e.target.closest && e.target.closest(window.__musicExclude)) return;
-    if(gestureUsed) return;
-    gestureUsed = true;
     widget.start();
   }
-  ['click','touchstart','keydown','scroll'].forEach(function(evt){
+  ['click','touchstart','keydown'].forEach(function(evt){
     window.addEventListener(evt, maybeStart, { passive:true });
   });
 

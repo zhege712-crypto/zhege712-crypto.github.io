@@ -1,19 +1,24 @@
-/* 全站音乐控件（共享）：圆钮 + 环绕音量环（收纳/伸展动画）+ 飞出小三角暂停键 */
+/* 全站音乐控件（共享）：玻璃质感圆钮 + 环绕音量环（收纳/伸展动画）+ 飞出小三角暂停键 */
 .music-box{
   position:fixed; right:28px; bottom:110px; z-index:200;
   display:flex; align-items:center;
   padding:6px;
-  background:color-mix(in srgb, var(--ink) 92%, transparent);
-  border:1px solid var(--charcoal); border-radius:50%;
-  box-shadow:0 10px 30px rgba(0,0,0,0.28);
+  background:color-mix(in srgb, var(--white) 20%, transparent);
+  backdrop-filter:blur(18px) saturate(170%); -webkit-backdrop-filter:blur(18px) saturate(170%);
+  border:1px solid color-mix(in srgb, var(--white) 32%, transparent);
+  border-radius:50%;
+  box-shadow:0 10px 34px rgba(28,28,27,0.16), inset 0 1px 0 rgba(255,255,255,0.22);
 }
 #music-toggle{
   width:44px; height:44px; border-radius:50%;
-  background:transparent; border:1px solid var(--charcoal);
+  background:color-mix(in srgb, var(--white) 12%, transparent);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  border:1px solid color-mix(in srgb, var(--white) 28%, transparent);
   display:flex; align-items:center; justify-content:center; cursor:grab;
   position:relative; flex-shrink:0; touch-action:none;
-  transition:border-color 0.3s ease;
+  transition:border-color 0.3s ease, background 0.3s ease;
 }
+#music-toggle:hover{ border-color:var(--accent-gold); background:color-mix(in srgb, var(--white) 18%, transparent); }
 #music-toggle:active{ cursor:grabbing; }
 #music-toggle:hover{ border-color:var(--accent-gold); }
 #music-toggle .ring{ position:absolute; inset:-3px; border-radius:50%; border:1px solid var(--accent-gold); opacity:0; transform:scale(0.85); transition:opacity 0.3s ease; }
@@ -46,7 +51,7 @@
   position:absolute; inset:0; width:100%; height:100%;
   pointer-events:auto; cursor:pointer; touch-action:none;
 }
-.vr-track{ fill:none; stroke:var(--charcoal); stroke-width:3; }
+.vr-track{ fill:none; stroke:color-mix(in srgb, var(--white) 30%, transparent); stroke-width:3; }
 .vr-fill{ fill:none; stroke:var(--accent-gold); stroke-width:3; stroke-linecap:round; }
 .vr-thumb{
   position:absolute; width:14px; height:14px; margin-left:-7px; margin-top:-7px;
@@ -59,8 +64,10 @@
   position:absolute; left:50%; top:50%;
   transform:translate(-50%,-50%) translateX(0) scale(0.4);
   width:28px; height:28px; border-radius:50%;
-  background:color-mix(in srgb, var(--ink) 92%, transparent);
-  border:1px solid var(--charcoal);
+  background:color-mix(in srgb, var(--white) 22%, transparent);
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid color-mix(in srgb, var(--white) 34%, transparent);
+  box-shadow:0 6px 20px rgba(28,28,27,0.16), inset 0 1px 0 rgba(255,255,255,0.2);
   display:flex; align-items:center; justify-content:center;
   opacity:0; visibility:hidden; pointer-events:none; cursor:pointer;
   z-index:4; touch-action:none;
