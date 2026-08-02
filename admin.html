@@ -407,6 +407,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <div class="status" id="link-status"></div>
     <label style="margin-top:26px;">已有友链</label>
     <div id="link-manage-list"></div>
+    <button id="refresh-link-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
     <div class="status" id="link-manage-status"></div>
   </div>
 
@@ -437,6 +438,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <div class="status" id="album-status"></div>
     <label style="margin-top:26px;">已有档案（删除后其内容移入「未归类」）</label>
     <div id="album-manage-list"></div>
+    <button id="refresh-album-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
     <div class="status" id="album-manage-status"></div>
   </div>
 </div>
@@ -1278,6 +1280,8 @@ async function deleteMemo(id){
 }
 
 document.getElementById('refresh-memo-btn').addEventListener('click', loadMemoManageList);
+document.getElementById('refresh-link-btn').addEventListener('click', loadLinkManageList);
+document.getElementById('refresh-album-btn').addEventListener('click', loadAlbumManageList);
 
 // ============================================================
 // ⑧ 管理友链
@@ -1555,6 +1559,7 @@ async function loadAlbumManageList(){
           '<label>排版</label><select class="al-e-layout"><option value="timeline"' + (a.layout === 'grid' ? '' : ' selected') + '>时间线</option><option value="grid"' + (a.layout === 'grid' ? ' selected' : '') + '>网格卡片</option></select>' +
           '<label>背景渐变（CSS）</label><input class="al-e-bgstyle" value="' + escapeHtml(a.bgStyle || '') + '">' +
           '<label>强调色（CSS 颜色）</label><input class="al-e-accent" value="' + escapeHtml(a.accent || '') + '">' +
+          '<label>背景图（可选，重新上传会替换）</label><input class="al-e-bgfile" type="file" accept="image/*">' +
           '<div class="row"><button class="mi-f-save" type="button">保存</button><button class="mi-f-cancel" type="button">取消</button></div>';
         editBox.querySelector('.mi-f-save').addEventListener('click', async function(){
           await saveAlbum(a.id, editBox);
@@ -1586,11 +1591,23 @@ async function saveAlbum(id, editBox){
   var layout = editBox.querySelector('.al-e-layout').value;
   var bgStyle = editBox.querySelector('.al-e-bgstyle').value.trim();
   var accent = editBox.querySelector('.al-e-accent').value.trim();
+  var bgFile = editBox.querySelector('.al-e-bgfile').files[0];
 
   if(!name){ setAlManageStatus('档案名称不能为空', 'err'); return; }
 
   setAlManageStatus('保存中…', 'loading');
   try{
+    var bg = '';
+    if(bgFile){
+      var base64 = await fileToBase64(bgFile);
+      var safeName = Date.now() + '-' + bgFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      bg = 'albums/' + safeName;
+      var imgRes = await ghRequest(bg, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传档案背景', content: base64 })
+      }, owner, repo, token);
+      if(!imgRes.ok){ throw new Error('背景上传失败：' + (await imgRes.text())); }
+    }
     var getRes = await ghRequest('albums.json', {}, owner, repo, token);
     if(!getRes.ok){ throw new Error('读取 albums.json 失败'); }
     var fileData = await getRes.json();
@@ -1604,6 +1621,7 @@ async function saveAlbum(id, editBox){
       target.layout = layout;
       target.bgStyle = bgStyle;
       target.accent = accent;
+      if(bg){ target.bg = bg; }
     }
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));
