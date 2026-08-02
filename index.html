@@ -407,7 +407,43 @@ nav.top-nav a:hover::after{ width:100%; }
 .link-row:hover .link-arrow{ color:var(--accent-gold); }
 .empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:40px 0; }
 
-footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+/* 统计行 */
+.stats{ display:flex; gap:52px; padding:0 0 70px; }
+.stat{ display:flex; flex-direction:column; gap:4px; }
+.stat-num{ font-family:var(--font-display); font-weight:500; font-size:2rem; line-height:1; }
+.stat-label{ font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); letter-spacing:0.12em; text-transform:uppercase; }
+@media (max-width:640px){ .stats{ gap:30px; } }
+
+/* 最近更新 */
+.recent{ padding:0 0 100px; }
+.recent-head{ display:flex; align-items:baseline; gap:18px; padding-bottom:26px; }
+.recent-head .section-num{ font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-red); letter-spacing:0.1em; }
+.recent-head h2{ font-family:var(--font-display); font-weight:500; font-size:1.5rem; }
+.recent-grid{ display:grid; grid-template-columns:280px 1fr; gap:36px; border-top:1px solid var(--fog); padding-top:26px; }
+.recent-photo{ position:relative; aspect-ratio:4/3; overflow:hidden; background:var(--paper-2); border:1px solid var(--paper-2); border-radius:6px; }
+.recent-photo a{ display:block; height:100%; }
+.recent-photo img{ width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.05); transition:filter 0.6s ease; }
+.recent-photo:hover img{ filter:grayscale(0); }
+.recent-photo .rp-cap{ position:absolute; left:0; right:0; bottom:0; padding:10px 14px; background:linear-gradient(to top, rgba(28,28,27,0.72), transparent); color:var(--white); font-family:var(--font-display); font-size:0.95rem; }
+.recent-col h3{ font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.12em; color:var(--steel); text-transform:uppercase; margin-bottom:4px; }
+.recent-row{ display:grid; grid-template-columns:74px 1fr auto; gap:16px; align-items:baseline; padding:12px 0; border-bottom:1px solid var(--paper-2); transition:padding-left 0.3s ease; }
+.recent-row:hover{ padding-left:10px; }
+.recent-row .rr-date{ font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); }
+.recent-row .rr-title{ font-size:0.95rem; color:var(--charcoal); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color 0.3s ease; }
+.recent-row:hover .rr-title{ color:var(--accent-red); }
+.recent-row .rr-arrow{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); }
+.rp-empty{ font-family:var(--font-mono); font-size:0.8rem; color:var(--steel); padding:20px; }
+@media (max-width:820px){
+  .recent-grid{ grid-template-columns:1fr; gap:24px; }
+  .recent-photo{ max-width:320px; }
+}
+
+footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+.footer-links{ display:flex; justify-content:center; gap:18px; margin-bottom:16px; }
+.footer-links a{ display:inline-flex; width:38px; height:38px; border:1px solid var(--charcoal); border-radius:50%; align-items:center; justify-content:center; transition:border-color 0.3s ease; }
+.footer-links a svg{ width:16px; height:16px; stroke:var(--steel); fill:none; stroke-width:1.6; transition:stroke 0.3s ease; }
+.footer-links a:hover{ border-color:var(--accent-gold); }
+.footer-links a:hover svg{ stroke:var(--accent-gold); }
 
 #music-toggle{ position:fixed; right:28px; bottom:28px; z-index:200; width:56px; height:56px; border-radius:50%; background:var(--ink); border:1px solid var(--charcoal); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,0.25); transition:border-color 0.3s ease; }
 #music-toggle:hover{ border-color:var(--accent-gold); }
@@ -533,6 +569,33 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </section>
 
 <div class="wrap">
+  <div class="stats">
+    <div class="stat"><span class="stat-num" id="stat-photos">–</span><span class="stat-label">照片</span></div>
+    <div class="stat"><span class="stat-num">2</span><span class="stat-label">视频</span></div>
+    <div class="stat"><span class="stat-num" id="stat-memos">–</span><span class="stat-label">随记</span></div>
+    <div class="stat"><span class="stat-num" id="stat-writings">–</span><span class="stat-label">文章</span></div>
+  </div>
+</div>
+
+<section class="recent">
+  <div class="wrap">
+    <div class="recent-head">
+      <span class="section-num">最新</span>
+      <h2>最近更新</h2>
+    </div>
+    <div class="recent-grid">
+      <div class="recent-photo" id="recent-photo">
+        <div class="rp-empty">加载中…</div>
+      </div>
+      <div>
+        <div class="recent-col" id="recent-memos"></div>
+        <div class="recent-col" id="recent-writings" style="margin-top:22px;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
   <div class="entry-list">
     <a class="entry-row" href="work.html">
       <span class="entry-num">01</span>
@@ -564,12 +627,6 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       <span class="entry-sub">联系我</span>
       <span class="entry-arrow">→</span>
     </a>
-    <a class="entry-row" href="https://zhege712-crypto.github.io/Poem_Ulysses/" target="_blank" rel="noopener noreferrer">
-      <span class="entry-num">06</span>
-      <span class="entry-title">诗歌漂流</span>
-      <span class="entry-sub">Poem's Ulysses</span>
-      <span class="entry-arrow">↗</span>
-    </a>
   </div>
 
   <section class="links-section">
@@ -583,7 +640,20 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   </section>
 </div>
 
-<footer>© 2026 水告示阳 · 保留所有权利</footer>
+<footer>
+  <div class="footer-links">
+    <a href="mailto:zhege712@gmail.com" target="_blank" rel="noopener noreferrer" aria-label="邮箱">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="1"/><path d="M2 6l10 7L22 6"/></svg>
+    </a>
+    <a href="https://space.bilibili.com/522848824" target="_blank" rel="noopener noreferrer" aria-label="Bilibili">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </a>
+    <a href="https://steamcommunity.com/profiles/1907515243" target="_blank" rel="noopener noreferrer" aria-label="Steam">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M6 11v4M4 13h4M16 11h.01M19 13h.01"/></svg>
+    </a>
+  </div>
+  <div>© 2026 水告示阳 · 保留所有权利</div>
+</footer>
 
 </div><!-- .page-content -->
 
@@ -966,6 +1036,88 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     }
   });
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+
+// ============================================================
+// 统计 + 最近更新
+// ============================================================
+(function(){
+  function esc(s){
+    var d = document.createElement('div');
+    d.textContent = String(s == null ? '' : s);
+    return d.innerHTML;
+  }
+  function sortNewest(arr){
+    return (arr || []).slice().sort(function(a,b){
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+  }
+
+  fetch('photos/photos.json?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(photos){
+      var n = photos ? photos.length : 0;
+      var numEl = document.getElementById('stat-photos');
+      if(numEl) numEl.textContent = n;
+      var box = document.getElementById('recent-photo');
+      if(!box) return;
+      if(n === 0){ box.innerHTML = '<div class="rp-empty">还没有照片</div>'; return; }
+      var newest = sortNewest(photos)[0];
+      box.innerHTML = '<a href="work.html">' +
+        '<img src="' + esc(newest.image) + '" alt="' + esc(newest.title) + '" loading="lazy">' +
+        '<div class="rp-cap">' + esc(newest.title) + '</div></a>';
+    })
+    .catch(function(){
+      var numEl = document.getElementById('stat-photos');
+      if(numEl) numEl.textContent = '–';
+      var box = document.getElementById('recent-photo');
+      if(box) box.innerHTML = '<div class="rp-empty">照片加载失败</div>';
+    });
+
+  fetch('memos.json?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(memos){
+      var n = memos ? memos.length : 0;
+      var numEl = document.getElementById('stat-memos');
+      if(numEl) numEl.textContent = n;
+      var col = document.getElementById('recent-memos');
+      if(!col) return;
+      var ms = sortNewest(memos);
+      var rows = ms.slice(0, 2).map(function(m){
+        var text = m.text || (m.linkTitle || m.linkUrl || (m.image ? '(图片)' : ''));
+        return '<a class="recent-row" href="memo.html">' +
+          '<span class="rr-date">' + esc(m.date || '') + '</span>' +
+          '<span class="rr-title">' + esc(text) + '</span>' +
+          '<span class="rr-arrow">→</span></a>';
+      }).join('');
+      col.innerHTML = '<h3>随记</h3>' + (rows || '<div class="rp-empty" style="padding:8px 0;">还没有随记</div>');
+    })
+    .catch(function(){
+      var numEl = document.getElementById('stat-memos');
+      if(numEl) numEl.textContent = '–';
+    });
+
+  fetch('writings.json?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(writings){
+      var n = writings ? writings.length : 0;
+      var numEl = document.getElementById('stat-writings');
+      if(numEl) numEl.textContent = n;
+      var col = document.getElementById('recent-writings');
+      if(!col) return;
+      var ws = sortNewest(writings);
+      var rows = ws.slice(0, 2).map(function(w){
+        return '<a class="recent-row" href="writing.html?id=' + encodeURIComponent(w.id) + '">' +
+          '<span class="rr-date">' + esc(w.date || '') + '</span>' +
+          '<span class="rr-title">' + esc(w.title) + '</span>' +
+          '<span class="rr-arrow">→</span></a>';
+      }).join('');
+      col.innerHTML = '<h3>文章</h3>' + (rows || '<div class="rp-empty" style="padding:8px 0;">还没有文章</div>');
+    })
+    .catch(function(){
+      var numEl = document.getElementById('stat-writings');
+      if(numEl) numEl.textContent = '–';
+    });
 })();
 
 // ============================================================
