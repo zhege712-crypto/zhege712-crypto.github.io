@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -314,14 +314,15 @@ nav.top-nav a:hover::after{ width:100%; }
 
 .side-nav{
   position:fixed; left:24px; top:120px; z-index:150; width:168px;
-  background:rgba(255,255,255,0.6); backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
-  border:1px solid rgba(255,255,255,0.6); border-radius:6px; padding:10px;
+  background:color-mix(in srgb, var(--white) 72%, transparent);
+  backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border:1px solid var(--fog); border-radius:6px; padding:10px;
   box-shadow:0 10px 34px rgba(28,28,27,0.10), inset 0 1px 0 rgba(255,255,255,0.5);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
-.side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:2px; font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal); transition:background 0.25s ease, color 0.25s ease; }
+.side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:4px; font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal); border-left:2px solid transparent; transition:background 0.25s ease, color 0.25s ease; }
 .side-nav a:hover{ background:var(--paper-2); }
-.side-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; }
+.side-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; border-left-color:var(--accent-red); }
 .side-nav a svg{ width:17px; height:17px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.6; }
 .side-nav a .badge{ margin-left:auto; font-family:var(--font-mono); font-size:0.65rem; background:var(--paper); color:var(--steel); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; }
 .side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
@@ -330,8 +331,7 @@ nav.top-nav a:hover::after{ width:100%; }
 .side-theme{
   position:fixed; left:24px; bottom:100px; z-index:150;
   display:flex; flex-direction:column; align-items:center; gap:6px;
-  background:rgba(255,255,255,0.4);
-  background:color-mix(in srgb, var(--white) 55%, transparent);
+  background:color-mix(in srgb, var(--white) 60%, transparent);
   backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
   box-shadow:0 8px 24px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.35);
   padding:10px 8px; border-radius:28px; border:1px solid var(--fog);
@@ -374,19 +374,38 @@ nav.top-nav a:hover::after{ width:100%; }
 .hero-scroll .line::after{ content:''; position:absolute; top:-40px; left:0; width:100%; height:40px; background:var(--accent-red); animation:scrollline 2s ease-in-out infinite; }
 @keyframes scrollline{ 50%{ top:40px; } 100%{ top:40px; } }
 
-.entry-grid{ padding:0 0 140px; display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--paper-2); }
-.entry-card{
-  background:var(--paper); padding:44px 32px; min-height:220px;
-  display:flex; flex-direction:column; justify-content:space-between;
-  transition:background 0.35s ease, color 0.35s ease;
+.entry-list{ border-top:1px solid var(--fog); padding:0 0 130px; }
+.entry-row{
+  display:grid; grid-template-columns:56px 1fr auto 36px; gap:20px; align-items:baseline;
+  padding:32px 0; border-bottom:1px solid var(--fog);
+  transition:padding-left 0.3s ease;
 }
-.entry-card:hover{ background:var(--ink); color:var(--white); }
-.entry-num{ font-family:var(--font-mono); font-size:0.7rem; color:var(--accent-red); letter-spacing:0.1em; }
-.entry-card h3{ font-family:var(--font-display); font-weight:500; font-size:1.6rem; margin-top:auto; }
-.entry-arrow{ font-family:var(--font-mono); font-size:0.75rem; margin-top:14px; color:var(--steel); }
-.entry-card:hover .entry-arrow{ color:var(--accent-gold); }
-@media (max-width:900px){ .entry-grid{ grid-template-columns:1fr 1fr; } }
-@media (max-width:640px){ .entry-grid{ grid-template-columns:1fr; } }
+.entry-row:hover{ padding-left:16px; }
+.entry-num{ font-family:var(--font-mono); font-size:0.72rem; color:var(--accent-red); letter-spacing:0.1em; }
+.entry-title{ font-family:var(--font-display); font-weight:500; font-size:1.6rem; transition:color 0.3s ease; }
+.entry-row:hover .entry-title{ color:var(--accent-red); }
+.entry-sub{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); letter-spacing:0.08em; }
+.entry-arrow{ font-family:var(--font-mono); font-size:0.85rem; color:var(--steel); transition:color 0.3s ease, transform 0.3s ease; }
+.entry-row:hover .entry-arrow{ color:var(--accent-gold); transform:translateX(4px); }
+
+/* 友链区 */
+.links-section{ padding:0 0 130px; }
+.links-head{ display:flex; align-items:baseline; gap:18px; padding-bottom:26px; }
+.links-head .section-num{ font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-red); letter-spacing:0.1em; }
+.links-head h2{ font-family:var(--font-display); font-weight:500; font-size:1.5rem; }
+.links-list{ border-top:1px solid var(--fog); }
+.link-row{
+  display:grid; grid-template-columns:1fr auto 32px; gap:20px; align-items:baseline;
+  padding:24px 0; border-bottom:1px solid var(--fog);
+  transition:padding-left 0.3s ease;
+}
+.link-row:hover{ padding-left:16px; }
+.link-name{ font-family:var(--font-display); font-weight:500; font-size:1.15rem; transition:color 0.3s ease; }
+.link-row:hover .link-name{ color:var(--accent-red); }
+.link-desc{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); letter-spacing:0.05em; text-align:right; }
+.link-arrow{ font-family:var(--font-mono); font-size:0.8rem; color:var(--steel); transition:color 0.3s ease; }
+.link-row:hover .link-arrow{ color:var(--accent-gold); }
+.empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:40px 0; }
 
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 
@@ -444,6 +463,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       <ul>
         <li><a href="work.html">作品</a></li>
         <li><a href="video.html">视频</a></li>
+        <li><a href="memo.html">随记</a></li>
         <li><a href="writing.html">文章</a></li>
         <li><a href="about.html">关于</a></li>
       </ul>
@@ -463,6 +483,10 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   <a href="video.html">
     <svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="1"/><path d="M17 9l4-2v10l-4-2z"/></svg>
     视频
+  </a>
+  <a href="memo.html">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+    随记
   </a>
   <a href="writing.html">
     <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
@@ -509,43 +533,54 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 </section>
 
 <div class="wrap">
-  <div class="entry-grid">
-    <a class="entry-card" href="work.html">
+  <div class="entry-list">
+    <a class="entry-row" href="work.html">
       <span class="entry-num">01</span>
-      <div>
-        <h3>作品</h3>
-        <div class="entry-arrow">照片 →</div>
-      </div>
+      <span class="entry-title">作品</span>
+      <span class="entry-sub">照片 / 影像</span>
+      <span class="entry-arrow">→</span>
     </a>
-    <a class="entry-card" href="video.html">
+    <a class="entry-row" href="video.html">
       <span class="entry-num">02</span>
-      <div>
-        <h3>视频</h3>
-        <div class="entry-arrow">影像 →</div>
-      </div>
+      <span class="entry-title">视频</span>
+      <span class="entry-sub">视频 / 影像</span>
+      <span class="entry-arrow">→</span>
     </a>
-    <a class="entry-card" href="writing.html">
+    <a class="entry-row" href="memo.html">
       <span class="entry-num">03</span>
-      <div>
-        <h3>文章</h3>
-        <div class="entry-arrow">文字 →</div>
-      </div>
+      <span class="entry-title">随记</span>
+      <span class="entry-sub">零散的句子与照片</span>
+      <span class="entry-arrow">→</span>
     </a>
-    <a class="entry-card" href="about.html">
+    <a class="entry-row" href="writing.html">
       <span class="entry-num">04</span>
-      <div>
-        <h3>关于</h3>
-        <div class="entry-arrow">联系我 →</div>
-      </div>
+      <span class="entry-title">文章</span>
+      <span class="entry-sub">文字 / 创作</span>
+      <span class="entry-arrow">→</span>
     </a>
-    <a class="entry-card" href="https://zhege712-crypto.github.io/Poem_Ulysses/" target="_blank" rel="noopener">
+    <a class="entry-row" href="about.html">
       <span class="entry-num">05</span>
-      <div>
-        <h3>诗歌漂流</h3>
-        <div class="entry-arrow">Poem's Ulysses ↗</div>
-      </div>
+      <span class="entry-title">关于</span>
+      <span class="entry-sub">联系我</span>
+      <span class="entry-arrow">→</span>
+    </a>
+    <a class="entry-row" href="https://zhege712-crypto.github.io/Poem_Ulysses/" target="_blank" rel="noopener noreferrer">
+      <span class="entry-num">06</span>
+      <span class="entry-title">诗歌漂流</span>
+      <span class="entry-sub">Poem's Ulysses</span>
+      <span class="entry-arrow">↗</span>
     </a>
   </div>
+
+  <section class="links-section">
+    <div class="links-head">
+      <span class="section-num">友链</span>
+      <h2>友情链接</h2>
+    </div>
+    <div class="links-list" id="links-list">
+      <div class="empty-state">加载中…</div>
+    </div>
+  </section>
 </div>
 
 <footer>© 2026 水告示阳 · 保留所有权利</footer>
@@ -931,6 +966,36 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     }
   });
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+
+// ============================================================
+// 友链
+// ============================================================
+(function(){
+  var listEl = document.getElementById('links-list');
+  if(!listEl) return;
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = String(s == null ? '' : s);
+    return d.innerHTML;
+  }
+  fetch('links.json?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(links){
+      if(!links || links.length === 0){
+        listEl.innerHTML = '<div class="empty-state">暂无友链</div>';
+        return;
+      }
+      listEl.innerHTML = links.map(function(l){
+        return '<a class="link-row" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer">' +
+          '<span class="link-name">' + escapeHtml(l.name) + '</span>' +
+          '<span class="link-desc">' + escapeHtml(l.desc || '') + '</span>' +
+          '<span class="link-arrow">↗</span></a>';
+      }).join('');
+    })
+    .catch(function(){
+      listEl.innerHTML = '<div class="empty-state">友链加载失败</div>';
+    });
 })();
 
 // ============================================================

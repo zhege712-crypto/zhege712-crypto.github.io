@@ -243,7 +243,10 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 <!-- ====== 密码门 ====== -->
 <div id="password-overlay">
   <div class="box">
-    <h2>🔐 管理员验证</h2>
+    <h2 style="display:flex; align-items:center; justify-content:center; gap:10px;">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;"><rect x="4" y="11" width="16" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      管理员验证
+    </h2>
     <p>请输入后台密码以继续</p>
     <input type="password" id="password-input" placeholder="输入密码" autofocus>
     <button id="password-submit">确认</button>
@@ -259,7 +262,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
   <div class="sub">这是你私人使用的页面，没有链接到网站导航里，但网址是公开可访问的，别把这个链接分享给别人。</div>
 
   <div class="warn-box">
-    ⚠️ 密钥（Token）具有修改你仓库内容的权限，请不要在公共/他人电脑上勾选"记住密钥"，也不要把密钥截图发给任何人（包括我）。
+    密钥（Token）具有修改你仓库内容的权限，请不要在公共/他人电脑上勾选"记住密钥"，也不要把密钥截图发给任何人（包括我）。
   </div>
 
   <div class="panel">
@@ -348,6 +351,56 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <button id="refresh-writing-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
     <div class="status" id="writing-manage-status"></div>
   </div>
+
+  <div class="panel">
+    <h2>⑥ 发布随记</h2>
+    <label>日期</label>
+    <div class="date-group">
+      <input type="text" id="m-date" placeholder="2026-08-02 或 2026-08 或 2026">
+      <button type="button" class="btn-sm" data-target="m-date" data-precision="year">年</button>
+      <button type="button" class="btn-sm" data-target="m-date" data-precision="month">年月</button>
+      <button type="button" class="btn-sm" data-target="m-date" data-precision="day">完整</button>
+    </div>
+    <label>正文（可选）</label>
+    <textarea id="m-text" placeholder="写点什么…"></textarea>
+    <label>图片（可选）</label>
+    <input type="file" id="m-file" accept="image/*">
+    <label>链接标题（可选）</label>
+    <input type="text" id="m-link-title" placeholder="例如：一篇文章">
+    <label>链接网址（可选）</label>
+    <input type="text" id="m-link-url" placeholder="https://…">
+    <button id="memo-btn">发布</button>
+    <div class="status" id="memo-status"></div>
+  </div>
+
+  <div class="panel">
+    <h2>⑦ 管理随记</h2>
+    <div class="hint" style="margin-top:0;">列出所有随记，点删除即可移除。</div>
+    <div id="memo-manage-list" style="margin-top:16px;"></div>
+    <button id="refresh-memo-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
+    <div class="status" id="memo-manage-status"></div>
+  </div>
+
+  <div class="panel">
+    <h2>⑧ 管理友链</h2>
+    <div class="row">
+      <div>
+        <label>站名</label>
+        <input type="text" id="lk-name" placeholder="例如：诗歌漂流">
+      </div>
+      <div>
+        <label>描述（可选）</label>
+        <input type="text" id="lk-desc" placeholder="一句话介绍">
+      </div>
+    </div>
+    <label>网址</label>
+    <input type="text" id="lk-url" placeholder="https://…">
+    <button id="link-add-btn">添加友链</button>
+    <div class="status" id="link-status"></div>
+    <label style="margin-top:26px;">已有友链</label>
+    <div id="link-manage-list"></div>
+    <div class="status" id="link-manage-status"></div>
+  </div>
 </div>
 
 <footer style="padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); margin-top:40px;">© 2026 水告示阳 · 保留所有权利</footer>
@@ -380,7 +433,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
   var contentWrapper = document.querySelector('.content-wrapper');
 
   // ---------- 在这里修改你的密码（直接写明文） ----------
-  var PASSWORD = 'umbrella2026'; // 你可以把 umbrella2026 改成你喜欢的任何密码
+  var PASSWORD = 'password'; // ← 请改成你自己的密码（改完 push 到仓库后生效）
 
   // 检查 sessionStorage 是否已登录
   if (sessionStorage.getItem('admin_authenticated') === 'true') {
@@ -441,7 +494,19 @@ var els = {
   wTag: document.getElementById('w-tag'),
   wContent: document.getElementById('w-content'),
   wBtn: document.getElementById('writing-btn'),
-  wStatus: document.getElementById('w-status')
+  wStatus: document.getElementById('w-status'),
+  mDate: document.getElementById('m-date'),
+  mText: document.getElementById('m-text'),
+  mFile: document.getElementById('m-file'),
+  mLinkTitle: document.getElementById('m-link-title'),
+  mLinkUrl: document.getElementById('m-link-url'),
+  mBtn: document.getElementById('memo-btn'),
+  mStatus: document.getElementById('memo-status'),
+  lkName: document.getElementById('lk-name'),
+  lkDesc: document.getElementById('lk-desc'),
+  lkUrl: document.getElementById('lk-url'),
+  lkBtn: document.getElementById('link-add-btn'),
+  lkStatus: document.getElementById('link-status')
 };
 
 // ===== 日期快捷填充 =====
@@ -518,6 +583,8 @@ function escapeHtml(s){
 if(els.owner.value && els.repo.value && els.token.value){
   loadPhotoManageList();
   loadWritingManageList();
+  loadMemoManageList();
+  loadLinkManageList();
 }
 
 // ============================================================
@@ -577,14 +644,14 @@ els.phBtn.addEventListener('click', async function(){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('保存 photos.json 失败：' + (await putRes.text())); }
 
-    setPhStatus('✓ 上传成功！', 'ok');
+    setPhStatus('上传成功', 'ok');
     els.phTitle.value = '';
     els.phCategory.value = '';
     els.phFile.value = '';
     loadPhotoManageList();
 
   } catch(err){
-    setPhStatus('✗ 出错了：' + err.message, 'err');
+    setPhStatus('出错：' + err.message, 'err');
   } finally {
     els.phBtn.disabled = false;
   }
@@ -676,11 +743,11 @@ async function savePhotoCategory(id, newCategory){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('更新 photos.json 失败'); }
 
-    setPhotoManageStatus('✓ 已保存', 'ok');
+    setPhotoManageStatus('已保存', 'ok');
     loadPhotoManageList();
 
   } catch(err){
-    setPhotoManageStatus('✗ 保存失败：' + err.message, 'err');
+    setPhotoManageStatus('保存失败：' + err.message, 'err');
   }
 }
 
@@ -724,11 +791,11 @@ async function deletePhoto(id){
       }
     }
 
-    setPhotoManageStatus('✓ 已删除', 'ok');
+    setPhotoManageStatus('已删除', 'ok');
     loadPhotoManageList();
 
   } catch(err){
-    setPhotoManageStatus('✗ 删除失败：' + err.message, 'err');
+    setPhotoManageStatus('删除失败：' + err.message, 'err');
   }
 }
 
@@ -798,14 +865,14 @@ els.wBtn.addEventListener('click', async function(){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('保存 writings.json 失败：' + (await putRes.text())); }
 
-    setWStatus('✓ 发布成功！大约1分钟后刷新文章页面就能看到。', 'ok');
+    setWStatus('发布成功，大约1分钟后刷新文章页面就能看到', 'ok');
     els.wTitle.value = '';
     els.wTag.value = '';
     els.wContent.value = '';
     loadWritingManageList();
 
   } catch(err){
-    setWStatus('✗ 出错了：' + err.message, 'err');
+    setWStatus('出错：' + err.message, 'err');
   } finally {
     els.wBtn.disabled = false;
   }
@@ -901,15 +968,343 @@ async function deleteWriting(id){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('更新 writings.json 失败'); }
 
-    setWManageStatus('✓ 已删除', 'ok');
+    setWManageStatus('已删除', 'ok');
     loadWritingManageList();
 
   } catch(err){
-    setWManageStatus('✗ 删除失败：' + err.message, 'err');
+    setWManageStatus('删除失败：' + err.message, 'err');
   }
 }
 
 document.getElementById('refresh-writing-btn').addEventListener('click', loadWritingManageList);
+
+// ============================================================
+// ⑥ 发布随记
+// ============================================================
+function setMStatus(text, type){
+  els.mStatus.textContent = text;
+  els.mStatus.className = 'status show ' + type;
+}
+
+els.mBtn.addEventListener('click', async function(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  var date = els.mDate.value.trim();
+  var text = els.mText.value.trim();
+  var linkTitle = els.mLinkTitle.value.trim();
+  var linkUrl = els.mLinkUrl.value.trim();
+  var file = els.mFile.files[0];
+
+  if(!owner || !repo || !token){ setMStatus('请先填写①的仓库信息和密钥', 'err'); return; }
+  if(!date){ setMStatus('请填写日期（至少年份）', 'err'); return; }
+  if(!text && !file && !linkUrl){ setMStatus('正文、图片、链接至少填写一项', 'err'); return; }
+
+  els.mBtn.disabled = true;
+  setMStatus('发布中，请稍候…', 'loading');
+
+  try{
+    var imagePath = '';
+    if(file){
+      var base64 = await fileToBase64(file);
+      var safeName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      imagePath = 'memos/' + safeName;
+      var imgRes = await ghRequest(imagePath, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传随记图片', content: base64 })
+      }, owner, repo, token);
+      if(!imgRes.ok){ throw new Error('图片上传失败：' + (await imgRes.text())); }
+    }
+
+    var sha = null;
+    var memos = [];
+    var getRes = await ghRequest('memos.json', {}, owner, repo, token);
+    if(getRes.ok){
+      var fileData = await getRes.json();
+      sha = fileData.sha;
+      memos = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+    } else if(getRes.status !== 404){
+      throw new Error('读取 memos.json 失败');
+    }
+
+    var memo = { id: String(Date.now()), date: date };
+    if(text){ memo.text = text; }
+    if(imagePath){ memo.image = imagePath; }
+    if(linkUrl){
+      memo.linkUrl = linkUrl;
+      if(linkTitle){ memo.linkTitle = linkTitle; }
+    }
+    memos.push(memo);
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(memos, null, 2))));
+    var putBody = { message: '发布随记', content: newContentB64 };
+    if(sha){ putBody.sha = sha; }
+
+    var putRes = await ghRequest('memos.json', {
+      method: 'PUT', body: JSON.stringify(putBody)
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('保存 memos.json 失败：' + (await putRes.text())); }
+
+    setMStatus('发布成功，刷新随记页即可看到', 'ok');
+    els.mText.value = '';
+    els.mLinkTitle.value = '';
+    els.mLinkUrl.value = '';
+    els.mFile.value = '';
+    loadMemoManageList();
+
+  } catch(err){
+    setMStatus('出错：' + err.message, 'err');
+  } finally {
+    els.mBtn.disabled = false;
+  }
+});
+
+// ============================================================
+// ⑦ 管理随记
+// ============================================================
+var memoListEl = document.getElementById('memo-manage-list');
+var memoManageStatusEl = document.getElementById('memo-manage-status');
+
+function setMManageStatus(text, type){
+  memoManageStatusEl.textContent = text;
+  memoManageStatusEl.className = 'status show ' + type;
+}
+
+async function loadMemoManageList(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  if(!owner || !repo || !token){
+    memoListEl.innerHTML = '<div class="hint">先填好①的仓库信息和密钥</div>';
+    return;
+  }
+  memoListEl.innerHTML = '<div class="hint">加载中…</div>';
+  try{
+    var res = await ghRequest('memos.json', {}, owner, repo, token);
+    var memos = [];
+    if(res.ok){
+      var fileData = await res.json();
+      memos = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+    } else if(res.status !== 404){
+      throw new Error('找不到 memos.json');
+    }
+
+    if(memos.length === 0){
+      memoListEl.innerHTML = '<div class="hint">目前没有已发布的随记</div>';
+      return;
+    }
+
+    memos.sort(function(a,b){ return String(b.date || '').localeCompare(String(a.date || '')); });
+
+    memoListEl.innerHTML = '';
+    memos.forEach(function(m){
+      var snippet = m.text ? m.text.slice(0, 30) : (m.linkTitle || m.linkUrl || (m.image ? '(图片)' : ''));
+      var row = document.createElement('div');
+      row.className = 'manage-item';
+      row.innerHTML =
+        '<div class="mi-info">' + escapeHtml(snippet) +
+          '<span class="mi-date">' + escapeHtml(m.date) + (m.image ? ' · 有图' : '') + '</span>' +
+        '</div>' +
+        '<button class="mi-del" type="button">删除</button>';
+      row.querySelector('.mi-del').addEventListener('click', function(){
+        deleteMemo(m.id);
+      });
+      memoListEl.appendChild(row);
+    });
+
+  } catch(err){
+    memoListEl.innerHTML = '<div class="hint">加载失败：' + err.message + '</div>';
+  }
+}
+
+async function deleteMemo(id){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+
+  if(!confirm('确定要删除这条随记吗？此操作不可撤销。')) return;
+
+  setMManageStatus('删除中…', 'loading');
+  try{
+    var getRes = await ghRequest('memos.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 memos.json 失败'); }
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var memos = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+
+    var target = memos.find(function(m){ return m.id === id; });
+    var remaining = memos.filter(function(m){ return m.id !== id; });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(remaining, null, 2))));
+    var putRes = await ghRequest('memos.json', {
+      method: 'PUT',
+      body: JSON.stringify({ message: '删除随记', content: newContentB64, sha: sha })
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 memos.json 失败'); }
+
+    if(target && target.image){
+      var imgGetRes = await ghRequest(target.image, {}, owner, repo, token);
+      if(imgGetRes.ok){
+        var imgData = await imgGetRes.json();
+        await ghRequest(target.image, {
+          method: 'DELETE',
+          body: JSON.stringify({ message: '删除随记图片', sha: imgData.sha })
+        }, owner, repo, token);
+      }
+    }
+
+    setMManageStatus('已删除', 'ok');
+    loadMemoManageList();
+
+  } catch(err){
+    setMManageStatus('删除失败：' + err.message, 'err');
+  }
+}
+
+document.getElementById('refresh-memo-btn').addEventListener('click', loadMemoManageList);
+
+// ============================================================
+// ⑧ 管理友链
+// ============================================================
+function setLkStatus(text, type){
+  els.lkStatus.textContent = text;
+  els.lkStatus.className = 'status show ' + type;
+}
+
+els.lkBtn.addEventListener('click', async function(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  var name = els.lkName.value.trim();
+  var desc = els.lkDesc.value.trim();
+  var url = els.lkUrl.value.trim();
+
+  if(!owner || !repo || !token){ setLkStatus('请先填写①的仓库信息和密钥', 'err'); return; }
+  if(!name || !url){ setLkStatus('站名和网址不能为空', 'err'); return; }
+
+  els.lkBtn.disabled = true;
+  setLkStatus('添加中…', 'loading');
+
+  try{
+    var sha = null;
+    var links = [];
+    var getRes = await ghRequest('links.json', {}, owner, repo, token);
+    if(getRes.ok){
+      var fileData = await getRes.json();
+      sha = fileData.sha;
+      links = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+    } else if(getRes.status !== 404){
+      throw new Error('读取 links.json 失败');
+    }
+
+    links.push({ id: String(Date.now()), name: name, url: url, desc: desc });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(links, null, 2))));
+    var putBody = { message: '添加友链: ' + name, content: newContentB64 };
+    if(sha){ putBody.sha = sha; }
+
+    var putRes = await ghRequest('links.json', {
+      method: 'PUT', body: JSON.stringify(putBody)
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('保存 links.json 失败：' + (await putRes.text())); }
+
+    setLkStatus('已添加', 'ok');
+    els.lkName.value = '';
+    els.lkDesc.value = '';
+    els.lkUrl.value = '';
+    loadLinkManageList();
+
+  } catch(err){
+    setLkStatus('出错：' + err.message, 'err');
+  } finally {
+    els.lkBtn.disabled = false;
+  }
+});
+
+var linkListEl = document.getElementById('link-manage-list');
+var linkManageStatusEl = document.getElementById('link-manage-status');
+
+function setLkManageStatus(text, type){
+  linkManageStatusEl.textContent = text;
+  linkManageStatusEl.className = 'status show ' + type;
+}
+
+async function loadLinkManageList(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  if(!owner || !repo || !token){
+    linkListEl.innerHTML = '<div class="hint">先填好①的仓库信息和密钥</div>';
+    return;
+  }
+  linkListEl.innerHTML = '<div class="hint">加载中…</div>';
+  try{
+    var res = await ghRequest('links.json', {}, owner, repo, token);
+    var links = [];
+    if(res.ok){
+      var fileData = await res.json();
+      links = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+    } else if(res.status !== 404){
+      throw new Error('找不到 links.json');
+    }
+
+    if(links.length === 0){
+      linkListEl.innerHTML = '<div class="hint">目前没有友链</div>';
+      return;
+    }
+
+    linkListEl.innerHTML = '';
+    links.forEach(function(l){
+      var row = document.createElement('div');
+      row.className = 'manage-item';
+      row.innerHTML =
+        '<div class="mi-info">' + escapeHtml(l.name) +
+          '<span class="mi-date">' + escapeHtml(l.url) + (l.desc ? ' · ' + escapeHtml(l.desc) : '') + '</span>' +
+        '</div>' +
+        '<button class="mi-del" type="button">删除</button>';
+      row.querySelector('.mi-del').addEventListener('click', function(){
+        deleteLink(l.id);
+      });
+      linkListEl.appendChild(row);
+    });
+
+  } catch(err){
+    linkListEl.innerHTML = '<div class="hint">加载失败：' + err.message + '</div>';
+  }
+}
+
+async function deleteLink(id){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+
+  if(!confirm('确定要删除这条友链吗？')) return;
+
+  setLkManageStatus('删除中…', 'loading');
+  try{
+    var getRes = await ghRequest('links.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 links.json 失败'); }
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var links = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+
+    var target = links.find(function(l){ return l.id === id; });
+    var remaining = links.filter(function(l){ return l.id !== id; });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(remaining, null, 2))));
+    var putRes = await ghRequest('links.json', {
+      method: 'PUT',
+      body: JSON.stringify({ message: '删除友链: ' + (target ? target.name : id), content: newContentB64, sha: sha })
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 links.json 失败'); }
+
+    setLkManageStatus('已删除', 'ok');
+    loadLinkManageList();
+
+  } catch(err){
+    setLkManageStatus('删除失败：' + err.message, 'err');
+  }
+}
 
 // ============================================================
 // 主题切换（与全站共用 localStorage 的 theme 键）
