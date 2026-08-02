@@ -7,14 +7,5 @@
     "bg": "",
     "bgStyle": "radial-gradient(1100px 600px at 82% -12%, rgba(146,20,26,0.55), transparent 62%), linear-gradient(160deg, #0d1016 0%, #222933 58%, #151a22 100%)",
     "accent": "#c25a50"
-  },
-  {
-    "id": "1785672924394",
-    "name": "ASSASSIN'S CREED",
-    "desc": "",
-    "layout": "timeline",
-    "bg": "albums/1785672922448-43d3b596c1788d293962e46583138a07fde23b339484-d8mw6H_fw658.webp",
-    "bgStyle": "",
-    "accent": ""
   }
 ]
