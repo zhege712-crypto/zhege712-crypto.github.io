@@ -18,5 +18,15 @@
     "bgStyle": "radial-gradient(1100px 600px at 82% -12%, rgba(100,20,26,0.55), transparent 62%), linear-gradient(160deg, #0d1016 0%, #222933 58%, #151a22 100%)",
     "accent": "#c25a50",
     "music": "albums/1785687744397-The1999-.flac"
+  },
+  {
+    "id": "1785688060308",
+    "name": "洛天依",
+    "desc": "世界第一的吃货殿下！",
+    "layout": "grid",
+    "bg": "albums/1785688035643-1705243615983.jpg",
+    "bgStyle": "",
+    "accent": "#66CCFF",
+    "music": "albums/1785688047568-ilemOfficial-.mp3"
   }
 ]
