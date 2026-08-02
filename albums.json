@@ -1,0 +1,11 @@
+[
+  {
+    "id": "ac",
+    "name": "ASSASSIN'S CREED",
+    "desc": "万物皆虚，万事皆允。Nothing is true, everything is permitted.",
+    "layout": "timeline",
+    "bg": "",
+    "bgStyle": "radial-gradient(1100px 600px at 82% -12%, rgba(146,20,26,0.55), transparent 62%), linear-gradient(160deg, #0d1016 0%, #222933 58%, #151a22 100%)",
+    "accent": "#c25a50"
+  }
+]

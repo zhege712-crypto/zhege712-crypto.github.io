@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform / 伞</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c1c1b; --charcoal:#373735; --steel:#74736f; --fog:#b9b7b0;
+  --paper:#eceae5; --paper-2:#e0ddd6; --white:#faf9f6;
+  --accent-red:#e0393e; --accent-cobalt:#2f5fa8; --accent-gold:#e8a33d;
+  --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'Space Mono',monospace;
+  --maxw:1100px;
+}
+[data-theme="dark"] {
+  --ink: #ecece5;
+  --charcoal: #c4c4be;
+  --steel: #8a8a85;
+  --fog: #4a4a45;
+  --paper: #1a1a19;
+  --paper-2: #2a2a27;
+  --white: #222221;
+  --accent-red: #e55a5f;
+  --accent-gold: #d4a373;
+}
+[data-theme="eye-care"] {
+  --paper: #e9f0e1;
+  --paper-2: #dce6cf;
+  --white: #f4f8ee;
+  --ink: #3a4632;
+  --charcoal: #5c6a4f;
+  --steel: #82906f;
+  --fog: #c6d3b4;
+  --accent-red: #b2674f;
+  --accent-cobalt: #5f7f92;
+  --accent-gold: #bda26c;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{ background:var(--paper); color:var(--ink); font-family:var(--font-body); line-height:1.6; overflow-x:hidden; transition: background 0.3s ease, color 0.3s ease; }
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
+header{ position:fixed; top:0; left:0; right:0; z-index:100; padding:22px 0; mix-blend-mode:difference; }
+header .wrap{ display:flex; justify-content:space-between; align-items:center; }
+.logo{ font-family:var(--font-display); font-weight:600; font-size:1.1rem; color:var(--white); }
+nav.top-nav ul{ list-style:none; display:flex; gap:28px; }
+nav.top-nav a{ font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--white); position:relative; padding-bottom:2px; }
+nav.top-nav a::after{ content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--white); transition:width 0.3s ease; }
+nav.top-nav a:hover::after{ width:100%; }
+@media (max-width:640px){ nav.top-nav ul{ gap:16px; } }
+.side-nav{
+  position:fixed; left:24px; top:120px; z-index:150; width:168px;
+  background:color-mix(in srgb, var(--white) 72%, transparent);
+  backdrop-filter:blur(16px) saturate(180%); -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border:1px solid var(--fog); border-radius:6px; padding:10px;
+  box-shadow:0 10px 34px rgba(28,28,27,0.10), inset 0 1px 0 rgba(255,255,255,0.5);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.side-nav a{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:4px; font-family:var(--font-body); font-size:0.88rem; color:var(--charcoal); border-left:2px solid transparent; transition:background 0.25s ease, color 0.25s ease; }
+.side-nav a:hover{ background:var(--paper-2); }
+.side-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; border-left-color:var(--accent-red); }
+.side-nav a svg{ width:17px; height:17px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.6; }
+.side-nav a .badge{ margin-left:auto; font-family:var(--font-mono); font-size:0.65rem; background:var(--paper); color:var(--steel); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; }
+.side-nav a.active .badge{ background:var(--accent-gold); color:var(--white); }
+@media (max-width:1180px){ .side-nav{ display:none; } }
+
+.side-theme{
+  position:fixed; left:24px; bottom:100px; z-index:150;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  background:color-mix(in srgb, var(--white) 60%, transparent);
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  box-shadow:0 8px 24px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.35);
+  padding:10px 8px; border-radius:28px; border:1px solid var(--fog);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.side-theme .theme-btn{
+  width:34px; height:34px; border-radius:50%; border:none;
+  background:transparent; cursor:pointer;
+  transition:background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  display:flex; align-items:center; justify-content:center;
+  padding:0; position:relative;
+}
+.side-theme .theme-btn svg{
+  width:22px; height:22px; stroke:var(--charcoal); stroke-width:1.8;
+  fill:none; display:block;
+  transition: stroke 0.25s ease;
+}
+.side-theme .theme-btn:hover{ background:var(--paper-2); transform:scale(1.08); }
+.side-theme .theme-btn.active{
+  background:var(--accent-gold);
+  box-shadow:0 0 0 2px var(--accent-gold);
+}
+.side-theme .theme-btn.active svg{ stroke:var(--white); }
+.side-theme .line{
+  width:2px; height:10px; background:var(--fog); border-radius:1px;
+  transition: background 0.3s ease;
+}
+@media (max-width:1180px){ .side-theme{ display:none; } }
+
+.page-head{ padding:150px 0 60px; }
+.section-num{ font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-red); letter-spacing:0.1em; margin-bottom:10px; display:block; }
+.page-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2rem,5vw,3.2rem); }
+.page-note{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); margin-top:16px; }
+
+/* ===== 总览：档案列表 ===== */
+.pl-head{ display:flex; align-items:baseline; gap:18px; padding-bottom:26px; }
+.pl-head h2{ font-family:var(--font-display); font-weight:500; font-size:1.5rem; }
+.album-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; padding-bottom:140px; }
+.album-card{
+  display:flex; flex-direction:column; gap:10px; padding:28px 26px;
+  background:var(--white); border:1px solid var(--paper-2); border-radius:10px;
+  transition:border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+.album-card:hover{ border-color:var(--fog); transform:translateY(-3px); box-shadow:0 12px 30px rgba(28,28,27,0.08); }
+.album-card .ac-layout{ font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.1em; color:var(--accent-red); text-transform:uppercase; }
+.album-card h3{ font-family:var(--font-display); font-weight:500; font-size:1.3rem; transition:color 0.3s ease; }
+.album-card:hover h3{ color:var(--accent-red); }
+.album-card .ac-desc{ font-size:0.86rem; color:var(--steel); line-height:1.6; }
+.album-card .ac-meta{ display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:6px; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); letter-spacing:0.05em; }
+.album-card.unfiled .ac-layout{ color:var(--accent-gold); }
+
+/* ===== 档案视图 ===== */
+.back-link{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); display:inline-block; margin-bottom:36px; }
+.back-link:hover{ color:var(--av-accent, var(--accent-red)); }
+.album-view{
+  --av-accent: var(--accent-cobalt);
+  --av-head: var(--ink);
+  position:relative; margin-bottom:140px;
+}
+.album-view-bg{ position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; border-radius:12px; }
+.album-view::after{ content:''; position:absolute; inset:0; z-index:0; background:color-mix(in srgb, var(--paper) 86%, transparent); border-radius:12px; }
+.album-view-inner{ position:relative; z-index:1; padding:44px 40px 60px; }
+.av-head{ margin-bottom:28px; }
+.av-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(1.9rem,4.5vw,2.8rem); line-height:1.1; color:var(--av-head); transition:color 0.3s ease; }
+.av-head .page-note{ margin-top:14px; }
+.av-head::after{ content:''; display:block; width:100px; height:1px; background:var(--fog); margin-top:22px; }
+
+.pl-search{
+  width:100%; max-width:340px; padding:10px 14px; margin-bottom:30px;
+  border:1px solid var(--fog); border-radius:8px;
+  background:color-mix(in srgb, var(--white) 70%, transparent);
+  font-family:var(--font-mono); font-size:0.8rem; color:var(--ink);
+  outline:none; transition:border-color 0.3s ease;
+}
+.pl-search:focus{ border-color:var(--accent-red); }
+.pl-search::placeholder{ color:var(--steel); }
+
+/* 时间线排版 */
+.memo-list{ border-top:1px solid var(--fog); }
+.memo-item{
+  display:grid; grid-template-columns:110px 1fr; gap:28px;
+  padding:30px 0; border-bottom:1px solid var(--fog);
+}
+.memo-date{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); letter-spacing:0.05em; padding-top:4px; }
+.memo-body{ min-width:0; }
+.memo-text{ font-size:1.02rem; line-height:1.8; color:var(--charcoal); white-space:pre-line; }
+.memo-img{ margin-top:14px; max-width:420px; border:1px solid var(--paper-2); border-radius:4px; }
+.memo-link{
+  display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+  font-family:var(--font-mono); font-size:0.85rem; color:var(--av-accent);
+  border-bottom:1px solid var(--fog); padding-bottom:2px;
+  transition:color 0.3s ease, border-color 0.3s ease;
+}
+.memo-link:hover{ color:var(--accent-red); border-color:var(--accent-red); }
+
+/* 网格排版 */
+.memo-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:16px; }
+.memo-card{ background:var(--white); border:1px solid var(--paper-2); border-radius:10px; overflow:hidden; transition:transform 0.2s ease, box-shadow 0.3s ease; }
+.memo-card:hover{ transform:translateY(-3px); box-shadow:0 12px 30px rgba(28,28,27,0.10); }
+.memo-card img{ width:100%; aspect-ratio:4/3; object-fit:cover; }
+.memo-card .mc-body{ padding:16px 18px 18px; }
+.memo-card .mc-text{ font-size:0.95rem; color:var(--charcoal); white-space:pre-line; }
+.memo-card .mc-link{ display:inline-flex; align-items:center; gap:8px; margin-top:10px; font-family:var(--font-mono); font-size:0.78rem; color:var(--av-accent); border-bottom:1px solid var(--fog); padding-bottom:2px; }
+.memo-card .mc-link:hover{ color:var(--accent-red); }
+.memo-card .mc-meta{ display:block; margin-top:12px; font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); letter-spacing:0.05em; }
+
+.load-more{
+  display:block; margin:36px auto 0; padding:12px 34px;
+  background:transparent; border:1px solid var(--fog); border-radius:30px;
+  font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.08em; color:var(--charcoal);
+  cursor:pointer; transition:border-color 0.3s ease, color 0.3s ease;
+}
+.load-more:hover{ border-color:var(--av-accent, var(--accent-red)); color:var(--av-accent, var(--accent-red)); }
+
+.empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:60px 0; }
+@media (max-width:640px){
+  .memo-item{ grid-template-columns:1fr; gap:8px; padding:24px 0; }
+  .album-view-inner{ padding:34px 24px 46px; }
+}
+footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="logo" href="index.html">伞 umbrella</a>
+    <nav class="top-nav">
+      <ul>
+        <li><a href="work.html">作品</a></li>
+        <li><a href="video.html">视频</a></li>
+        <li><a href="platform.html">Platform</a></li>
+        <li><a href="writing.html">文章</a></li>
+        <li><a href="about.html">关于</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<nav class="side-nav">
+  <a href="index.html">
+    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+    首页
+  </a>
+  <a href="platform.html" class="active">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+    Platform
+  </a>
+  <a href="work.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    作品
+  </a>
+  <a href="video.html">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="1"/><path d="M17 9l4-2v10l-4-2z"/></svg>
+    视频
+  </a>
+  <a href="writing.html">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
+    文章
+  </a>
+  <a href="about.html">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    关于
+  </a>
+</nav>
+<div class="side-theme" id="theme-side">
+  <button class="theme-btn" data-theme="light" aria-label="日间模式">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  </button>
+  <div class="line"></div>
+  <button class="theme-btn" data-theme="dark" aria-label="夜间模式">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0 0 20 10 10 0 0 0 0-20z" style="fill:rgba(0,0,0,0.1);"/><path d="M12 2a10 10 0 0 1 0 20 10 10 0 0 1 0-20z" style="fill:rgba(0,0,0,0.1);"/><path d="M12 4a8 8 0 0 0 0 16 8 8 0 0 0 0-16z" fill="var(--charcoal)" opacity="0.2"/><path d="M12 6a6 6 0 0 1 0 12 6 6 0 0 1 0-12z" fill="var(--charcoal)" opacity="0.4"/><path d="M12 8a4 4 0 0 0 0 8 4 4 0 0 0 0-8z" fill="var(--charcoal)" opacity="0.6"/></svg>
+  </button>
+  <div class="line"></div>
+  <button class="theme-btn" data-theme="eye-care" aria-label="护眼模式">
+    <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path d="M12 9c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z" fill="var(--charcoal)" opacity="0.3"/><path d="M12 10.5c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5 1.5-.7 1.5-1.5-.7-1.5-1.5-1.5z" fill="var(--charcoal)" opacity="0.5"/></svg>
+  </button>
+</div>
+<div class="wrap">
+  <div class="page-head">
+    <span class="section-num">01 — Platform</span>
+    <h1>Platform</h1>
+    <p class="page-note">归档 / 碎片</p>
+  </div>
+  <div id="platform-view">
+    <div class="empty-state">加载中…</div>
+  </div>
+</div>
+<footer>© 2026 水告示阳 · 保留所有权利</footer>
+<script>
+(function(){
+  var viewEl = document.getElementById('platform-view');
+  var PAGE_SIZE = 10;
+  var state = { q: '', page: 0 };
+
+  function esc(s){
+    var d = document.createElement('div');
+    d.textContent = String(s == null ? '' : s);
+    return d.innerHTML;
+  }
+  function newest(a, b){ return String(b.date || '').localeCompare(String(a.date || '')); }
+  function safeStyle(v){ return String(v == null ? '' : v).replace(/["']/g, ''); }
+  function isDraft(m){ return m && m.draft === true; }
+  function qMatch(m, q){
+    if(!q) return true;
+    var hay = ((m.text || '') + ' ' + (m.linkTitle || '') + ' ' + (m.linkUrl || '') + ' ' + (m.date || ''));
+    return hay.toLowerCase().indexOf(q.toLowerCase()) !== -1;
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var albumKey = params.get('album');
+  state.q = (params.get('q') || '').trim();
+
+  Promise.all([
+    fetch('memos.json?t=' + Date.now()).then(function(r){ return r.json(); }),
+    fetch('albums.json?t=' + Date.now()).then(function(r){ return r.json(); })
+  ]).then(function(results){
+    state.memos = results[0] || [];
+    state.albums = results[1] || [];
+    if(!albumKey){
+      renderOverview();
+    } else {
+      renderAlbumView();
+    }
+  }).catch(function(){
+    viewEl.innerHTML = '<div class="empty-state">加载失败，检查 memos.json / albums.json 是否存在。</div>';
+  });
+
+  function filteredMemos(albumId){
+    return state.memos.filter(function(m){
+      if(isDraft(m)) return false;
+      if(albumId === null){
+        if(m.album) return false;
+      } else {
+        if(String(m.album || '') !== String(albumId)) return false;
+      }
+      return qMatch(m, state.q);
+    }).sort(newest);
+  }
+
+  function memoRowBody(m){
+    var body = '';
+    if(m.text){ body += '<div class="memo-text">' + esc(m.text) + '</div>'; }
+    if(m.image){ body += '<img class="memo-img" src="' + esc(m.image) + '" alt="' + esc(m.text || 'Platform') + '" loading="lazy">'; }
+    if(m.linkUrl){ body += '<a class="memo-link" href="' + esc(m.linkUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(m.linkTitle || m.linkUrl) + ' ↗</a>'; }
+    return body;
+  }
+
+  function memoCardHTML(m){
+    var img = m.image ? '<img src="' + esc(m.image) + '" alt="" loading="lazy">' : '';
+    var text = m.text ? '<div class="mc-text">' + esc(m.text) + '</div>' : '';
+    var link = m.linkUrl ? '<a class="mc-link" href="' + esc(m.linkUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(m.linkTitle || m.linkUrl) + ' ↗</a>' : '';
+    return '<div class="memo-card">' + img + '<div class="mc-body">' + text + link +
+      '<span class="mc-meta">' + esc(m.date || '') + '</span></div></div>';
+  }
+
+  function renderOverview(){
+    var memos = state.memos.filter(function(m){ return !isDraft(m); });
+    var html = '<div class="pl-head"><span class="section-num">总览</span><h2>档案</h2></div>';
+    html += '<div class="album-grid">';
+    if(state.albums.length === 0){
+      html += '<div class="empty-state">还没有档案，去后台「管理档案」新建吧。</div>';
+    }
+    state.albums.forEach(function(a){
+      var c = memos.filter(function(m){ return String(m.album || '') === String(a.id); }).length;
+      html += '<a class="album-card" href="platform.html?album=' + encodeURIComponent(a.id) + '">' +
+        '<span class="ac-layout">' + (a.layout === 'grid' ? '网格卡片' : '时间线') + '</span>' +
+        '<h3>' + esc(a.name) + '</h3>' +
+        (a.desc ? '<div class="ac-desc">' + esc(a.desc) + '</div>' : '') +
+        '<div class="ac-meta"><span>' + c + ' 条内容</span><span>→</span></div></a>';
+    });
+    var uf = memos.filter(function(m){ return !m.album; }).length;
+    html += '<a class="album-card unfiled" href="platform.html?album=unfiled">' +
+      '<span class="ac-layout">未归类</span>' +
+      '<h3>未归类</h3>' +
+      '<div class="ac-desc">尚未归入任何档案的内容</div>' +
+      '<div class="ac-meta"><span>' + uf + ' 条内容</span><span>→</span></div></a>';
+    html += '</div>';
+    viewEl.innerHTML = html;
+  }
+
+  function renderAlbumView(){
+    var unfiled = (albumKey === 'unfiled');
+    var album = null;
+    if(!unfiled){
+      for(var i = 0; i < state.albums.length; i++){
+        if(String(state.albums[i].id) === albumKey){ album = state.albums[i]; break; }
+      }
+      if(!album){
+        viewEl.innerHTML =
+          '<div class="album-view"><div class="album-view-inner">' +
+            '<a class="back-link" href="platform.html">← Platform 总览</a>' +
+            '<div class="av-head"><h1>未找到</h1>' +
+            '<p class="page-note">该档案不存在或已被删除</p></div>' +
+          '</div></div>';
+        return;
+      }
+    }
+
+    var name = unfiled ? '未归类' : album.name;
+    var desc = unfiled ? '尚未归入任何档案的内容' : (album.desc || '');
+    var bgStyle = (!unfiled && album.bgStyle) ? safeStyle(album.bgStyle) : '';
+    var bgImg = (!unfiled && album.bg) ? album.bg : '';
+    var layout = (!unfiled && album.layout === 'grid') ? 'grid' : 'timeline';
+    var accent = (!unfiled && album.accent) ? safeStyle(album.accent) : '';
+
+    var list = filteredMemos(unfiled ? null : albumKey);
+    var visible = list.slice(0, (state.page + 1) * PAGE_SIZE);
+    var hasMore = list.length > visible.length;
+
+    var listHtml;
+    if(list.length === 0){
+      listHtml = '<div class="empty-state">' + (state.q ? '没有匹配「' + esc(state.q) + '」的内容' : '这里还没有内容') + '</div>';
+    } else if(layout === 'grid'){
+      listHtml = '<div class="memo-grid">' + visible.map(memoCardHTML).join('') + '</div>';
+    } else {
+      listHtml = '<div class="memo-list">' + visible.map(function(m){
+        return '<div class="memo-item"><span class="memo-date">' + esc(m.date || '') + '</span><div class="memo-body">' + memoRowBody(m) + '</div></div>';
+      }).join('') + '</div>';
+    }
+
+    var bgHTML = '';
+    if(bgImg){ bgHTML = '<div class="album-view-bg" style="background-image:url(\'' + bgImg + '\')"></div>'; }
+    else if(bgStyle){ bgHTML = '<div class="album-view-bg" style="background:' + bgStyle + '"></div>'; }
+
+    viewEl.innerHTML =
+      '<div class="album-view"' + (accent ? ' style="--av-accent:' + accent + ';--av-head:' + accent + '"' : '') + '>' + bgHTML +
+        '<div class="album-view-inner">' +
+          '<a class="back-link" href="platform.html">← Platform 总览</a>' +
+          '<div class="av-head"><h1>' + esc(name) + '</h1>' +
+          (desc ? '<p class="page-note">' + esc(desc) + '</p>' : '') + '</div>' +
+          '<input class="pl-search" id="pl-search" type="text" placeholder="搜索此档案…" value="' + esc(state.q) + '">' +
+          listHtml +
+          (hasMore ? '<button class="load-more" id="pl-load-more" type="button">加载更多（还有 ' + (list.length - visible.length) + ' 条）</button>' : '') +
+        '</div>' +
+      '</div>';
+
+    var search = document.getElementById('pl-search');
+    if(search){
+      search.addEventListener('input', function(){
+        state.q = this.value.trim();
+        state.page = 0;
+        var url = 'platform.html?album=' + encodeURIComponent(albumKey) + (state.q ? '&q=' + encodeURIComponent(state.q) : '');
+        if(window.history && window.history.replaceState){ window.history.replaceState(null, '', url); }
+        renderAlbumView();
+      });
+    }
+    var moreBtn = document.getElementById('pl-load-more');
+    if(moreBtn){
+      moreBtn.addEventListener('click', function(){
+        state.page++;
+        renderAlbumView();
+      });
+    }
+  }
+})();
+(function(){
+  var btns = document.querySelectorAll('#theme-side .theme-btn');
+  if(!btns.length) return;
+  function isNightTime() {
+    var hour = new Date().getHours();
+    return (hour >= 19 || hour < 6);
+  }
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+    btns.forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+    });
+  }
+  var saved = localStorage.getItem('theme');
+  var initial;
+  if (saved && (saved === 'light' || saved === 'dark' || saved === 'eye-care')) {
+    initial = saved;
+  } else {
+    initial = isNightTime() ? 'dark' : 'light';
+  }
+  applyTheme(initial);
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applyTheme(this.getAttribute('data-theme'));
+    });
+  });
+})();
+</script>
+</body>
+</html>

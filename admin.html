@@ -52,6 +52,7 @@ input[type=text], input[type=password], input[type=date], textarea{
   font-family:var(--font-body); font-size:0.95rem; color:var(--ink);
 }
 textarea{ min-height:160px; resize:vertical; font-family:var(--font-body); line-height:1.6; }
+select{ width:100%; padding:11px 12px; border:1px solid var(--paper-2); background:var(--paper); font-family:var(--font-body); font-size:0.95rem; color:var(--ink); }
 input[type=file]{ font-family:var(--font-mono); font-size:0.8rem; }
 
 .row{ display:flex; gap:14px; flex-wrap:wrap; }
@@ -353,7 +354,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
   </div>
 
   <div class="panel">
-    <h2>⑥ 发布随记</h2>
+    <h2>⑥ 发布 Platform 内容</h2>
     <label>日期</label>
     <div class="date-group">
       <input type="text" id="m-date" placeholder="2026-08-02 或 2026-08 或 2026">
@@ -361,6 +362,10 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
       <button type="button" class="btn-sm" data-target="m-date" data-precision="month">年月</button>
       <button type="button" class="btn-sm" data-target="m-date" data-precision="day">完整</button>
     </div>
+    <label>归档（不选则归入「未归类」）</label>
+    <select id="m-album">
+      <option value="">未归类</option>
+    </select>
     <label>正文（可选）</label>
     <textarea id="m-text" placeholder="写点什么…"></textarea>
     <label>图片（可选）</label>
@@ -369,13 +374,16 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <input type="text" id="m-link-title" placeholder="例如：一篇文章">
     <label>链接网址（可选）</label>
     <input type="text" id="m-link-url" placeholder="https://…">
+    <label style="display:flex; align-items:center; gap:8px; text-transform:none; font-size:0.82rem; color:var(--charcoal); margin-top:14px;">
+      <input type="checkbox" id="m-draft" style="width:auto;"> 存为草稿（Platform 页不显示）
+    </label>
     <button id="memo-btn">发布</button>
     <div class="status" id="memo-status"></div>
   </div>
 
   <div class="panel">
-    <h2>⑦ 管理随记</h2>
-    <div class="hint" style="margin-top:0;">列出所有随记，点删除即可移除。</div>
+    <h2>⑦ 管理 Platform 内容</h2>
+    <div class="hint" style="margin-top:0;">列出所有内容，可修改归档（发布后自行归档）或删除。</div>
     <div id="memo-manage-list" style="margin-top:16px;"></div>
     <button id="refresh-memo-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
     <div class="status" id="memo-manage-status"></div>
@@ -400,6 +408,36 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <label style="margin-top:26px;">已有友链</label>
     <div id="link-manage-list"></div>
     <div class="status" id="link-manage-status"></div>
+  </div>
+
+  <div class="panel">
+    <h2>⑨ 管理档案</h2>
+    <div class="row">
+      <div>
+        <label>档案名称</label>
+        <input type="text" id="al-name" placeholder="例如 ASSASSIN'S CREED">
+      </div>
+      <div>
+        <label>排版</label>
+        <select id="al-layout">
+          <option value="timeline">时间线</option>
+          <option value="grid">网格卡片</option>
+        </select>
+      </div>
+    </div>
+    <label>描述（可选）</label>
+    <input type="text" id="al-desc" placeholder="一句话简介">
+    <label>背景渐变（可选，CSS）</label>
+    <input type="text" id="al-bgstyle" placeholder="例如 linear-gradient(160deg,#0e1116,#20262e)">
+    <label>背景图片（可选）</label>
+    <input type="file" id="al-bgfile" accept="image/*">
+    <label>强调色（可选，CSS 颜色）</label>
+    <input type="text" id="al-accent" placeholder="例如 #b23a3a">
+    <button id="album-add-btn">新建档案</button>
+    <div class="status" id="album-status"></div>
+    <label style="margin-top:26px;">已有档案（删除后其内容移入「未归类」）</label>
+    <div id="album-manage-list"></div>
+    <div class="status" id="album-manage-status"></div>
   </div>
 </div>
 
@@ -506,7 +544,17 @@ var els = {
   lkDesc: document.getElementById('lk-desc'),
   lkUrl: document.getElementById('lk-url'),
   lkBtn: document.getElementById('link-add-btn'),
-  lkStatus: document.getElementById('link-status')
+  lkStatus: document.getElementById('link-status'),
+  mAlbum: document.getElementById('m-album'),
+  mDraft: document.getElementById('m-draft'),
+  alName: document.getElementById('al-name'),
+  alLayout: document.getElementById('al-layout'),
+  alDesc: document.getElementById('al-desc'),
+  alBgstyle: document.getElementById('al-bgstyle'),
+  alBgfile: document.getElementById('al-bgfile'),
+  alAccent: document.getElementById('al-accent'),
+  alBtn: document.getElementById('album-add-btn'),
+  alStatus: document.getElementById('album-status')
 };
 
 // ===== 日期快捷填充 =====
@@ -585,6 +633,8 @@ if(els.owner.value && els.repo.value && els.token.value){
   loadWritingManageList();
   loadMemoManageList();
   loadLinkManageList();
+  loadAlbumManageList();
+  populateAlbumOptions();
 }
 
 // ============================================================
@@ -995,6 +1045,7 @@ els.mBtn.addEventListener('click', async function(){
   var linkTitle = els.mLinkTitle.value.trim();
   var linkUrl = els.mLinkUrl.value.trim();
   var file = els.mFile.files[0];
+  var album = els.mAlbum.value.trim();
 
   if(!owner || !repo || !token){ setMStatus('请先填写①的仓库信息和密钥', 'err'); return; }
   if(!date){ setMStatus('请填写日期（至少年份）', 'err'); return; }
@@ -1034,6 +1085,8 @@ els.mBtn.addEventListener('click', async function(){
       memo.linkUrl = linkUrl;
       if(linkTitle){ memo.linkTitle = linkTitle; }
     }
+    if(album){ memo.album = album; }
+    if(els.mDraft.checked){ memo.draft = true; }
     memos.push(memo);
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(memos, null, 2))));
@@ -1045,11 +1098,12 @@ els.mBtn.addEventListener('click', async function(){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('保存 memos.json 失败：' + (await putRes.text())); }
 
-    setMStatus('发布成功，刷新随记页即可看到', 'ok');
+    setMStatus('发布成功，刷新 Platform 页即可看到', 'ok');
     els.mText.value = '';
     els.mLinkTitle.value = '';
     els.mLinkUrl.value = '';
     els.mFile.value = '';
+    els.mDraft.checked = false;
     loadMemoManageList();
 
   } catch(err){
@@ -1080,6 +1134,8 @@ async function loadMemoManageList(){
   }
   memoListEl.innerHTML = '<div class="hint">加载中…</div>';
   try{
+    var albums = await fetchAlbums(owner, repo, token);
+
     var res = await ghRequest('memos.json', {}, owner, repo, token);
     var memos = [];
     if(res.ok){
@@ -1090,22 +1146,31 @@ async function loadMemoManageList(){
     }
 
     if(memos.length === 0){
-      memoListEl.innerHTML = '<div class="hint">目前没有已发布的随记</div>';
+      memoListEl.innerHTML = '<div class="hint">目前没有已发布的内容</div>';
       return;
     }
 
     memos.sort(function(a,b){ return String(b.date || '').localeCompare(String(a.date || '')); });
 
+    var albumNameMap = {};
+    albums.forEach(function(a){ albumNameMap[a.id] = a.name; });
+
     memoListEl.innerHTML = '';
     memos.forEach(function(m){
       var snippet = m.text ? m.text.slice(0, 30) : (m.linkTitle || m.linkUrl || (m.image ? '(图片)' : ''));
+      var albumName = m.album ? (albumNameMap[m.album] || '') : '';
       var row = document.createElement('div');
       row.className = 'manage-item';
       row.innerHTML =
         '<div class="mi-info">' + escapeHtml(snippet) +
-          '<span class="mi-date">' + escapeHtml(m.date) + (m.image ? ' · 有图' : '') + '</span>' +
+          '<span class="mi-date">' + escapeHtml(m.date) + (albumName ? ' · ' + escapeHtml(albumName) : ' · 未归类') + (m.draft ? ' · 草稿' : '') + (m.image ? ' · 有图' : '') + '</span>' +
         '</div>' +
+        '<select class="mi-series">' + albumOptionsHTML(albums, m.album || '') + '</select>' +
+        '<button class="mi-save" type="button">归档</button>' +
         '<button class="mi-del" type="button">删除</button>';
+      row.querySelector('.mi-save').addEventListener('click', function(){
+        saveMemoAlbum(m.id, row.querySelector('.mi-series').value);
+      });
       row.querySelector('.mi-del').addEventListener('click', function(){
         deleteMemo(m.id);
       });
@@ -1117,12 +1182,63 @@ async function loadMemoManageList(){
   }
 }
 
+function albumOptionsHTML(albums, selected){
+  var html = '<option value="">未归类</option>';
+  albums.forEach(function(a){
+    html += '<option value="' + escapeHtml(a.id) + '"' + (String(selected) === String(a.id) ? ' selected' : '') + '>' + escapeHtml(a.name) + '</option>';
+  });
+  return html;
+}
+
+async function fetchAlbums(owner, repo, token){
+  var res = await ghRequest('albums.json', {}, owner, repo, token);
+  if(res.ok){
+    var fd = await res.json();
+    return JSON.parse(decodeURIComponent(escape(atob(fd.content))));
+  }
+  return [];
+}
+
+async function saveMemoAlbum(id, albumId){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+
+  setMManageStatus('保存中…', 'loading');
+  try{
+    var getRes = await ghRequest('memos.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 memos.json 失败'); }
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var memos = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+
+    var target = memos.find(function(m){ return String(m.id) === String(id); });
+    if(target){
+      if(albumId){ target.album = albumId; }
+      else { delete target.album; }
+    }
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(memos, null, 2))));
+    var putRes = await ghRequest('memos.json', {
+      method: 'PUT',
+      body: JSON.stringify({ message: '调整归档', content: newContentB64, sha: sha })
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 memos.json 失败'); }
+
+    setMManageStatus('已保存', 'ok');
+    loadMemoManageList();
+
+  } catch(err){
+    setMManageStatus('保存失败：' + err.message, 'err');
+  }
+}
+
 async function deleteMemo(id){
   var owner = els.owner.value.trim();
   var repo = els.repo.value.trim();
   var token = els.token.value.trim();
 
-  if(!confirm('确定要删除这条随记吗？此操作不可撤销。')) return;
+  if(!confirm('确定要删除这条内容吗？此操作不可撤销。')) return;
 
   setMManageStatus('删除中…', 'loading');
   try{
@@ -1304,6 +1420,267 @@ async function deleteLink(id){
   } catch(err){
     setLkManageStatus('删除失败：' + err.message, 'err');
   }
+}
+
+// ============================================================
+// ⑨ 管理档案
+// ============================================================
+var albumListEl = document.getElementById('album-manage-list');
+var albumManageStatusEl = document.getElementById('album-manage-status');
+
+function setAlStatus(text, type){
+  els.alStatus.textContent = text;
+  els.alStatus.className = 'status show ' + type;
+}
+function setAlManageStatus(text, type){
+  albumManageStatusEl.textContent = text;
+  albumManageStatusEl.className = 'status show ' + type;
+}
+
+async function populateAlbumOptions(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  var sel = els.mAlbum;
+  if(!sel || !owner || !repo || !token) return;
+  try{
+    var albums = await fetchAlbums(owner, repo, token);
+    var current = sel.value;
+    sel.innerHTML = albumOptionsHTML(albums, '');
+    if(current) sel.value = current;
+  }catch(e){}
+}
+
+els.alBtn.addEventListener('click', async function(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  var name = els.alName.value.trim();
+  var desc = els.alDesc.value.trim();
+  var layout = els.alLayout.value || 'timeline';
+  var bgStyle = els.alBgstyle.value.trim();
+  var accent = els.alAccent.value.trim();
+  var file = els.alBgfile.files[0];
+
+  if(!owner || !repo || !token){ setAlStatus('请先填写①的仓库信息和密钥', 'err'); return; }
+  if(!name){ setAlStatus('档案名称不能为空', 'err'); return; }
+
+  els.alBtn.disabled = true;
+  setAlStatus('创建中…', 'loading');
+
+  try{
+    var bg = '';
+    if(file){
+      var base64 = await fileToBase64(file);
+      var safeName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      bg = 'albums/' + safeName;
+      var imgRes = await ghRequest(bg, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传档案背景', content: base64 })
+      }, owner, repo, token);
+      if(!imgRes.ok){ throw new Error('背景上传失败：' + (await imgRes.text())); }
+    }
+
+    var sha = null;
+    var albums = [];
+    var getRes = await ghRequest('albums.json', {}, owner, repo, token);
+    if(getRes.ok){
+      var fileData = await getRes.json();
+      sha = fileData.sha;
+      albums = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+    } else if(getRes.status !== 404){
+      throw new Error('读取 albums.json 失败');
+    }
+
+    albums.push({ id: String(Date.now()), name: name, desc: desc, layout: layout, bg: bg, bgStyle: bgStyle, accent: accent });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));
+    var putBody = { message: '新建档案: ' + name, content: newContentB64 };
+    if(sha){ putBody.sha = sha; }
+
+    var putRes = await ghRequest('albums.json', {
+      method: 'PUT', body: JSON.stringify(putBody)
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('保存 albums.json 失败：' + (await putRes.text())); }
+
+    setAlStatus('已创建', 'ok');
+    els.alName.value = '';
+    els.alDesc.value = '';
+    els.alBgstyle.value = '';
+    els.alBgfile.value = '';
+    els.alAccent.value = '';
+    await loadAlbumManageList();
+    await populateAlbumOptions();
+
+  } catch(err){
+    setAlStatus('出错：' + err.message, 'err');
+  } finally {
+    els.alBtn.disabled = false;
+  }
+});
+
+async function loadAlbumManageList(){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  if(!owner || !repo || !token){
+    albumListEl.innerHTML = '<div class="hint">先填好①的仓库信息和密钥</div>';
+    return;
+  }
+  albumListEl.innerHTML = '<div class="hint">加载中…</div>';
+  try{
+    var albums = await fetchAlbums(owner, repo, token);
+
+    if(albums.length === 0){
+      albumListEl.innerHTML = '<div class="hint">目前没有档案</div>';
+      return;
+    }
+
+    albumListEl.innerHTML = '';
+    albums.forEach(function(a){
+      var row = document.createElement('div');
+      row.className = 'manage-item';
+      row.innerHTML =
+        '<div class="mi-info">' + escapeHtml(a.name) +
+          '<span class="mi-date">' + escapeHtml(a.desc || '') + (a.layout === 'grid' ? ' · 网格' : ' · 时间线') + (a.bg ? ' · 有背景图' : '') + (a.accent ? ' · 强调色' : '') + '</span>' +
+        '</div>' +
+        '<button class="mi-edit" type="button">编辑</button>' +
+        '<button class="mi-del" type="button">删除</button>';
+      row.querySelector('.mi-edit').addEventListener('click', function(){
+        var editBox = document.createElement('div');
+        editBox.className = 'mi-edit-form';
+        editBox.innerHTML =
+          '<label>名称</label><input class="al-e-name" value="' + escapeHtml(a.name) + '">' +
+          '<label>描述</label><input class="al-e-desc" value="' + escapeHtml(a.desc || '') + '">' +
+          '<label>排版</label><select class="al-e-layout"><option value="timeline"' + (a.layout === 'grid' ? '' : ' selected') + '>时间线</option><option value="grid"' + (a.layout === 'grid' ? ' selected' : '') + '>网格卡片</option></select>' +
+          '<label>背景渐变（CSS）</label><input class="al-e-bgstyle" value="' + escapeHtml(a.bgStyle || '') + '">' +
+          '<label>强调色（CSS 颜色）</label><input class="al-e-accent" value="' + escapeHtml(a.accent || '') + '">' +
+          '<div class="row"><button class="mi-f-save" type="button">保存</button><button class="mi-f-cancel" type="button">取消</button></div>';
+        editBox.querySelector('.mi-f-save').addEventListener('click', async function(){
+          await saveAlbum(a.id, editBox);
+        });
+        editBox.querySelector('.mi-f-cancel').addEventListener('click', function(){
+          editBox.remove();
+          row.style.display = '';
+        });
+        row.after(editBox);
+        row.style.display = 'none';
+      });
+      row.querySelector('.mi-del').addEventListener('click', function(){
+        deleteAlbum(a.id);
+      });
+      albumListEl.appendChild(row);
+    });
+
+  } catch(err){
+    albumListEl.innerHTML = '<div class="hint">加载失败：' + err.message + '</div>';
+  }
+}
+
+async function saveAlbum(id, editBox){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  var name = editBox.querySelector('.al-e-name').value.trim();
+  var desc = editBox.querySelector('.al-e-desc').value.trim();
+  var layout = editBox.querySelector('.al-e-layout').value;
+  var bgStyle = editBox.querySelector('.al-e-bgstyle').value.trim();
+  var accent = editBox.querySelector('.al-e-accent').value.trim();
+
+  if(!name){ setAlManageStatus('档案名称不能为空', 'err'); return; }
+
+  setAlManageStatus('保存中…', 'loading');
+  try{
+    var getRes = await ghRequest('albums.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 albums.json 失败'); }
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var albums = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+
+    var target = albums.find(function(a){ return String(a.id) === String(id); });
+    if(target){
+      target.name = name;
+      target.desc = desc;
+      target.layout = layout;
+      target.bgStyle = bgStyle;
+      target.accent = accent;
+    }
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));
+    var putRes = await ghRequest('albums.json', {
+      method: 'PUT',
+      body: JSON.stringify({ message: '编辑档案', content: newContentB64, sha: sha })
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 albums.json 失败'); }
+
+    setAlManageStatus('已保存', 'ok');
+    editBox.remove();
+    await loadAlbumManageList();
+    await populateAlbumOptions();
+
+  } catch(err){
+    setAlManageStatus('保存失败：' + err.message, 'err');
+  }
+}
+
+async function deleteAlbum(id){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+
+  if(!confirm('确定删除这个档案吗？该档案下的内容将移入「未归类」。')) return;
+
+  setAlManageStatus('删除中…', 'loading');
+  try{
+    var getRes = await ghRequest('albums.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 albums.json 失败'); }
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var albums = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+
+    var remaining = albums.filter(function(a){ return String(a.id) !== String(id); });
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(remaining, null, 2))));
+    var putRes = await ghRequest('albums.json', {
+      method: 'PUT',
+      body: JSON.stringify({ message: '删除档案', content: newContentB64, sha: sha })
+    }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 albums.json 失败'); }
+
+    await unassignMemos(id);
+    setAlManageStatus('已删除', 'ok');
+    await loadAlbumManageList();
+    await loadMemoManageList();
+    await populateAlbumOptions();
+
+  } catch(err){
+    setAlManageStatus('删除失败：' + err.message, 'err');
+  }
+}
+
+async function unassignMemos(albumId){
+  var owner = els.owner.value.trim();
+  var repo = els.repo.value.trim();
+  var token = els.token.value.trim();
+  try{
+    var getRes = await ghRequest('memos.json', {}, owner, repo, token);
+    if(!getRes.ok) return;
+    var fileData = await getRes.json();
+    var sha = fileData.sha;
+    var memos = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
+
+    var changed = false;
+    memos.forEach(function(m){
+      if(String(m.album || '') === String(albumId)){ delete m.album; changed = true; }
+    });
+    if(!changed) return;
+
+    var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(memos, null, 2))));
+    await ghRequest('memos.json', {
+      method: 'PUT',
+      body: JSON.stringify({ message: '内容移入未归类', content: newContentB64, sha: sha })
+    }, owner, repo, token);
+  }catch(e){}
 }
 
 // ============================================================

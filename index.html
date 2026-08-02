@@ -499,7 +499,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
       <ul>
         <li><a href="work.html">作品</a></li>
         <li><a href="video.html">视频</a></li>
-        <li><a href="memo.html">随记</a></li>
+        <li><a href="platform.html">Platform</a></li>
         <li><a href="writing.html">文章</a></li>
         <li><a href="about.html">关于</a></li>
       </ul>
@@ -512,6 +512,10 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
     <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
     首页
   </a>
+  <a href="platform.html">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+    Platform
+  </a>
   <a href="work.html">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     作品
@@ -519,10 +523,6 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
   <a href="video.html">
     <svg viewBox="0 0 24 24"><rect x="3" y="5" width="14" height="14" rx="1"/><path d="M17 9l4-2v10l-4-2z"/></svg>
     视频
-  </a>
-  <a href="memo.html">
-    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
-    随记
   </a>
   <a href="writing.html">
     <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
@@ -572,7 +572,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
   <div class="stats">
     <div class="stat"><span class="stat-num" id="stat-photos">–</span><span class="stat-label">照片</span></div>
     <div class="stat"><span class="stat-num">2</span><span class="stat-label">视频</span></div>
-    <div class="stat"><span class="stat-num" id="stat-memos">–</span><span class="stat-label">随记</span></div>
+    <div class="stat"><span class="stat-num" id="stat-memos">–</span><span class="stat-label">Platform</span></div>
     <div class="stat"><span class="stat-num" id="stat-writings">–</span><span class="stat-label">文章</span></div>
   </div>
 </div>
@@ -597,22 +597,22 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 
 <div class="wrap">
   <div class="entry-list">
-    <a class="entry-row" href="work.html">
+    <a class="entry-row" href="platform.html">
       <span class="entry-num">01</span>
+      <span class="entry-title">Platform</span>
+      <span class="entry-sub">归档 / 碎片</span>
+      <span class="entry-arrow">→</span>
+    </a>
+    <a class="entry-row" href="work.html">
+      <span class="entry-num">02</span>
       <span class="entry-title">作品</span>
       <span class="entry-sub">照片 / 影像</span>
       <span class="entry-arrow">→</span>
     </a>
     <a class="entry-row" href="video.html">
-      <span class="entry-num">02</span>
+      <span class="entry-num">03</span>
       <span class="entry-title">视频</span>
       <span class="entry-sub">视频 / 影像</span>
-      <span class="entry-arrow">→</span>
-    </a>
-    <a class="entry-row" href="memo.html">
-      <span class="entry-num">03</span>
-      <span class="entry-title">随记</span>
-      <span class="entry-sub">零散的句子与照片</span>
       <span class="entry-arrow">→</span>
     </a>
     <a class="entry-row" href="writing.html">
@@ -1085,12 +1085,12 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
       var ms = sortNewest(memos);
       var rows = ms.slice(0, 2).map(function(m){
         var text = m.text || (m.linkTitle || m.linkUrl || (m.image ? '(图片)' : ''));
-        return '<a class="recent-row" href="memo.html">' +
+        return '<a class="recent-row" href="platform.html">' +
           '<span class="rr-date">' + esc(m.date || '') + '</span>' +
           '<span class="rr-title">' + esc(text) + '</span>' +
           '<span class="rr-arrow">→</span></a>';
       }).join('');
-      col.innerHTML = '<h3>随记</h3>' + (rows || '<div class="rp-empty" style="padding:8px 0;">还没有随记</div>');
+      col.innerHTML = '<h3>Platform</h3>' + (rows || '<div class="rp-empty" style="padding:8px 0;">还没有内容</div>');
     })
     .catch(function(){
       var numEl = document.getElementById('stat-memos');
