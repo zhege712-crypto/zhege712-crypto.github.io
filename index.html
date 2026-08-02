@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="music.css">
 <style>
 :root{
   --ink:      #1c1c1b;
@@ -444,24 +445,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 .footer-links a svg{ width:16px; height:16px; stroke:var(--steel); fill:none; stroke-width:1.6; transition:stroke 0.3s ease; }
 .footer-links a:hover{ border-color:var(--accent-gold); }
 .footer-links a:hover svg{ stroke:var(--accent-gold); }
-
-#music-toggle{ position:fixed; right:28px; bottom:28px; z-index:200; width:56px; height:56px; border-radius:50%; background:var(--ink); border:1px solid var(--charcoal); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,0.25); transition:border-color 0.3s ease; }
-#music-toggle:hover{ border-color:var(--accent-gold); }
-#music-toggle .ring{ position:absolute; inset:-4px; border-radius:50%; border:1px solid var(--accent-gold); opacity:0; transform:scale(0.85); transition:opacity 0.3s ease; }
-#music-toggle.playing .ring{ opacity:1; animation: pulse-ring 1.8s ease-out infinite; }
-@keyframes pulse-ring{ 0%{ transform:scale(0.85); opacity:0.8; } 100%{ transform:scale(1.35); opacity:0; } }
-#music-toggle .bars{ display:flex; align-items:flex-end; gap:3px; height:16px; }
-#music-toggle .bars span{ width:3px; background:var(--fog); border-radius:1px; height:6px; transition:background 0.3s ease; }
-#music-toggle.playing .bars span{ background:var(--accent-gold); }
-#music-toggle.playing .bars span:nth-child(1){ animation:bar1 1.1s ease-in-out infinite; }
-#music-toggle.playing .bars span:nth-child(2){ animation:bar2 0.9s ease-in-out infinite; }
-#music-toggle.playing .bars span:nth-child(3){ animation:bar3 1.3s ease-in-out infinite; }
-@keyframes bar1{ 0%,100%{ height:6px; } 50%{ height:16px; } }
-@keyframes bar2{ 0%,100%{ height:10px; } 50%{ height:4px; } }
-@keyframes bar3{ 0%,100%{ height:6px; } 50%{ height:14px; } }
-#music-toggle .label{ position:absolute; right:66px; top:50%; transform:translateY(-50%); font-family:var(--font-mono); font-size:0.68rem; color:var(--white); background:var(--ink); padding:6px 10px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
-#music-toggle:hover .label{ opacity:1; }
-@media (max-width:640px){ #music-toggle{ right:18px; bottom:18px; width:50px; height:50px; } #music-toggle .label{ display:none; } }
+.footer-stats{ margin-bottom:10px; color:var(--steel); font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; }
 </style>
 </head>
 <body>
@@ -652,6 +636,10 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
       <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M6 11v4M4 13h4M16 11h.01M19 13h.01"/></svg>
     </a>
   </div>
+  <div class="footer-stats">
+    <span id="busuanzi_container_site_uv" style="display:none;">访客 <span id="busuanzi_value_site_uv"></span></span>
+    <span id="busuanzi_container_site_pv" style="display:none;"> · 浏览 <span id="busuanzi_value_site_pv"></span></span>
+  </div>
   <div>© 2026 水告示阳 · 保留所有权利</div>
 </footer>
 
@@ -666,11 +654,12 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 <audio id="bg-music" loop preload="none">
   <source src="music/background.mp3" type="audio/mpeg">
 </audio>
-<button id="music-toggle" type="button" aria-label="播放音乐">
-  <span class="ring"></span>
-  <span class="bars"><span></span><span></span><span></span></span>
-  <span class="label">播放音乐</span>
-</button>
+<div class="music-box">
+  <button id="music-toggle" type="button" aria-label="播放音乐">
+    <span class="ring"></span>
+    <span class="bars"><span></span><span></span><span></span></span>
+  </button>
+</div>
 
 <script>
 // ============================================================
@@ -1154,33 +1143,8 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 // 原有功能
 // ============================================================
 
-(function(){
-  var btn = document.getElementById('music-toggle');
-  var audio = document.getElementById('bg-music');
-  var label = btn.querySelector('.label');
-  var autoStarted = false;
-  audio.volume = 0.35;
-  function startPlaying(){
-    if(autoStarted) return;
-    audio.play().then(function(){
-      autoStarted = true;
-      btn.classList.add('playing');
-      label.textContent = '暂停音乐';
-    }).catch(function(){});
-  }
-  function stopPlaying(){
-    audio.pause();
-    btn.classList.remove('playing');
-    label.textContent = '播放音乐';
-  }
-  btn.addEventListener('click', function(e){
-    e.stopPropagation();
-    if(audio.paused){ startPlaying(); } else { stopPlaying(); }
-  });
-  ['click','touchstart','keydown','scroll'].forEach(function(evt){
-    window.addEventListener(evt, startPlaying, { once:true, passive:true });
-  });
-})();
+// 音乐播放（共享组件，见 music.js）
+
 
 (function(){
   var btns = document.querySelectorAll('#theme-side .theme-btn');
@@ -1215,5 +1179,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
   });
 })();
 </script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="music.js"></script>
 </body>
 </html>

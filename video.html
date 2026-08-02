@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="music.css">
 <style>
 :root{
   --ink:#1c1c1b; --charcoal:#373735; --steel:#74736f; --fog:#b9b7b0;
@@ -116,6 +117,7 @@ nav.top-nav a:hover::after{ width:100%; }
 .play-btn svg{ width:16px; height:16px; fill:var(--white); margin-left:2px; }
 @media (max-width:820px){ .video-grid{ grid-template-columns:1fr; } }
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+.footer-stats{ margin-bottom:10px; color:var(--steel); font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; }
 </style>
 </head>
 <body>
@@ -199,10 +201,17 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     </div>
   </div>
 </div>
-<footer>© 2026 水告示阳 · 保留所有权利</footer>
+<footer>
+  <div class="footer-stats">
+    <span id="busuanzi_container_site_uv" style="display:none;">访客 <span id="busuanzi_value_site_uv"></span></span>
+    <span id="busuanzi_container_site_pv" style="display:none;"> · 浏览 <span id="busuanzi_value_site_pv"></span></span>
+  </div>
+  <div>© 2026 水告示阳 · 保留所有权利</div>
+</footer>
 <script>
 document.querySelectorAll('.video-embed').forEach(function(box){
   box.addEventListener('click', function(){
+    if(window.__pauseMusic){ window.__pauseMusic(); }
     var bvid = box.getAttribute('data-bvid');
     var iframe = document.createElement('iframe');
     iframe.src = 'https://player.bilibili.com/player.html?bvid=' + bvid + '&page=1&high_quality=1&danmaku=0&autoplay=1';
@@ -247,5 +256,17 @@ document.querySelectorAll('.video-embed').forEach(function(box){
   });
 })();
 </script>
+<audio id="bg-music" loop preload="none">
+  <source src="music/background.mp3" type="audio/mpeg">
+</audio>
+<div class="music-box">
+  <button id="music-toggle" type="button" aria-label="播放音乐">
+    <span class="ring"></span>
+    <span class="bars"><span></span><span></span><span></span></span>
+  </button>
+</div>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>window.__musicExclude = '.video-embed';</script>
+<script src="music.js"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="music.css">
 <style>
 :root{
   --ink:#1c1c1b; --charcoal:#373735; --steel:#74736f; --fog:#b9b7b0;
@@ -106,22 +107,45 @@ nav.top-nav a:hover::after{ width:100%; }
 .page-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2rem,5vw,3.2rem); }
 .page-note{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); margin-top:16px; }
 
-/* ===== 总览：档案列表 ===== */
+/* ===== 总览：档案袋卡片 ===== */
 .pl-head{ display:flex; align-items:baseline; gap:18px; padding-bottom:26px; }
 .pl-head h2{ font-family:var(--font-display); font-weight:500; font-size:1.5rem; }
-.album-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; padding-bottom:140px; }
+.album-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; }
 .album-card{
-  display:flex; flex-direction:column; gap:10px; padding:28px 26px;
-  background:var(--white); border:1px solid var(--paper-2); border-radius:10px;
+  position:relative; display:flex; flex-direction:column;
+  background:var(--white); border:1px solid var(--paper-2);
+  border-radius:4px 4px 12px 12px; overflow:hidden;
   transition:border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 .album-card:hover{ border-color:var(--fog); transform:translateY(-3px); box-shadow:0 12px 30px rgba(28,28,27,0.08); }
-.album-card .ac-layout{ font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.1em; color:var(--accent-red); text-transform:uppercase; }
+.ac-tab{
+  align-self:flex-start; margin:14px 0 0 18px; padding:5px 12px;
+  background:var(--paper-2); border-radius:6px 6px 2px 2px;
+  font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.1em;
+  color:var(--steel); text-transform:uppercase; z-index:1;
+}
+.album-card.unfiled .ac-tab{ color:var(--accent-gold); }
+.ac-body{ position:relative; z-index:1; padding:14px 22px 20px; display:flex; flex-direction:column; flex:1; gap:10px; }
 .album-card h3{ font-family:var(--font-display); font-weight:500; font-size:1.3rem; transition:color 0.3s ease; }
-.album-card:hover h3{ color:var(--accent-red); }
 .album-card .ac-desc{ font-size:0.86rem; color:var(--steel); line-height:1.6; }
 .album-card .ac-meta{ display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:6px; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); letter-spacing:0.05em; }
-.album-card.unfiled .ac-layout{ color:var(--accent-gold); }
+.album-card.has-bg h3{ color:#faf9f6; }
+.album-card.has-bg:hover h3{ color:var(--accent-gold); }
+.album-card.has-bg .ac-desc{ color:rgba(250,249,246,0.85); }
+.album-card.has-bg .ac-meta{ color:rgba(250,249,246,0.72); }
+.album-card.has-bg .ac-tab{ background:color-mix(in srgb, var(--paper) 72%, transparent); color:#faf9f6; }
+.ac-bg{ position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; }
+.ac-overlay{ position:absolute; inset:0; background:rgba(28,28,27,0.5); z-index:0; }
+
+/* 最近内容 */
+.pl-recent{ padding-bottom:40px; }
+.pl-recent-list{ border-top:1px solid var(--fog); }
+.pl-recent-row{ display:grid; grid-template-columns:90px 1fr auto; gap:18px; align-items:baseline; padding:16px 0; border-bottom:1px solid var(--fog); transition:padding-left 0.3s ease; }
+.pl-recent-row:hover{ padding-left:12px; }
+.pr-date{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); }
+.pr-title{ font-size:0.98rem; color:var(--charcoal); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color 0.3s ease; }
+.pl-recent-row:hover .pr-title{ color:var(--accent-red); }
+.pr-arrow{ font-family:var(--font-mono); font-size:0.8rem; color:var(--steel); }
 
 /* ===== 档案视图 ===== */
 .back-link{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); display:inline-block; margin-bottom:36px; }
@@ -186,12 +210,17 @@ nav.top-nav a:hover::after{ width:100%; }
 }
 .load-more:hover{ border-color:var(--av-accent, var(--accent-red)); color:var(--av-accent, var(--accent-red)); }
 
+/* 档案专属音乐（置于档案视图内） */
+.music-box.album-music-box{ position:absolute; right:24px; bottom:20px; z-index:2; }
+
 .empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:60px 0; }
 @media (max-width:640px){
   .memo-item{ grid-template-columns:1fr; gap:8px; padding:24px 0; }
   .album-view-inner{ padding:34px 24px 46px; }
+  .music-box.album-music-box{ right:16px; bottom:12px; }
 }
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
+.footer-stats{ margin-bottom:10px; color:var(--steel); font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; }
 </style>
 </head>
 <body>
@@ -258,7 +287,22 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     <div class="empty-state">加载中…</div>
   </div>
 </div>
-<footer>© 2026 水告示阳 · 保留所有权利</footer>
+<footer>
+  <div class="footer-stats">
+    <span id="busuanzi_container_site_uv" style="display:none;">访客 <span id="busuanzi_value_site_uv"></span></span>
+    <span id="busuanzi_container_site_pv" style="display:none;"> · 浏览 <span id="busuanzi_value_site_pv"></span></span>
+  </div>
+  <div>© 2026 水告示阳 · 保留所有权利</div>
+</footer>
+<audio id="bg-music" loop preload="none">
+  <source src="music/background.mp3" type="audio/mpeg">
+</audio>
+<div class="music-box">
+  <button id="music-toggle" type="button" aria-label="播放音乐">
+    <span class="ring"></span>
+    <span class="bars"><span></span><span></span><span></span></span>
+  </button>
+</div>
 <script>
 (function(){
   var viewEl = document.getElementById('platform-view');
@@ -335,19 +379,41 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     }
     state.albums.forEach(function(a){
       var c = memos.filter(function(m){ return String(m.album || '') === String(a.id); }).length;
-      html += '<a class="album-card" href="platform.html?album=' + encodeURIComponent(a.id) + '">' +
-        '<span class="ac-layout">' + (a.layout === 'grid' ? '网格卡片' : '时间线') + '</span>' +
-        '<h3>' + esc(a.name) + '</h3>' +
-        (a.desc ? '<div class="ac-desc">' + esc(a.desc) + '</div>' : '') +
-        '<div class="ac-meta"><span>' + c + ' 条内容</span><span>→</span></div></a>';
+      var hasBg = a.bg || a.bgStyle;
+      var bgHTML = '';
+      if(a.bg){ bgHTML = '<div class="ac-bg" style="background-image:url(\'' + a.bg + '\')"></div><div class="ac-overlay"></div>'; }
+      else if(a.bgStyle){ bgHTML = '<div class="ac-bg" style="background:' + safeStyle(a.bgStyle) + '"></div><div class="ac-overlay"></div>'; }
+      html += '<a class="album-card' + (hasBg ? ' has-bg' : '') + '" href="platform.html?album=' + encodeURIComponent(a.id) + '">' +
+        bgHTML +
+        '<span class="ac-tab">' + (a.layout === 'grid' ? '网格卡片' : '时间线') + '</span>' +
+        '<div class="ac-body">' +
+          '<h3>' + esc(a.name) + '</h3>' +
+          (a.desc ? '<div class="ac-desc">' + esc(a.desc) + '</div>' : '') +
+          '<div class="ac-meta"><span>' + c + ' 条内容</span><span>→</span></div>' +
+        '</div></a>';
     });
     var uf = memos.filter(function(m){ return !m.album; }).length;
     html += '<a class="album-card unfiled" href="platform.html?album=unfiled">' +
-      '<span class="ac-layout">未归类</span>' +
-      '<h3>未归类</h3>' +
+      '<span class="ac-tab">未归类</span>' +
+      '<div class="ac-body"><h3>未归类</h3>' +
       '<div class="ac-desc">尚未归入任何档案的内容</div>' +
-      '<div class="ac-meta"><span>' + uf + ' 条内容</span><span>→</span></div></a>';
+      '<div class="ac-meta"><span>' + uf + ' 条内容</span><span>→</span></div></div></a>';
     html += '</div>';
+
+    var recent = memos.slice().sort(newest).slice(0, 3);
+    html += '<div class="pl-recent">' +
+      '<div class="pl-head" style="margin-top:64px;"><span class="section-num">最新</span><h2>最近内容</h2></div>' +
+      '<div class="pl-recent-list">' +
+      (recent.length ? recent.map(function(m){
+        var target = m.album ? 'platform.html?album=' + encodeURIComponent(m.album) : 'platform.html?album=unfiled';
+        var snippet = m.text || (m.linkTitle || m.linkUrl || (m.image ? '(图片)' : ''));
+        return '<a class="pl-recent-row" href="' + target + '">' +
+          '<span class="pr-date">' + esc(m.date || '') + '</span>' +
+          '<span class="pr-title">' + esc(snippet) + '</span>' +
+          '<span class="pr-arrow">→</span></a>';
+      }).join('') : '<div class="empty-state">还没有内容</div>') +
+      '</div></div>';
+
     viewEl.innerHTML = html;
   }
 
@@ -375,6 +441,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     var bgImg = (!unfiled && album.bg) ? album.bg : '';
     var layout = (!unfiled && album.layout === 'grid') ? 'grid' : 'timeline';
     var accent = (!unfiled && album.accent) ? safeStyle(album.accent) : '';
+    var albumMusic = (!unfiled && album.music) ? album.music : '';
 
     var list = filteredMemos(unfiled ? null : albumKey);
     var visible = list.slice(0, (state.page + 1) * PAGE_SIZE);
@@ -395,6 +462,17 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     if(bgImg){ bgHTML = '<div class="album-view-bg" style="background-image:url(\'' + bgImg + '\')"></div>'; }
     else if(bgStyle){ bgHTML = '<div class="album-view-bg" style="background:' + bgStyle + '"></div>'; }
 
+    var musicHTML = '';
+    if(albumMusic){
+      musicHTML =
+        '<div class="music-box album-music-box" id="album-music-box">' +
+          '<button id="album-music-toggle" type="button" aria-label="播放档案音乐">' +
+            '<span class="ring"></span><span class="bars"><span></span><span></span><span></span></span>' +
+          '</button>' +
+        '</div>' +
+        '<audio id="album-music-audio" loop preload="none"><source src="' + esc(albumMusic) + '" type="audio/mpeg"></audio>';
+    }
+
     viewEl.innerHTML =
       '<div class="album-view"' + (accent ? ' style="--av-accent:' + accent + ';--av-head:' + accent + '"' : '') + '>' + bgHTML +
         '<div class="album-view-inner">' +
@@ -404,6 +482,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
           '<input class="pl-search" id="pl-search" type="text" placeholder="搜索此档案…" value="' + esc(state.q) + '">' +
           listHtml +
           (hasMore ? '<button class="load-more" id="pl-load-more" type="button">加载更多（还有 ' + (list.length - visible.length) + ' 条）</button>' : '') +
+          musicHTML +
         '</div>' +
       '</div>';
 
@@ -424,6 +503,16 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
         renderAlbumView();
       });
     }
+    if(albumMusic){ wireAlbumMusic(); }
+  }
+
+  function wireAlbumMusic(){
+    var audio = document.getElementById('album-music-audio');
+    var btn = document.getElementById('album-music-toggle');
+    if(!audio || !btn || !window.__createMusicWidget) return;
+    window.__createMusicWidget(btn, audio, 'album_music_volume', function(){
+      if(window.__pauseMusic){ window.__pauseMusic(); }
+    });
   }
 })();
 (function(){
@@ -459,5 +548,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   });
 })();
 </script>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="music.js"></script>
 </body>
 </html>

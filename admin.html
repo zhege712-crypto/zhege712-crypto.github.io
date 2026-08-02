@@ -306,7 +306,7 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
       <button type="button" class="btn-sm" data-target="ph-date" data-precision="day">完整</button>
     </div>
     <label>照片文件</label>
-    <input type="file" id="ph-file" accept="image/*">
+    <input type="file" id="ph-file" accept="image/*" multiple>
     <button id="photo-upload-btn">上传</button>
     <div class="status" id="photo-status"></div>
   </div>
@@ -434,6 +434,8 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <input type="file" id="al-bgfile" accept="image/*">
     <label>强调色（可选，CSS 颜色）</label>
     <input type="text" id="al-accent" placeholder="例如 #b23a3a">
+    <label>档案音乐（可选，mp3）</label>
+    <input type="file" id="al-musicfile" accept="audio/*">
     <button id="album-add-btn">新建档案</button>
     <div class="status" id="album-status"></div>
     <label style="margin-top:26px;">已有档案（删除后其内容移入「未归类」）</label>
@@ -555,6 +557,7 @@ var els = {
   alBgstyle: document.getElementById('al-bgstyle'),
   alBgfile: document.getElementById('al-bgfile'),
   alAccent: document.getElementById('al-accent'),
+  alMusicfile: document.getElementById('al-musicfile'),
   alBtn: document.getElementById('album-add-btn'),
   alStatus: document.getElementById('album-status')
 };
@@ -654,25 +657,32 @@ els.phBtn.addEventListener('click', async function(){
   var title = els.phTitle.value.trim();
   var category = els.phCategory.value.trim() || '未分类';
   var date = els.phDate.value.trim();
-  var file = els.phFile.files[0];
+  var files = Array.prototype.slice.call(els.phFile.files || []);
 
   if(!owner || !repo || !token){ setPhStatus('请先填写①的仓库信息和密钥', 'err'); return; }
-  if(!title || !file){ setPhStatus('标题和照片文件不能为空', 'err'); return; }
+  if(!title || files.length === 0){ setPhStatus('标题和照片文件不能为空', 'err'); return; }
   if(!date){ setPhStatus('请填写日期（至少年份）', 'err'); return; }
 
   els.phBtn.disabled = true;
-  setPhStatus('上传中，请稍候…', 'loading');
+  setPhStatus('上传中（共 ' + files.length + ' 张），请稍候…', 'loading');
 
   try{
-    var base64 = await fileToBase64(file);
-    var safeName = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
-    var imagePath = 'photos/' + safeName;
+    var uploaded = [];
+    var ts = Date.now();
+    for(var i = 0; i < files.length; i++){
+      var file = files[i];
+      var base64 = await fileToBase64(file);
+      var safeName = ts + '-' + i + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      var imagePath = 'photos/' + safeName;
 
-    var imgRes = await ghRequest(imagePath, {
-      method: 'PUT',
-      body: JSON.stringify({ message: '上传照片: ' + title, content: base64 })
-    }, owner, repo, token);
-    if(!imgRes.ok){ throw new Error('照片上传失败：' + (await imgRes.text())); }
+      var imgRes = await ghRequest(imagePath, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传照片: ' + title, content: base64 })
+      }, owner, repo, token);
+      if(!imgRes.ok){ throw new Error('照片上传失败：' + (await imgRes.text())); }
+
+      uploaded.push({ id: String(ts + i), title: title, date: date, category: category, image: imagePath });
+    }
 
     var sha = null;
     var photos = [];
@@ -685,10 +695,10 @@ els.phBtn.addEventListener('click', async function(){
       throw new Error('读取 photos.json 失败');
     }
 
-    photos.push({ id: String(Date.now()), title: title, date: date, category: category, image: imagePath });
+    photos = photos.concat(uploaded);
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(photos, null, 2))));
-    var putBody = { message: '新增照片: ' + title, content: newContentB64 };
+    var putBody = { message: '新增照片 ' + uploaded.length + ' 张: ' + title, content: newContentB64 };
     if(sha){ putBody.sha = sha; }
 
     var putRes = await ghRequest('photos/photos.json', {
@@ -696,7 +706,7 @@ els.phBtn.addEventListener('click', async function(){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('保存 photos.json 失败：' + (await putRes.text())); }
 
-    setPhStatus('上传成功', 'ok');
+    setPhStatus('上传成功（' + uploaded.length + ' 张）', 'ok');
     els.phTitle.value = '';
     els.phCategory.value = '';
     els.phFile.value = '';
@@ -1465,6 +1475,7 @@ els.alBtn.addEventListener('click', async function(){
   var bgStyle = els.alBgstyle.value.trim();
   var accent = els.alAccent.value.trim();
   var file = els.alBgfile.files[0];
+  var musicFile = els.alMusicfile.files[0];
 
   if(!owner || !repo || !token){ setAlStatus('请先填写①的仓库信息和密钥', 'err'); return; }
   if(!name){ setAlStatus('档案名称不能为空', 'err'); return; }
@@ -1485,6 +1496,18 @@ els.alBtn.addEventListener('click', async function(){
       if(!imgRes.ok){ throw new Error('背景上传失败：' + (await imgRes.text())); }
     }
 
+    var music = '';
+    if(musicFile){
+      var mBase64 = await fileToBase64(musicFile);
+      var mName = Date.now() + '-' + musicFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      music = 'albums/' + mName;
+      var mRes = await ghRequest(music, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传档案音乐', content: mBase64 })
+      }, owner, repo, token);
+      if(!mRes.ok){ throw new Error('音乐上传失败：' + (await mRes.text())); }
+    }
+
     var sha = null;
     var albums = [];
     var getRes = await ghRequest('albums.json', {}, owner, repo, token);
@@ -1496,7 +1519,7 @@ els.alBtn.addEventListener('click', async function(){
       throw new Error('读取 albums.json 失败');
     }
 
-    albums.push({ id: String(Date.now()), name: name, desc: desc, layout: layout, bg: bg, bgStyle: bgStyle, accent: accent });
+    albums.push({ id: String(Date.now()), name: name, desc: desc, layout: layout, bg: bg, bgStyle: bgStyle, accent: accent, music: music });
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));
     var putBody = { message: '新建档案: ' + name, content: newContentB64 };
@@ -1513,6 +1536,7 @@ els.alBtn.addEventListener('click', async function(){
     els.alBgstyle.value = '';
     els.alBgfile.value = '';
     els.alAccent.value = '';
+    els.alMusicfile.value = '';
     await loadAlbumManageList();
     await populateAlbumOptions();
 
@@ -1546,7 +1570,7 @@ async function loadAlbumManageList(){
       row.className = 'manage-item';
       row.innerHTML =
         '<div class="mi-info">' + escapeHtml(a.name) +
-          '<span class="mi-date">' + escapeHtml(a.desc || '') + (a.layout === 'grid' ? ' · 网格' : ' · 时间线') + (a.bg ? ' · 有背景图' : '') + (a.accent ? ' · 强调色' : '') + '</span>' +
+          '<span class="mi-date">' + escapeHtml(a.desc || '') + (a.layout === 'grid' ? ' · 网格' : ' · 时间线') + (a.bg ? ' · 有背景图' : '') + (a.accent ? ' · 强调色' : '') + (a.music ? ' · 有音乐' : '') + '</span>' +
         '</div>' +
         '<button class="mi-edit" type="button">编辑</button>' +
         '<button class="mi-del" type="button">删除</button>';
@@ -1560,6 +1584,7 @@ async function loadAlbumManageList(){
           '<label>背景渐变（CSS）</label><input class="al-e-bgstyle" value="' + escapeHtml(a.bgStyle || '') + '">' +
           '<label>强调色（CSS 颜色）</label><input class="al-e-accent" value="' + escapeHtml(a.accent || '') + '">' +
           '<label>背景图（可选，重新上传会替换）</label><input class="al-e-bgfile" type="file" accept="image/*">' +
+          '<label>档案音乐（可选，重新上传会替换）</label><input class="al-e-musicfile" type="file" accept="audio/*">' +
           '<div class="row"><button class="mi-f-save" type="button">保存</button><button class="mi-f-cancel" type="button">取消</button></div>';
         editBox.querySelector('.mi-f-save').addEventListener('click', async function(){
           await saveAlbum(a.id, editBox);
@@ -1592,6 +1617,7 @@ async function saveAlbum(id, editBox){
   var bgStyle = editBox.querySelector('.al-e-bgstyle').value.trim();
   var accent = editBox.querySelector('.al-e-accent').value.trim();
   var bgFile = editBox.querySelector('.al-e-bgfile').files[0];
+  var musicFile = editBox.querySelector('.al-e-musicfile').files[0];
 
   if(!name){ setAlManageStatus('档案名称不能为空', 'err'); return; }
 
@@ -1608,6 +1634,17 @@ async function saveAlbum(id, editBox){
       }, owner, repo, token);
       if(!imgRes.ok){ throw new Error('背景上传失败：' + (await imgRes.text())); }
     }
+    var music = '';
+    if(musicFile){
+      var mBase64 = await fileToBase64(musicFile);
+      var mName = Date.now() + '-' + musicFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      music = 'albums/' + mName;
+      var mRes = await ghRequest(music, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传档案音乐', content: mBase64 })
+      }, owner, repo, token);
+      if(!mRes.ok){ throw new Error('音乐上传失败：' + (await mRes.text())); }
+    }
     var getRes = await ghRequest('albums.json', {}, owner, repo, token);
     if(!getRes.ok){ throw new Error('读取 albums.json 失败'); }
     var fileData = await getRes.json();
@@ -1622,6 +1659,7 @@ async function saveAlbum(id, editBox){
       target.bgStyle = bgStyle;
       target.accent = accent;
       if(bg){ target.bg = bg; }
+      if(music){ target.music = music; }
     }
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));

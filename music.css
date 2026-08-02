@@ -1,0 +1,90 @@
+/* 全站音乐控件（共享）：圆钮 + 环绕音量环（收纳/伸展动画）+ 飞出小三角暂停键 */
+.music-box{
+  position:fixed; right:28px; bottom:110px; z-index:200;
+  display:flex; align-items:center;
+  padding:6px;
+  background:color-mix(in srgb, var(--ink) 92%, transparent);
+  border:1px solid var(--charcoal); border-radius:50%;
+  box-shadow:0 10px 30px rgba(0,0,0,0.28);
+}
+#music-toggle{
+  width:44px; height:44px; border-radius:50%;
+  background:transparent; border:1px solid var(--charcoal);
+  display:flex; align-items:center; justify-content:center; cursor:grab;
+  position:relative; flex-shrink:0; touch-action:none;
+  transition:border-color 0.3s ease;
+}
+#music-toggle:active{ cursor:grabbing; }
+#music-toggle:hover{ border-color:var(--accent-gold); }
+#music-toggle .ring{ position:absolute; inset:-3px; border-radius:50%; border:1px solid var(--accent-gold); opacity:0; transform:scale(0.85); transition:opacity 0.3s ease; }
+#music-toggle.playing .ring{ opacity:1; animation:pulse-ring 1.8s ease-out infinite; }
+@keyframes pulse-ring{ 0%{ transform:scale(0.85); opacity:0.8; } 100%{ transform:scale(1.35); opacity:0; } }
+#music-toggle .bars{ display:flex; align-items:flex-end; gap:3px; height:14px; }
+#music-toggle .bars span{ width:3px; background:var(--fog); border-radius:1px; height:5px; transition:background 0.3s ease; }
+#music-toggle.playing .bars span{ background:var(--accent-gold); }
+#music-toggle.playing .bars span:nth-child(1){ animation:bar1 1.1s ease-in-out infinite; }
+#music-toggle.playing .bars span:nth-child(2){ animation:bar2 0.9s ease-in-out infinite; }
+#music-toggle.playing .bars span:nth-child(3){ animation:bar3 1.3s ease-in-out infinite; }
+@keyframes bar1{ 0%,100%{ height:5px; } 50%{ height:14px; } }
+@keyframes bar2{ 0%,100%{ height:8px; } 50%{ height:4px; } }
+@keyframes bar3{ 0%,100%{ height:5px; } 50%{ height:12px; } }
+
+/* 环绕圆形音量环：收纳 = 缩小旋转淡出，伸展 = 放大回正淡入 */
+.volume-ring{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%) scale(0.55) rotate(-14deg);
+  opacity:0; visibility:hidden; pointer-events:none;
+  width:92px; height:92px; z-index:3;
+  transition:transform 0.35s cubic-bezier(0.34,1.3,0.64,1), opacity 0.28s ease, visibility 0s linear 0.35s;
+}
+.music-box.volume-open .volume-ring{
+  transform:translate(-50%,-50%) scale(1) rotate(0deg);
+  opacity:1; visibility:visible; pointer-events:auto;
+  transition:transform 0.42s cubic-bezier(0.34,1.4,0.64,1), opacity 0.22s ease, visibility 0s;
+}
+.volume-ring svg{
+  position:absolute; inset:0; width:100%; height:100%;
+  pointer-events:auto; cursor:pointer; touch-action:none;
+}
+.vr-track{ fill:none; stroke:var(--charcoal); stroke-width:3; }
+.vr-fill{ fill:none; stroke:var(--accent-gold); stroke-width:3; stroke-linecap:round; }
+.vr-thumb{
+  position:absolute; width:14px; height:14px; margin-left:-7px; margin-top:-7px;
+  border-radius:50%; background:var(--accent-gold); pointer-events:none;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--ink) 82%, transparent);
+}
+
+/* 飞出小三角：从圆钮飞向环旁；暂停后变为方块，收纳时不被收走 */
+.pause-fly{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%) translateX(0) scale(0.4);
+  width:28px; height:28px; border-radius:50%;
+  background:color-mix(in srgb, var(--ink) 92%, transparent);
+  border:1px solid var(--charcoal);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; pointer-events:none; cursor:pointer;
+  z-index:4; touch-action:none;
+  transition:transform 0.35s cubic-bezier(0.34,1.3,0.64,1), opacity 0.28s ease, visibility 0s linear 0.35s, left 0s, top 0s;
+}
+.pause-fly.on{
+  transform:translate(-50%,-50%) translateX(44px) scale(1);
+  opacity:1; visibility:visible; pointer-events:auto;
+  transition:transform 0.42s cubic-bezier(0.34,1.5,0.64,1), opacity 0.22s ease, visibility 0s, left 0s, top 0s;
+}
+.pause-fly svg{ width:14px; height:14px; fill:currentColor; }
+.pause-fly .pf-pause{ color:var(--accent-gold); }
+.pause-fly .pf-play{ color:var(--white); }
+.pause-fly.dragging{ transition:none; }
+.pause-fly.absorbing{
+  transform:translate(-50%,-50%) scale(0);
+  opacity:0; pointer-events:none;
+  transition:transform 0.32s ease, opacity 0.32s ease;
+}
+
+@media (max-width:640px){
+  .music-box{ right:16px; bottom:96px; }
+  #music-toggle{ width:40px; height:40px; }
+  .volume-ring{ width:84px; height:84px; }
+  .pause-fly{ width:26px; height:26px; }
+  .pause-fly.on{ transform:translate(-50%,-50%) translateX(36px) scale(1); }
+}
