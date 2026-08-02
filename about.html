@@ -163,24 +163,78 @@ nav.top-nav a:hover::after{ width:100%; }
   font-family:var(--font-display); font-weight:600; font-size:2.4rem; color:var(--accent-red);
   margin-bottom:24px;
 }
-.about-gallery{ padding-bottom:140px; }
-.about-gallery h2{
-  font-family:var(--font-display); font-weight:500; font-size:1.4rem;
-  margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--paper-2);
+
+/* ===== 玻璃材质背景板 ===== */
+.glass-panel{
+  background:color-mix(in srgb, var(--white) 36%, transparent);
+  backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%);
+  border:1px solid color-mix(in srgb, var(--white) 42%, transparent);
+  border-radius:18px;
+  box-shadow:0 10px 34px rgba(28,28,27,0.08), inset 0 1px 0 rgba(255,255,255,0.22);
+  padding:26px 28px;
 }
-.about-gallery-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-.about-gallery-grid a{
-  position:relative; aspect-ratio:4/3; overflow:hidden; background:var(--paper-2); border-radius:6px;
+
+/* ===== 友情链接：文件夹抽拉效果（左对齐标题 "the end" 的 e） ===== */
+.folder{ position:relative; max-width:860px; margin:0 0 140px; }
+.folder-tab{
+  position:relative; z-index:2;
+  display:flex; align-items:baseline; gap:14px;
+  margin-left:30px; padding:11px 24px 12px;
+  background:color-mix(in srgb, var(--white) 78%, transparent);
+  border:1px solid var(--paper-2); border-bottom:none;
+  border-radius:12px 12px 0 0;
+  cursor:pointer; text-align:left;
+  font-family:var(--font-display); font-weight:500; font-size:1.15rem; color:var(--ink);
+  box-shadow:0 -4px 14px rgba(28,28,27,0.05);
+  transition:color 0.3s ease, background 0.3s ease;
 }
-.about-gallery-grid img{
-  width:100%; height:100%; object-fit:cover;
-  filter:grayscale(1) contrast(1.05); transition:filter 0.5s ease, transform 0.5s ease;
+.folder-tab:hover{ color:var(--accent-red); background:color-mix(in srgb, var(--white) 90%, transparent); }
+.folder-tab .ft-count{ margin-left:auto; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); letter-spacing:0.05em; }
+.folder-tab .ft-icon{ font-family:var(--font-mono); font-size:0.95rem; color:var(--steel); transition:color 0.3s ease; }
+.folder-tab:hover .ft-icon{ color:var(--accent-red); }
+.folder-body{
+  border:1px solid color-mix(in srgb, var(--white) 42%, transparent);
+  border-radius:6px 18px 18px 18px;
+  background:color-mix(in srgb, var(--white) 36%, transparent);
+  backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:0 10px 34px rgba(28,28,27,0.08), inset 0 10px 20px rgba(28,28,27,0.07);
+  display:grid; grid-template-rows:0fr;
+  transition:grid-template-rows 0.5s cubic-bezier(0.4,0,0.2,1);
 }
-.about-gallery-grid a:hover img{ filter:grayscale(0); transform:scale(1.05); }
+.folder.open .folder-body{ grid-template-rows:1fr; }
+.folder-papers{
+  overflow:hidden; min-height:0;
+  padding:4px 26px 28px;
+  transform:translateY(-18px); opacity:0.5;
+  transition:transform 0.5s cubic-bezier(0.2,0.8,0.2,1), opacity 0.45s ease;
+}
+.folder.open .folder-papers{ transform:translateY(0); opacity:1; }
+.about-links-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:14px; }
+.about-links-grid a{
+  display:flex; flex-direction:column; gap:6px; padding:20px 22px;
+  background:var(--white); border:1px solid var(--paper-2); border-radius:10px;
+  transform:translateY(12px); opacity:0.65;
+  box-shadow:0 6px 18px rgba(28,28,27,0.05);
+  transition:transform 0.4s cubic-bezier(0.2,0.8,0.2,1), opacity 0.4s ease,
+             border-color 0.3s ease, box-shadow 0.3s ease;
+  transition-delay:calc(var(--i, 0) * 0.06s);
+}
+.folder.open .about-links-grid a{
+  transform:translateY(0); opacity:1;
+}
+.about-links-grid a:hover{ border-color:var(--fog); box-shadow:0 12px 28px rgba(28,28,27,0.10); }
+.folder.open .about-links-grid a:hover{ transform:translateY(-2px); }
+.about-links-grid .al-name{
+  font-family:var(--font-display); font-weight:500; font-size:1.15rem;
+  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  transition:color 0.3s ease;
+}
+.about-links-grid a:hover .al-name{ color:var(--accent-red); }
+.about-links-grid .al-desc{ font-size:0.85rem; color:var(--steel); line-height:1.6; }
+.about-links-grid .al-arrow{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); flex-shrink:0; }
 .empty-state{ text-align:center; color:var(--steel); font-family:var(--font-mono); font-size:0.85rem; padding:30px 0; }
 @media (max-width:720px){
   .about-content{ grid-template-columns:1fr; gap:30px; }
-  .about-gallery-grid{ grid-template-columns:repeat(2,1fr); }
 }
 footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 .footer-counter{ margin-bottom:10px; font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); letter-spacing:0.05em; display:none; }
@@ -259,7 +313,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
         “愿飞鸟的羽毛落下，橄榄的枝叶。”<br>
       </p>
     </div>
-    <div class="col">
+    <div class="col glass-panel">
       <h2>联系方式</h2>
       <div class="contact-list">
         <a href="mailto:zhege712@gmail.com">
@@ -283,20 +337,21 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
           <span class="c-value">1907515243</span>
         </a>
       </div>
-      <h2 style="margin-top:40px;">友站</h2>
-      <div class="contact-list">
-        <a href="https://zhege712-crypto.github.io/Poem_Ulysses/" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <span class="c-label">友站</span>
-          <span class="c-value">诗歌漂流 · Poem's Ulysses</span>
-        </a>
       </div>
     </div>
   </div>
-  <div class="about-gallery">
-    <h2>相册</h2>
-    <div class="about-gallery-grid" id="about-gallery">
-      <div class="empty-state">加载中…</div>
+  <div class="folder">
+    <button class="folder-tab" type="button" aria-expanded="false">
+      <span class="ft-title">友情链接</span>
+      <span class="ft-count" id="links-count"></span>
+      <span class="ft-icon">＋</span>
+    </button>
+    <div class="folder-body">
+      <div class="folder-papers">
+        <div class="about-links-grid" id="about-links">
+          <div class="empty-state">加载中…</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -307,32 +362,64 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
   <div>© 2026 水告示阳 · 保留所有权利</div>
 </footer>
 <script>
+// 文件夹左边缘与标题 "the end" 的 t 对齐（精确测量字体位置）
 (function(){
-  var grid = document.getElementById('about-gallery');
+  var h1 = document.querySelector('.page-head h1');
+  var folder = document.querySelector('.folder');
+  if(!h1 || !folder) return;
+  function align(){
+    try{
+      var node = h1.firstChild;
+      if(!node || node.nodeType !== 3) return;
+      var range = document.createRange();
+      range.setStart(node, 0);
+      range.setEnd(node, 1);
+      var r = range.getBoundingClientRect();
+      folder.style.marginLeft = r.left + 'px';
+    }catch(err){}
+  }
+  align();
+  window.addEventListener('resize', align);
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(align); }
+})();
+// 文件夹抽拉
+(function(){
+  document.querySelectorAll('.folder-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      var folder = tab.closest('.folder');
+      var open = folder.classList.toggle('open');
+      tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var icon = tab.querySelector('.ft-icon');
+      if(icon) icon.textContent = open ? '−' : '＋';
+    });
+  });
+})();
+(function(){
+  var grid = document.getElementById('about-links');
   if(!grid) return;
   function escapeHtml(s){
     var d = document.createElement('div');
     d.textContent = String(s == null ? '' : s);
     return d.innerHTML;
   }
-  fetch('photos/photos.json?t=' + Date.now())
+  fetch('links.json?t=' + Date.now())
     .then(function(r){ return r.json(); })
-    .then(function(photos){
-      if(!photos || photos.length === 0){
-        grid.innerHTML = '<div class="empty-state">还没有照片</div>';
+    .then(function(links){
+      var cnt = document.getElementById('links-count');
+      if(cnt) cnt.textContent = (links ? links.length : 0) + ' 个';
+      if(!links || links.length === 0){
+        grid.innerHTML = '<div class="empty-state">暂无友链</div>';
         return;
       }
-      var sorted = photos.slice().sort(function(a,b){
-        return String(b.date || '').localeCompare(String(a.date || ''));
-      });
-      grid.innerHTML = sorted.slice(0, 4).map(function(p){
-        return '<a href="work.html">' +
-          '<img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.title) + '" loading="lazy">' +
+      grid.innerHTML = links.map(function(l, i){
+        return '<a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer" style="--i:' + i + '">' +
+          '<div class="al-name">' + escapeHtml(l.name) + '<span class="al-arrow">↗</span></div>' +
+          (l.desc ? '<div class="al-desc">' + escapeHtml(l.desc) + '</div>' : '') +
           '</a>';
       }).join('');
     })
     .catch(function(){
-      grid.innerHTML = '<div class="empty-state">相册加载失败</div>';
+      grid.innerHTML = '<div class="empty-state">友链加载失败</div>';
     });
 })();
 (function(){
