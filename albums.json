@@ -16,7 +16,7 @@
     "desc": "The storm is coming.",
     "layout": "timeline",
     "bg": "albums/1785687739825-8861440x2560_2a5763f797e844b988c5819ee61519b1.jpg",
-    "bgStyle": "",
+    "bgStyle": "linear-gradient(160deg, #9eb6e5, #f4d8bd)",
     "accent": "#c25a50",
     "music": "albums/1785687744397-The1999-.flac"
   },
