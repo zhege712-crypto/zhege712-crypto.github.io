@@ -107,10 +107,43 @@ nav.top-nav a:hover::after{ width:100%; }
 .page-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2rem,5vw,3.2rem); }
 .page-note{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); margin-top:16px; }
 
-/* ===== 总览：档案袋卡片 ===== */
+/* ===== 总览 ===== */
 .pl-head{ display:flex; align-items:baseline; gap:18px; padding-bottom:26px; }
 .pl-head h2{ font-family:var(--font-display); font-weight:500; font-size:1.5rem; }
-.album-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; }
+.pl-count{ font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); letter-spacing:0.05em; }
+
+/* 最近内容（全部展示，>10 折叠） */
+.pl-recent-list{ position:relative; }
+.pl-recent-list::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent 0%, var(--fog) 6%, var(--fog) 94%, transparent 100%);
+}
+.pl-recent-row{
+  position:relative;
+  display:grid; grid-template-columns:90px 1fr auto auto; gap:16px; align-items:baseline;
+  padding:16px 0;
+  transition:padding-left 0.3s ease;
+}
+.pl-recent-row::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:linear-gradient(90deg, var(--fog) 0%, var(--fog) calc(42% - 14px), transparent calc(42% - 14px), transparent calc(42% + 14px), var(--fog) calc(42% + 14px), var(--fog) 100%);
+}
+.pl-recent-row:hover{ padding-left:12px; }
+.pr-date{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); }
+.pr-title{ font-size:0.98rem; color:var(--charcoal); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color 0.3s ease; }
+.pl-recent-row:hover .pr-title{ color:var(--accent-red); }
+.pr-album{ font-family:var(--font-mono); font-size:0.62rem; color:var(--steel); background:var(--paper-2); padding:3px 9px; border-radius:4px; white-space:nowrap; }
+.pr-arrow{ font-family:var(--font-mono); font-size:0.8rem; color:var(--steel); }
+.pl-more{
+  display:block; margin:24px auto 0; padding:10px 28px;
+  background:transparent; border:1px solid var(--fog); border-radius:30px;
+  font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.08em; color:var(--charcoal);
+  cursor:pointer; transition:border-color 0.3s ease, color 0.3s ease;
+}
+.pl-more:hover{ border-color:var(--accent-red); color:var(--accent-red); }
+
+/* 档案：档案袋卡片（回归） */
+.album-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; padding-bottom:20px; }
 .album-card{
   position:relative; display:flex; flex-direction:column;
   background:var(--white); border:1px solid var(--paper-2);
@@ -135,17 +168,13 @@ nav.top-nav a:hover::after{ width:100%; }
 .album-card.has-bg .ac-meta{ color:rgba(250,249,246,0.72); }
 .album-card.has-bg .ac-tab{ background:color-mix(in srgb, var(--paper) 72%, transparent); color:#faf9f6; }
 .ac-bg{ position:absolute; inset:0; background-size:cover; background-position:center; z-index:0; }
+.ac-tint{ position:absolute; inset:0; opacity:0.5; z-index:0; }
 .ac-overlay{ position:absolute; inset:0; background:rgba(28,28,27,0.5); z-index:0; }
-
-/* 最近内容 */
-.pl-recent{ padding-bottom:40px; }
-.pl-recent-list{ border-top:1px solid var(--fog); }
-.pl-recent-row{ display:grid; grid-template-columns:90px 1fr auto; gap:18px; align-items:baseline; padding:16px 0; border-bottom:1px solid var(--fog); transition:padding-left 0.3s ease; }
-.pl-recent-row:hover{ padding-left:12px; }
-.pr-date{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); }
-.pr-title{ font-size:0.98rem; color:var(--charcoal); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color 0.3s ease; }
-.pl-recent-row:hover .pr-title{ color:var(--accent-red); }
-.pr-arrow{ font-family:var(--font-mono); font-size:0.8rem; color:var(--steel); }
+.album-card.has-tint .ac-overlay{ opacity:0.35; }
+@media (max-width:640px){
+  .pl-recent-row{ grid-template-columns:1fr auto auto; gap:10px; }
+  .pr-date{ display:none; }
+}
 
 /* ===== 档案视图 ===== */
 .back-link{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); display:inline-block; margin-bottom:36px; }
@@ -177,10 +206,19 @@ nav.top-nav a:hover::after{ width:100%; }
 .pl-search::placeholder{ color:var(--steel); }
 
 /* 时间线排版 */
-.memo-list{ border-top:1px solid var(--fog); }
+.memo-list{ position:relative; }
+.memo-list::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent 0%, var(--fog) 6%, var(--fog) 94%, transparent 100%);
+}
 .memo-item{
+  position:relative;
   display:grid; grid-template-columns:110px 1fr; gap:28px;
-  padding:30px 0; border-bottom:1px solid var(--fog);
+  padding:30px 0;
+}
+.memo-item::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:linear-gradient(90deg, var(--fog) 0%, var(--fog) calc(66% - 16px), transparent calc(66% - 16px), transparent calc(66% + 16px), var(--fog) calc(66% + 16px), var(--fog) 100%);
 }
 .memo-date{ font-family:var(--font-mono); font-size:0.7rem; color:var(--steel); letter-spacing:0.05em; padding-top:4px; }
 .memo-body{ min-width:0; }
@@ -305,7 +343,7 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 (function(){
   var viewEl = document.getElementById('platform-view');
   var PAGE_SIZE = 10;
-  var state = { q: '', page: 0, albumAutoDone: false };
+  var state = { q: '', page: 0, albumAutoDone: false, recentExpanded: false };
 
   function esc(s){
     var d = document.createElement('div');
@@ -370,7 +408,34 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
 
   function renderOverview(){
     var memos = state.memos.filter(function(m){ return !isDraft(m); });
-    var html = '<div class="pl-head"><span class="section-num">总览</span><h2>档案</h2></div>';
+    var albumNameMap = {};
+    state.albums.forEach(function(a){ albumNameMap[a.id] = a.name; });
+    var html = '';
+
+    // ---- 最近内容（全部展示，>10 折叠） ----
+    var recent = memos.slice().sort(newest);
+    var LIMIT = 10;
+    var shown = (!state.recentExpanded && recent.length > LIMIT) ? recent.slice(0, LIMIT) : recent;
+    html += '<div class="pl-head"><span class="section-num">最新</span><h2>最近内容</h2>' +
+            '<span class="pl-count">共 ' + recent.length + ' 条</span></div>';
+    html += '<div class="pl-recent-list">' +
+      (shown.length ? shown.map(function(m){
+        var target = m.album ? 'platform.html?album=' + encodeURIComponent(m.album) : 'platform.html?album=unfiled';
+        var snippet = m.text || (m.linkTitle || m.linkUrl || (m.image ? '(图片)' : ''));
+        var albumName = m.album ? (albumNameMap[m.album] || '') : '未归类';
+        return '<a class="pl-recent-row" href="' + target + '">' +
+          '<span class="pr-date">' + esc(m.date || '') + '</span>' +
+          '<span class="pr-title">' + esc(snippet) + '</span>' +
+          '<span class="pr-album">' + esc(albumName) + '</span>' +
+          '<span class="pr-arrow">→</span></a>';
+      }).join('') : '<div class="empty-state">还没有内容</div>') +
+      '</div>';
+    if(!state.recentExpanded && recent.length > LIMIT){
+      html += '<button class="pl-more" id="pl-more-btn" type="button">展开全部（共 ' + recent.length + ' 条）</button>';
+    }
+
+    // ---- 档案（档案袋卡片） ----
+    html += '<div class="pl-head" style="margin-top:70px;"><span class="section-num">总览</span><h2>档案</h2></div>';
     html += '<div class="album-grid">';
     if(state.albums.length === 0){
       html += '<div class="empty-state">还没有档案，去后台「管理档案」新建吧。</div>';
@@ -378,15 +443,25 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
     state.albums.forEach(function(a){
       var c = memos.filter(function(m){ return String(m.album || '') === String(a.id); }).length;
       var hasBg = false;
+      var hasTint = false;
       var bgHTML = '';
-      if(a.bgStyle){
+      if(a.cardBg && a.bgStyle){
+        bgHTML = '<div class="ac-bg" style="background-image:url(\'' + a.cardBg + '\')"></div>' +
+                 '<div class="ac-tint" style="background:' + safeStyle(a.bgStyle) + '"></div>' +
+                 '<div class="ac-overlay"></div>';
+        hasBg = true;
+        hasTint = true;
+      } else if(a.cardBg){
+        bgHTML = '<div class="ac-bg" style="background-image:url(\'' + a.cardBg + '\')"></div><div class="ac-overlay"></div>';
+        hasBg = true;
+      } else if(a.bgStyle){
         bgHTML = '<div class="ac-bg" style="background:' + safeStyle(a.bgStyle) + '"></div><div class="ac-overlay"></div>';
         hasBg = true;
       } else if(a.bg){
         bgHTML = '<div class="ac-bg" style="background-image:url(\'' + a.bg + '\')"></div><div class="ac-overlay"></div>';
         hasBg = true;
       }
-      html += '<a class="album-card' + (hasBg ? ' has-bg' : '') + '" href="platform.html?album=' + encodeURIComponent(a.id) + '">' +
+      html += '<a class="album-card' + (hasBg ? ' has-bg' : '') + (hasTint ? ' has-tint' : '') + '" href="platform.html?album=' + encodeURIComponent(a.id) + '">' +
         bgHTML +
         '<span class="ac-tab">' + (a.layout === 'grid' ? '网格卡片' : '时间线') + '</span>' +
         '<div class="ac-body">' +
@@ -403,21 +478,15 @@ footer{ padding:30px 0; text-align:center; font-family:var(--font-mono); font-si
       '<div class="ac-meta"><span>' + uf + ' 条内容</span><span>→</span></div></div></a>';
     html += '</div>';
 
-    var recent = memos.slice().sort(newest).slice(0, 3);
-    html += '<div class="pl-recent">' +
-      '<div class="pl-head" style="margin-top:64px;"><span class="section-num">最新</span><h2>最近内容</h2></div>' +
-      '<div class="pl-recent-list">' +
-      (recent.length ? recent.map(function(m){
-        var target = m.album ? 'platform.html?album=' + encodeURIComponent(m.album) : 'platform.html?album=unfiled';
-        var snippet = m.text || (m.linkTitle || m.linkUrl || (m.image ? '(图片)' : ''));
-        return '<a class="pl-recent-row" href="' + target + '">' +
-          '<span class="pr-date">' + esc(m.date || '') + '</span>' +
-          '<span class="pr-title">' + esc(snippet) + '</span>' +
-          '<span class="pr-arrow">→</span></a>';
-      }).join('') : '<div class="empty-state">还没有内容</div>') +
-      '</div></div>';
-
     viewEl.innerHTML = html;
+
+    var moreBtn = document.getElementById('pl-more-btn');
+    if(moreBtn){
+      moreBtn.addEventListener('click', function(){
+        state.recentExpanded = true;
+        renderOverview();
+      });
+    }
     if(window.__musicWidget){
       window.__musicWidget.setSrc('music/background.mp3');
     }

@@ -106,8 +106,21 @@ nav.top-nav a:hover::after{ width:100%; }
 .section-num{ font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-red); letter-spacing:0.1em; margin-bottom:10px; display:block; }
 .page-head h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2rem,5vw,3.2rem); }
 .page-note{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); margin-top:16px; }
-.article-list{ border-top:1px solid var(--fog); padding-bottom:140px; }
-.article-row{ display:grid; grid-template-columns:100px 1fr auto; gap:24px; align-items:baseline; padding:26px 0; border-bottom:1px solid var(--fog); transition:padding-left 0.3s ease; }
+.article-list{ position:relative; padding-bottom:140px; }
+.article-list::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent 0%, var(--fog) 6%, var(--fog) 94%, transparent 100%);
+}
+.article-row{
+  position:relative;
+  display:grid; grid-template-columns:100px 1fr auto; gap:24px; align-items:baseline;
+  padding:26px 0;
+  transition:padding-left 0.3s ease;
+}
+.article-row::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:linear-gradient(90deg, var(--fog) 0%, var(--fog) calc(45% - 16px), transparent calc(45% - 16px), transparent calc(45% + 16px), var(--fog) calc(45% + 16px), var(--fog) 100%);
+}
 .article-row:hover{ padding-left:14px; }
 .article-row .a-date{ font-family:var(--font-mono); font-size:0.72rem; color:var(--steel); }
 .article-row h3{ font-family:var(--font-display); font-weight:500; font-size:1.3rem; transition:color 0.3s ease; }

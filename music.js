@@ -10,6 +10,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   audio.volume = volVal;
 
   var playing = false;
+  var suppressAuto = false;
   window.__musicWidgets = window.__musicWidgets || [];
 
   function setOpen(open){ box.classList.toggle('volume-open', open); }
@@ -46,7 +47,9 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     var cy = rect.top + rect.height / 2;
     var ang = Math.atan2(e.clientX - cx, -(e.clientY - cy));
     if(ang < 0) ang += Math.PI * 2;
-    return ang / (2 * Math.PI);
+    var MUTE = 0.05;
+    if(ang < MUTE) return 0;
+    return (ang - MUTE) / (Math.PI * 2 - MUTE);
   }
   function setVol(v){
     v = renderVol(v);
@@ -174,22 +177,32 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
       showChip(true);
     }).catch(function(){});
   }
-  function stop(){
+  // 手势自动播放：仅在用户未主动暂停时生效
+  function startAuto(){
+    if(suppressAuto) return;
+    start();
+  }
+  function doStop(){
     audio.pause();
     playing = false;
     btn.classList.remove('playing');
     setOpen(false);
     showChip(false);
   }
+  function stop(){
+    suppressAuto = true;
+    doStop();
+  }
   function toggle(){
     if(playing){
       stop();
     } else {
+      suppressAuto = false;
       start();
       setOpen(true);
     }
   }
-  var api = { start: start, stop: stop, setSrc: setSrc };
+  var api = { start: start, startAuto: startAuto, stop: stop, setSrc: setSrc };
   window.__musicWidgets.push(api);
   function pauseOthers(){
     window.__musicWidgets.forEach(function(w){
@@ -216,11 +229,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
       return;
     }
     var wasPlaying = playing;
-    audio.pause();
-    playing = false;
-    btn.classList.remove('playing');
-    setOpen(false);
-    hideChip();
+    doStop();
     audio.setAttribute('data-src', url);
     audio.src = url;
     try{ audio.load(); }catch(err){}
@@ -347,7 +356,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   function maybeStart(e){
     if(e.type === 'click' && window.__musicExclude && e.target &&
        e.target.closest && e.target.closest(window.__musicExclude)) return;
-    widget.start();
+    widget.startAuto();
   }
   ['click','touchstart','keydown'].forEach(function(evt){
     window.addEventListener(evt, maybeStart, { passive:true });

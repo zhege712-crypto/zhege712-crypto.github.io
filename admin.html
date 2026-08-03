@@ -428,12 +428,32 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     </div>
     <label>描述（可选）</label>
     <input type="text" id="al-desc" placeholder="一句话简介">
-    <label>背景渐变（可选，CSS；用于总览卡片，并叠加在内容页背景图上）</label>
-    <input type="text" id="al-bgstyle" placeholder="例如 linear-gradient(160deg,#0e1116,#20262e)">
+    <label>背景渐变（叠加在背景图上；总览卡片 + 内容页）</label>
+    <div class="grad-box">
+      <div class="row" style="align-items:center; gap:10px;">
+        <input type="color" id="al-grad-from" value="#0d1016" title="起始色" style="width:44px; height:38px; padding:2px;">
+        <span style="color:var(--steel); font-family:var(--font-mono); font-size:0.75rem;">→</span>
+        <input type="color" id="al-grad-to" value="#222933" title="结束色" style="width:44px; height:38px; padding:2px;">
+        <select id="al-grad-angle" style="width:120px; margin:0;">
+          <option value="160deg">160° 对角</option>
+          <option value="180deg">180° 上下</option>
+          <option value="90deg">90° 左右</option>
+          <option value="135deg">135° 对角</option>
+          <option value="45deg">45° 对角</option>
+        </select>
+      </div>
+      <div id="al-grad-preview" style="height:26px; border:1px solid var(--paper-2); border-radius:6px; margin-top:10px;"></div>
+      <input type="text" id="al-bgstyle" placeholder="CSS 渐变（由取色器自动生成，可手改高级写法）" style="margin-top:10px;">
+    </div>
     <label>背景图片（可选；用于档案内容页背景，与渐变叠加）</label>
     <input type="file" id="al-bgfile" accept="image/*">
-    <label>强调色（可选，CSS 颜色）</label>
-    <input type="text" id="al-accent" placeholder="例如 #b23a3a">
+    <label>卡片背景图（可选；总览页档案行专用）</label>
+    <input type="file" id="al-cardbgfile" accept="image/*">
+    <label>强调色（可选）</label>
+    <div class="row" style="align-items:center; gap:10px;">
+      <input type="text" id="al-accent" placeholder="例如 #b23a3a" style="flex:1; min-width:120px;">
+      <input type="color" id="al-accent-color" value="#c25a50" title="取色器" style="width:44px; height:38px; padding:2px; flex-shrink:0;">
+    </div>
     <label>档案音乐（可选，mp3）</label>
     <input type="file" id="al-musicfile" accept="audio/*">
     <button id="album-add-btn">新建档案</button>
@@ -555,8 +575,14 @@ var els = {
   alLayout: document.getElementById('al-layout'),
   alDesc: document.getElementById('al-desc'),
   alBgstyle: document.getElementById('al-bgstyle'),
+  alGradFrom: document.getElementById('al-grad-from'),
+  alGradTo: document.getElementById('al-grad-to'),
+  alGradAngle: document.getElementById('al-grad-angle'),
+  alGradPreview: document.getElementById('al-grad-preview'),
   alBgfile: document.getElementById('al-bgfile'),
+  alCardbgfile: document.getElementById('al-cardbgfile'),
   alAccent: document.getElementById('al-accent'),
+  alAccentColor: document.getElementById('al-accent-color'),
   alMusicfile: document.getElementById('al-musicfile'),
   alBtn: document.getElementById('album-add-btn'),
   alStatus: document.getElementById('album-status')
@@ -1465,6 +1491,52 @@ async function populateAlbumOptions(){
   }catch(e){}
 }
 
+// 新建表单：强调色文本与取色器双向同步
+(function(){
+  var txt = els.alAccent;
+  var col = els.alAccentColor;
+  if(!txt || !col) return;
+  col.addEventListener('input', function(){ txt.value = this.value; });
+  txt.addEventListener('input', function(){
+    var v = txt.value.trim();
+    if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)){ col.value = v; }
+  });
+})();
+
+// 渐变可视化编辑器（取色器 → CSS 渐变字符串）
+function wireGradientEditor(fromEl, toEl, angleEl, previewEl, textEl){
+  function apply(){
+    var from = fromEl.value;
+    var to = toEl.value;
+    var ang = angleEl.value;
+    var css = 'linear-gradient(' + ang + ', ' + from + ', ' + to + ')';
+    if(textEl) textEl.value = css;
+    if(previewEl) previewEl.style.background = css;
+  }
+  function tryParse(){
+    if(!textEl) return;
+    var v = textEl.value.trim();
+    var m = v.match(/^linear-gradient\(\s*(\d+)deg\s*,\s*(#[0-9a-fA-F]{3,8})\s*,\s*(#[0-9a-fA-F]{3,8})\s*\)$/);
+    if(m){
+      fromEl.value = m[2];
+      toEl.value = m[3];
+      angleEl.value = m[1] + 'deg';
+    }
+    if(previewEl){ try{ previewEl.style.background = v; }catch(err){} }
+  }
+  [fromEl, toEl].forEach(function(el){ el.addEventListener('input', apply); });
+  angleEl.addEventListener('change', apply);
+  if(textEl) textEl.addEventListener('input', tryParse);
+  return { apply: apply, tryParse: tryParse };
+}
+
+var gradEditor = null;
+(function(){
+  if(!els.alGradFrom || !els.alGradTo || !els.alGradAngle || !els.alGradPreview) return;
+  gradEditor = wireGradientEditor(els.alGradFrom, els.alGradTo, els.alGradAngle, els.alGradPreview, els.alBgstyle);
+  gradEditor.apply();
+})();
+
 els.alBtn.addEventListener('click', async function(){
   var owner = els.owner.value.trim();
   var repo = els.repo.value.trim();
@@ -1475,6 +1547,7 @@ els.alBtn.addEventListener('click', async function(){
   var bgStyle = els.alBgstyle.value.trim();
   var accent = els.alAccent.value.trim();
   var file = els.alBgfile.files[0];
+  var cardBgFile = els.alCardbgfile.files[0];
   var musicFile = els.alMusicfile.files[0];
 
   if(!owner || !repo || !token){ setAlStatus('请先填写①的仓库信息和密钥', 'err'); return; }
@@ -1494,6 +1567,18 @@ els.alBtn.addEventListener('click', async function(){
         body: JSON.stringify({ message: '上传档案背景', content: base64 })
       }, owner, repo, token);
       if(!imgRes.ok){ throw new Error('背景上传失败：' + (await imgRes.text())); }
+    }
+
+    var cardBg = '';
+    if(cardBgFile){
+      var cbBase64 = await fileToBase64(cardBgFile);
+      var cbName = Date.now() + '-' + cardBgFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      cardBg = 'albums/' + cbName;
+      var cbRes = await ghRequest(cardBg, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传档案卡片背景', content: cbBase64 })
+      }, owner, repo, token);
+      if(!cbRes.ok){ throw new Error('卡片背景上传失败：' + (await cbRes.text())); }
     }
 
     var music = '';
@@ -1519,7 +1604,7 @@ els.alBtn.addEventListener('click', async function(){
       throw new Error('读取 albums.json 失败');
     }
 
-    albums.push({ id: String(Date.now()), name: name, desc: desc, layout: layout, bg: bg, bgStyle: bgStyle, accent: accent, music: music });
+    albums.push({ id: String(Date.now()), name: name, desc: desc, layout: layout, bg: bg, bgStyle: bgStyle, accent: accent, music: music, cardBg: cardBg });
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));
     var putBody = { message: '新建档案: ' + name, content: newContentB64 };
@@ -1533,10 +1618,17 @@ els.alBtn.addEventListener('click', async function(){
     setAlStatus('已创建', 'ok');
     els.alName.value = '';
     els.alDesc.value = '';
-    els.alBgstyle.value = '';
     els.alBgfile.value = '';
+    els.alCardbgfile.value = '';
     els.alAccent.value = '';
+    els.alAccentColor.value = '#c25a50';
     els.alMusicfile.value = '';
+    if(gradEditor){
+      els.alGradFrom.value = '#0d1016';
+      els.alGradTo.value = '#222933';
+      els.alGradAngle.value = '160deg';
+      gradEditor.apply();
+    }
     await loadAlbumManageList();
     await populateAlbumOptions();
 
@@ -1570,7 +1662,7 @@ async function loadAlbumManageList(){
       row.className = 'manage-item';
       row.innerHTML =
         '<div class="mi-info">' + escapeHtml(a.name) +
-          '<span class="mi-date">' + escapeHtml(a.desc || '') + (a.layout === 'grid' ? ' · 网格' : ' · 时间线') + (a.bg ? ' · 有背景图' : '') + (a.accent ? ' · 强调色' : '') + (a.music ? ' · 有音乐' : '') + '</span>' +
+          '<span class="mi-date">' + escapeHtml(a.desc || '') + (a.layout === 'grid' ? ' · 网格' : ' · 时间线') + (a.bg ? ' · 有背景图' : '') + (a.cardBg ? ' · 卡片图' : '') + (a.accent ? ' · 强调色' : '') + (a.music ? ' · 有音乐' : '') + '</span>' +
         '</div>' +
         '<button class="mi-edit" type="button">编辑</button>' +
         '<button class="mi-del" type="button">删除</button>';
@@ -1581,9 +1673,20 @@ async function loadAlbumManageList(){
           '<label>名称</label><input class="al-e-name" value="' + escapeHtml(a.name) + '">' +
           '<label>描述</label><input class="al-e-desc" value="' + escapeHtml(a.desc || '') + '">' +
           '<label>排版</label><select class="al-e-layout"><option value="timeline"' + (a.layout === 'grid' ? '' : ' selected') + '>时间线</option><option value="grid"' + (a.layout === 'grid' ? ' selected' : '') + '>网格卡片</option></select>' +
-          '<label>背景渐变（CSS；总览卡片 + 叠加内容页）</label><input class="al-e-bgstyle" value="' + escapeHtml(a.bgStyle || '') + '">' +
-          '<label>强调色（CSS 颜色）</label><input class="al-e-accent" value="' + escapeHtml(a.accent || '') + '">' +
+          '<label>背景渐变（叠加在背景图上）</label>' +
+          '<div class="grad-box">' +
+            '<div class="row" style="align-items:center; gap:10px;">' +
+              '<input type="color" class="al-e-grad-from" value="#0d1016" title="起始色" style="width:44px; height:38px; padding:2px;">' +
+              '<span style="color:var(--steel); font-family:var(--font-mono); font-size:0.75rem;">→</span>' +
+              '<input type="color" class="al-e-grad-to" value="#222933" title="结束色" style="width:44px; height:38px; padding:2px;">' +
+              '<select class="al-e-grad-angle" style="width:120px; margin:0;"><option value="160deg">160° 对角</option><option value="180deg">180° 上下</option><option value="90deg">90° 左右</option><option value="135deg">135° 对角</option><option value="45deg">45° 对角</option></select>' +
+            '</div>' +
+            '<div class="al-e-grad-preview" style="height:26px; border:1px solid var(--paper-2); border-radius:6px; margin-top:10px;"></div>' +
+            '<input class="al-e-bgstyle" value="' + escapeHtml(a.bgStyle || '') + '" placeholder="CSS 渐变（由取色器自动生成）" style="margin-top:10px;">' +
+          '</div>' +
+          '<label>强调色</label><div class="row" style="align-items:center; gap:10px;"><input class="al-e-accent" value="' + escapeHtml(a.accent || '') + '" style="flex:1;"><input type="color" class="al-e-accent-color" value="' + escapeHtml(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(a.accent || '') ? a.accent : '#c25a50') + '" title="取色器" style="width:44px; height:38px; padding:2px; flex-shrink:0;"></div>' +
           '<label>背景图（可选，内容页用；重新上传会替换）</label><input class="al-e-bgfile" type="file" accept="image/*">' +
+          '<label>卡片背景图（可选，总览行用；重新上传会替换）</label><input class="al-e-cardbgfile" type="file" accept="image/*">' +
           '<label>档案音乐（可选，重新上传会替换）</label><input class="al-e-musicfile" type="file" accept="audio/*">' +
           '<div class="row"><button class="mi-f-save" type="button">保存</button><button class="mi-f-cancel" type="button">取消</button></div>';
         editBox.querySelector('.mi-f-save').addEventListener('click', async function(){
@@ -1593,6 +1696,23 @@ async function loadAlbumManageList(){
           editBox.remove();
           row.style.display = '';
         });
+        var eAccent = editBox.querySelector('.al-e-accent');
+        var eColor = editBox.querySelector('.al-e-accent-color');
+        if(eAccent && eColor){
+          eColor.addEventListener('input', function(){ eAccent.value = this.value; });
+          eAccent.addEventListener('input', function(){
+            var v = eAccent.value.trim();
+            if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)){ eColor.value = v; }
+          });
+        }
+        var eGrad = wireGradientEditor(
+          editBox.querySelector('.al-e-grad-from'),
+          editBox.querySelector('.al-e-grad-to'),
+          editBox.querySelector('.al-e-grad-angle'),
+          editBox.querySelector('.al-e-grad-preview'),
+          editBox.querySelector('.al-e-bgstyle')
+        );
+        if(eGrad){ eGrad.tryParse(); }
         row.after(editBox);
         row.style.display = 'none';
       });
@@ -1617,6 +1737,7 @@ async function saveAlbum(id, editBox){
   var bgStyle = editBox.querySelector('.al-e-bgstyle').value.trim();
   var accent = editBox.querySelector('.al-e-accent').value.trim();
   var bgFile = editBox.querySelector('.al-e-bgfile').files[0];
+  var cardBgFile = editBox.querySelector('.al-e-cardbgfile').files[0];
   var musicFile = editBox.querySelector('.al-e-musicfile').files[0];
 
   if(!name){ setAlManageStatus('档案名称不能为空', 'err'); return; }
@@ -1645,6 +1766,17 @@ async function saveAlbum(id, editBox){
       }, owner, repo, token);
       if(!mRes.ok){ throw new Error('音乐上传失败：' + (await mRes.text())); }
     }
+    var cardBg = '';
+    if(cardBgFile){
+      var cbBase64 = await fileToBase64(cardBgFile);
+      var cbName = Date.now() + '-' + cardBgFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      cardBg = 'albums/' + cbName;
+      var cbRes = await ghRequest(cardBg, {
+        method: 'PUT',
+        body: JSON.stringify({ message: '上传档案卡片背景', content: cbBase64 })
+      }, owner, repo, token);
+      if(!cbRes.ok){ throw new Error('卡片背景上传失败：' + (await cbRes.text())); }
+    }
     var getRes = await ghRequest('albums.json', {}, owner, repo, token);
     if(!getRes.ok){ throw new Error('读取 albums.json 失败'); }
     var fileData = await getRes.json();
@@ -1659,6 +1791,7 @@ async function saveAlbum(id, editBox){
       target.bgStyle = bgStyle;
       target.accent = accent;
       if(bg){ target.bg = bg; }
+      if(cardBg){ target.cardBg = cardBg; }
       if(music){ target.music = music; }
     }
 
