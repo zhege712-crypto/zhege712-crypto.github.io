@@ -26,7 +26,7 @@
     "desc": "世界第一的吃货殿下！",
     "layout": "grid",
     "bg": "albums/1785688035643-1705243615983.jpg",
-    "bgStyle": "",
+    "bgStyle": "linear-gradient(160deg, #afb7c5, #80b5ff)",
     "accent": "#66CCFF",
     "music": "albums/1785688047568-ilemOfficial-.mp3"
   }
