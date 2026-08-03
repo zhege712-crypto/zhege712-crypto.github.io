@@ -5,9 +5,10 @@
     "desc": "万物皆虚，万事皆允。Nothing is true, everything is permitted.",
     "layout": "timeline",
     "bg": "albums/1785679222398-43d3b596c1788d293962e46583138a07fde23b339484-d8mw6H_fw658.webp",
-    "bgStyle": "radial-gradient(1100px 600px at 82% -12%, rgba(146,20,26,0.55), transparent 62%), linear-gradient(160deg, #0d1016 0%, #222933 58%, #151a22 100%)",
+    "bgStyle": "linear-gradient(160deg, #9a7979, #36404f)",
     "accent": "#c25a50",
-    "music": "albums/1785679224270-JesperKydAssassinsCreed-EziosFamily.flac"
+    "music": "albums/1785679224270-JesperKydAssassinsCreed-EziosFamily.flac",
+    "cardBg": "albums/1785720922629-449B82C15EAD85C50D62DEEC16C666B2.jpeg"
   },
   {
     "id": "1785687756303",
