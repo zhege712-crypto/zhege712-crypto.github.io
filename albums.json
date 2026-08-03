@@ -29,5 +29,16 @@
     "bgStyle": "",
     "accent": "#66CCFF",
     "music": "albums/1785688047568-ilemOfficial-.mp3"
+  },
+  {
+    "id": "1785745753716",
+    "name": "相机娘化",
+    "desc": "一个关于那些影像的存在",
+    "layout": "timeline",
+    "bg": "albums/1785745748738-edd5cd40a317359d4b7d2e243bd86490.png",
+    "bgStyle": "linear-gradient(160deg, #b2c7f0, #ff9494)",
+    "accent": "#000000",
+    "music": "",
+    "cardBg": ""
   }
 ]
