@@ -5,10 +5,9 @@
     "desc": "万物皆虚，万事皆允。Nothing is true, everything is permitted.",
     "layout": "timeline",
     "bg": "albums/1785679222398-43d3b596c1788d293962e46583138a07fde23b339484-d8mw6H_fw658.webp",
-    "bgStyle": "linear-gradient(160deg, #9a7979, #36404f)",
-    "accent": "#cf5e54",
-    "music": "albums/1785679224270-JesperKydAssassinsCreed-EziosFamily.flac",
-    "cardBg": "albums/1785720926082-449B82C15EAD85C50D62DEEC16C666B2.jpeg"
+    "bgStyle": "radial-gradient(1100px 600px at 82% -12%, rgba(146,20,26,0.55), transparent 62%), linear-gradient(160deg, #0d1016 0%, #222933 58%, #151a22 100%)",
+    "accent": "#c25a50",
+    "music": "albums/1785679224270-JesperKydAssassinsCreed-EziosFamily.flac"
   },
   {
     "id": "1785687756303",
@@ -16,7 +15,7 @@
     "desc": "The storm is coming.",
     "layout": "timeline",
     "bg": "albums/1785687739825-8861440x2560_2a5763f797e844b988c5819ee61519b1.jpg",
-    "bgStyle": "linear-gradient(160deg, #9eb6e5, #f4d8bd)",
+    "bgStyle": "",
     "accent": "#c25a50",
     "music": "albums/1785687744397-The1999-.flac"
   },
@@ -26,7 +25,7 @@
     "desc": "世界第一的吃货殿下！",
     "layout": "grid",
     "bg": "albums/1785688035643-1705243615983.jpg",
-    "bgStyle": "linear-gradient(160deg, #afb7c5, #80b5ff)",
+    "bgStyle": "",
     "accent": "#66CCFF",
     "music": "albums/1785688047568-ilemOfficial-.mp3"
   }
