@@ -118,6 +118,11 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
 .mi-edit-form .mi-f-save{ margin-top:16px; padding:10px 18px; font-size:0.72rem; }
 .mi-edit-form .mi-f-cancel{ margin-top:16px; padding:10px 18px; font-size:0.72rem; }
 .manage-item .mi-del:hover{ background:var(--accent-red); color:var(--white); }
+.mi-modules{ margin-top:10px; border-top:1px dashed var(--paper-2); padding-top:10px; display:flex; flex-direction:column; gap:8px; width:100%; }
+.mi-mod-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:0.8rem; }
+.mi-mod-name{ font-family:var(--font-mono); font-size:0.72rem; color:var(--charcoal); min-width:72px; }
+.mi-mod-state{ font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); }
+.mi-mod-row button{ margin:0; padding:6px 12px; font-size:0.66rem; }
 
 .photo-item{
   display:flex; align-items:center; gap:14px;
@@ -456,6 +461,11 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     </div>
     <label>档案音乐（可选，mp3）</label>
     <input type="file" id="al-musicfile" accept="audio/*">
+    <label>启用模块（勾选后档案页头部显示对应功能）</label>
+    <div class="row">
+      <label style="display:flex; align-items:center; gap:6px; margin:0; font-family:var(--font-mono); font-size:0.7rem; text-transform:none; letter-spacing:0;"><input type="checkbox" id="al-mod-gacha" style="width:auto;"> 抽卡统计</label>
+      <label style="display:flex; align-items:center; gap:6px; margin:0; font-family:var(--font-mono); font-size:0.7rem; text-transform:none; letter-spacing:0;"><input type="checkbox" id="al-mod-gamebox" style="width:auto;"> 游戏箱</label>
+    </div>
     <button id="album-add-btn">新建档案</button>
     <div class="status" id="album-status"></div>
     <label style="margin-top:26px;">已有档案（删除后其内容移入「未归类」）</label>
@@ -1604,7 +1614,12 @@ els.alBtn.addEventListener('click', async function(){
       throw new Error('读取 albums.json 失败');
     }
 
-    albums.push({ id: String(Date.now()), name: name, desc: desc, layout: layout, bg: bg, bgStyle: bgStyle, accent: accent, music: music, cardBg: cardBg });
+    var modules = [];
+    if(document.getElementById('al-mod-gacha').checked) modules.push('gacha');
+    if(document.getElementById('al-mod-gamebox').checked) modules.push('gamebox');
+    var albumObj = { id: String(Date.now()), name: name, desc: desc, layout: layout, bg: bg, bgStyle: bgStyle, accent: accent, music: music, cardBg: cardBg };
+    if(modules.length) albumObj.modules = modules;
+    albums.push(albumObj);
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));
     var putBody = { message: '新建档案: ' + name, content: newContentB64 };
@@ -1666,6 +1681,36 @@ async function loadAlbumManageList(){
         '</div>' +
         '<button class="mi-edit" type="button">编辑</button>' +
         '<button class="mi-del" type="button">删除</button>';
+      var modsBox = null;
+      if(a.modules && a.modules.length){
+        modsBox = document.createElement('div');
+        modsBox.className = 'mi-modules';
+        a.modules.forEach(function(k){
+          var meta = MODULE_META[k];
+          if(!meta) return;
+          var seg = document.createElement('div');
+          seg.className = 'mi-mod-row';
+          seg.innerHTML =
+            '<span class="mi-mod-name">' + meta + '</span>' +
+            '<span class="mi-mod-state">检查中…</span>' +
+            '<button class="mi-mod-up" type="button">上传数据</button>' +
+            '<input type="file" accept="application/json" class="mi-mod-file" style="display:none">' +
+            '<button class="mi-mod-dl" type="button">下载</button>' +
+            '<button class="mi-mod-del" type="button">删除数据</button>';
+          modsBox.appendChild(seg);
+          checkModuleData(k, a.id, seg);
+          seg.querySelector('.mi-mod-up').addEventListener('click', function(){ seg.querySelector('.mi-mod-file').click(); });
+          seg.querySelector('.mi-mod-file').addEventListener('change', function(){
+            var f = this.files && this.files[0];
+            if(!f) return;
+            uploadModuleData(k, a.id, f, seg);
+            this.value = '';
+          });
+          seg.querySelector('.mi-mod-dl').addEventListener('click', function(){ downloadModuleData(k, a.id, seg); });
+          seg.querySelector('.mi-mod-del').addEventListener('click', function(){ deleteModuleData(k, a.id, seg); });
+        });
+        row.appendChild(modsBox);
+      }
       row.querySelector('.mi-edit').addEventListener('click', function(){
         var editBox = document.createElement('div');
         editBox.className = 'mi-edit-form';
@@ -1688,6 +1733,10 @@ async function loadAlbumManageList(){
           '<label>背景图（可选，内容页用；重新上传会替换）</label><input class="al-e-bgfile" type="file" accept="image/*">' +
           '<label>卡片背景图（可选，总览行用；重新上传会替换）</label><input class="al-e-cardbgfile" type="file" accept="image/*">' +
           '<label>档案音乐（可选，重新上传会替换）</label><input class="al-e-musicfile" type="file" accept="audio/*">' +
+          '<label>启用模块</label><div class="row" style="align-items:center;">' +
+            '<label style="display:flex; align-items:center; gap:6px; margin:0; font-family:var(--font-mono); font-size:0.7rem; text-transform:none; letter-spacing:0;"><input type="checkbox" class="al-e-mod-gacha" style="width:auto;"' + ((a.modules || []).indexOf('gacha') !== -1 ? ' checked' : '') + '> 抽卡统计</label>' +
+            '<label style="display:flex; align-items:center; gap:6px; margin:0; font-family:var(--font-mono); font-size:0.7rem; text-transform:none; letter-spacing:0;"><input type="checkbox" class="al-e-mod-gamebox" style="width:auto;"' + ((a.modules || []).indexOf('gamebox') !== -1 ? ' checked' : '') + '> 游戏箱</label>' +
+          '</div>' +
           '<div class="row"><button class="mi-f-save" type="button">保存</button><button class="mi-f-cancel" type="button">取消</button></div>';
         editBox.querySelector('.mi-f-save').addEventListener('click', async function(){
           await saveAlbum(a.id, editBox);
@@ -1793,6 +1842,10 @@ async function saveAlbum(id, editBox){
       if(bg){ target.bg = bg; }
       if(cardBg){ target.cardBg = cardBg; }
       if(music){ target.music = music; }
+      var eMods = [];
+      if(editBox.querySelector('.al-e-mod-gacha').checked) eMods.push('gacha');
+      if(editBox.querySelector('.al-e-mod-gamebox').checked) eMods.push('gamebox');
+      if(eMods.length){ target.modules = eMods; } else { delete target.modules; }
     }
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(albums, null, 2))));
@@ -1907,6 +1960,71 @@ async function unassignMemos(albumId){
     });
   });
 })();
+
+// ============================================================
+// 档案模块数据管理（platform-data/<模块>_<档案id>.json）
+// ============================================================
+var MODULE_META = { gacha: '抽卡统计', gamebox: '游戏箱' };
+function modDataPath(k, id){ return 'platform-data/' + k + '_' + id + '.json'; }
+function setModState(seg, text){
+  var el = seg.querySelector('.mi-mod-state');
+  if(el) el.textContent = text;
+}
+async function getModuleData(k, id){
+  var owner = els.owner.value.trim(), repo = els.repo.value.trim(), token = els.token.value.trim();
+  var res = await ghRequest(modDataPath(k, id), {}, owner, repo, token);
+  if(!res.ok) return null;
+  return await res.json();
+}
+async function checkModuleData(k, id, seg){
+  try{
+    var fd = await getModuleData(k, id);
+    setModState(seg, fd ? '仓库已有数据' : '未上传数据');
+  }catch(err){ setModState(seg, '检查失败'); }
+}
+async function uploadModuleData(k, id, file, seg){
+  try{
+    var owner = els.owner.value.trim(), repo = els.repo.value.trim(), token = els.token.value.trim();
+    if(!owner || !repo || !token){ setModState(seg, '请先填①仓库信息'); return; }
+    var base64 = await fileToBase64(file);
+    var existing = await getModuleData(k, id);
+    var body = { message: '上传模块数据 ' + k + '_' + id, content: base64 };
+    if(existing && existing.sha){ body.sha = existing.sha; }
+    var res = await ghRequest(modDataPath(k, id), { method: 'PUT', body: JSON.stringify(body) }, owner, repo, token);
+    if(!res.ok){ throw new Error(await res.text()); }
+    setModState(seg, '已上传 ✓');
+    checkModuleData(k, id, seg);
+  }catch(err){ setModState(seg, '上传失败：' + err.message); }
+}
+async function downloadModuleData(k, id, seg){
+  try{
+    var fd = await getModuleData(k, id);
+    if(!fd){ setModState(seg, '仓库无数据可下载'); return; }
+    var json = decodeURIComponent(escape(atob(fd.content)));
+    var blob = new Blob([json], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = k + '_' + id + '.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 300);
+  }catch(err){ setModState(seg, '下载失败'); }
+}
+async function deleteModuleData(k, id, seg){
+  try{
+    var fd = await getModuleData(k, id);
+    if(!fd){ setModState(seg, '仓库无数据'); return; }
+    if(!confirm('确定删除仓库中的 ' + k + '_' + id + ' 数据？')) return;
+    var owner = els.owner.value.trim(), repo = els.repo.value.trim(), token = els.token.value.trim();
+    var res = await ghRequest(modDataPath(k, id), {
+      method: 'DELETE',
+      body: JSON.stringify({ message: '删除模块数据', sha: fd.sha })
+    }, owner, repo, token);
+    if(!res.ok){ throw new Error(await res.text()); }
+    setModState(seg, '已删除');
+    checkModuleData(k, id, seg);
+  }catch(err){ setModState(seg, '删除失败'); }
+}
 </script>
 
 </body>
