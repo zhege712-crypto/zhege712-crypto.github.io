@@ -18,7 +18,11 @@
     "bg": "albums/1785687739825-8861440x2560_2a5763f797e844b988c5819ee61519b1.jpg",
     "bgStyle": "",
     "accent": "#c25a50",
-    "music": "albums/1785687744397-The1999-.flac"
+    "music": "albums/1785687744397-The1999-.flac",
+    "modules": [
+      "gacha",
+      "gamebox"
+    ]
   },
   {
     "id": "1785688060308",
