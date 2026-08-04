@@ -8,7 +8,10 @@
     "bgStyle": "radial-gradient(1100px 600px at 82% -12%, rgba(146,20,26,0.55), transparent 62%), linear-gradient(160deg, #0d1016 0%, #222933 58%, #151a22 100%)",
     "accent": "#c25a50",
     "music": "albums/1785679224270-JesperKydAssassinsCreed-EziosFamily.flac",
-    "cardBg": "albums/1785729194814-449B82C15EAD85C50D62DEEC16C666B2.jpeg"
+    "cardBg": "albums/1785729194814-449B82C15EAD85C50D62DEEC16C666B2.jpeg",
+    "modules": [
+      "gamebox"
+    ]
   },
   {
     "id": "1785687756303",
