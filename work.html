@@ -238,6 +238,7 @@
     </div>
   </div>
   <div class="gallery-wrap" id="gallery-wrap">
+    <div class="lens-section" id="lens-section"></div>
     <div class="photo-stage" id="photo-stage"></div>
   </div>
 </div>
@@ -562,6 +563,8 @@
   }, { passive:true });
 })();
 </script>
+<script src="lens.js"></script>
+<script>if(window.LENS_UI){ window.LENS_UI.mount(document.getElementById('lens-section')); }</script>
 <script src="theme.js"></script>
 <audio id="bg-music" loop preload="none">
   <source src="music/background.mp3" type="audio/mpeg">

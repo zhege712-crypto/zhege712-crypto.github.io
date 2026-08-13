@@ -473,6 +473,72 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
     <button id="refresh-album-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
     <div class="status" id="album-manage-status"></div>
   </div>
+
+  <div class="panel">
+    <h2>⑩ 管理镜头</h2>
+    <div class="row">
+      <div>
+        <label>镜头名称</label>
+        <input type="text" id="ln-name" placeholder="RF 50mm f/1.8 STM">
+      </div>
+      <div>
+        <label>品牌</label>
+        <input type="text" id="ln-make" value="Canon">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>焦段</label>
+        <input type="text" id="ln-focal" placeholder="50mm">
+      </div>
+      <div>
+        <label>光圈</label>
+        <input type="text" id="ln-aperture" placeholder="f/1.8">
+      </div>
+      <div>
+        <label>类型</label>
+        <select id="ln-type">
+          <option value="zoom">变焦</option>
+          <option value="prime">定焦</option>
+          <option value="macro">微距</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>片数</label>
+        <input type="number" id="ln-elements" min="1" placeholder="6">
+      </div>
+      <div>
+        <label>组数</label>
+        <input type="number" id="ln-groups" min="1" placeholder="5">
+      </div>
+      <div>
+        <label>光圈叶片</label>
+        <input type="number" id="ln-blades" min="1" placeholder="7">
+      </div>
+    </div>
+    <label>特殊镜片 / 技术（逗号分隔）</label>
+    <input type="text" id="ln-special" placeholder="非球面镜片, STM 步进马达">
+    <label>产品图（可选，上传后前端自动转线稿）</label>
+    <input type="file" id="ln-photofile" accept="image/*">
+    <label>镜片结构（JSON，可选；留空按类型自动生成）</label>
+    <textarea id="ln-structure" placeholder='[{"label":"前组","type":"convex","elements":3},{"label":"光圈","type":"iris"},{"label":"后组","type":"convex","elements":5}]'></textarea>
+    <label>镜头故事 · 标题（可选）</label>
+    <input type="text" id="ln-story-title" placeholder="一支陪我走遍城市的镜头">
+    <label>镜头故事 · 正文（可选，空行分段）</label>
+    <textarea id="ln-story-body" placeholder="第一段故事...&#10;&#10;第二段故事..."></textarea>
+    <label>镜头故事 · 日期（可选，如 2025-08）</label>
+    <input type="text" id="ln-story-date" placeholder="2025-08">
+    <label>手账条目（JSON，可选）</label>
+    <textarea id="ln-journal" placeholder='[{"photo":"photos/xx.png","text":"...","date":"2026-01-01"}]'></textarea>
+    <button id="lens-add-btn">新建镜头</button>
+    <div class="status" id="lens-status"></div>
+    <label style="margin-top:26px;">已有镜头</label>
+    <div id="lens-manage-list"></div>
+    <button id="refresh-lens-btn" type="button" style="background:var(--charcoal);">刷新列表</button>
+    <div class="status" id="lens-manage-status"></div>
+  </div>
 </div>
 
 <footer style="padding:30px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); margin-top:40px;">© 2026 水告示阳 · 保留所有权利</footer>
@@ -595,7 +661,24 @@ var els = {
   alAccentColor: document.getElementById('al-accent-color'),
   alMusicfile: document.getElementById('al-musicfile'),
   alBtn: document.getElementById('album-add-btn'),
-  alStatus: document.getElementById('album-status')
+  alStatus: document.getElementById('album-status'),
+  lnName: document.getElementById('ln-name'),
+  lnMake: document.getElementById('ln-make'),
+  lnFocal: document.getElementById('ln-focal'),
+  lnAperture: document.getElementById('ln-aperture'),
+  lnType: document.getElementById('ln-type'),
+  lnElements: document.getElementById('ln-elements'),
+  lnGroups: document.getElementById('ln-groups'),
+  lnBlades: document.getElementById('ln-blades'),
+  lnSpecial: document.getElementById('ln-special'),
+  lnPhotofile: document.getElementById('ln-photofile'),
+  lnStructure: document.getElementById('ln-structure'),
+  lnJournal: document.getElementById('ln-journal'),
+  lnStoryTitle: document.getElementById('ln-story-title'),
+  lnStoryBody: document.getElementById('ln-story-body'),
+  lnStoryDate: document.getElementById('ln-story-date'),
+  lnBtn: document.getElementById('lens-add-btn'),
+  lnStatus: document.getElementById('lens-status')
 };
 
 // ===== 日期快捷填充 =====
@@ -675,6 +758,7 @@ if(els.owner.value && els.repo.value && els.token.value){
   loadMemoManageList();
   loadLinkManageList();
   loadAlbumManageList();
+  loadLensManageList();
   populateAlbumOptions();
 }
 
@@ -2025,6 +2109,183 @@ async function deleteModuleData(k, id, seg){
     checkModuleData(k, id, seg);
   }catch(err){ setModState(seg, '删除失败'); }
 }
+
+// ============================================================
+// ⑩ 管理镜头（lenses.json）
+// ============================================================
+var lensListEl = document.getElementById('lens-manage-list');
+var lensManageStatusEl = document.getElementById('lens-manage-status');
+var editingLensId = null;
+
+function setLnStatus(text, type){ els.lnStatus.textContent = text; els.lnStatus.className = 'status show ' + type; }
+function setLnManageStatus(text, type){ lensManageStatusEl.textContent = text; lensManageStatusEl.className = 'status show ' + type; }
+
+async function fetchLenses(owner, repo, token){
+  var res = await ghRequest('lenses.json', {}, owner, repo, token);
+  if(res.ok){
+    var fd = await res.json();
+    return JSON.parse(decodeURIComponent(escape(atob(fd.content))));
+  }
+  return [];
+}
+
+function parseJSONField(el){
+  var v = (el.value || '').trim();
+  if(!v) return null;
+  try{ return JSON.parse(v); }catch(err){ return null; }
+}
+
+async function uploadLensPhoto(file, owner, repo, token){
+  var base64 = await fileToBase64(file);
+  var name = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+  var path = 'lenses/' + name;
+  var res = await ghRequest(path, { method:'PUT', body: JSON.stringify({ message:'上传镜头产品图', content: base64 }) }, owner, repo, token);
+  if(!res.ok){ throw new Error('产品图上传失败'); }
+  return path;
+}
+
+function resetLensForm(){
+  ['ln-name','ln-focal','ln-aperture','ln-elements','ln-groups','ln-blades','ln-special','ln-structure','ln-story-title','ln-story-body','ln-story-date','ln-journal'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  els.lnMake.value = 'Canon';
+  els.lnType.value = 'zoom';
+  els.lnPhotofile.value = '';
+}
+
+function fillLensForm(l){
+  els.lnName.value = l.name || '';
+  els.lnMake.value = l.make || 'Canon';
+  els.lnFocal.value = l.focal || '';
+  els.lnAperture.value = l.aperture || '';
+  els.lnType.value = l.type || 'zoom';
+  els.lnElements.value = l.elements || '';
+  els.lnGroups.value = l.groups || '';
+  els.lnBlades.value = l.blades || '';
+  els.lnSpecial.value = (l.special || []).join(', ');
+  els.lnStructure.value = l.structure ? JSON.stringify(l.structure) : '';
+  els.lnStoryTitle.value = (l.story && l.story.title) || '';
+  els.lnStoryBody.value = (l.story && l.story.body) || '';
+  els.lnStoryDate.value = (l.story && l.story.date) || '';
+  els.lnJournal.value = l.journal ? JSON.stringify(l.journal) : '';
+}
+
+els.lnBtn.addEventListener('click', async function(){
+  var owner = els.owner.value.trim(), repo = els.repo.value.trim(), token = els.token.value.trim();
+  if(!owner || !repo || !token){ setLnStatus('请先填①的仓库信息', 'err'); return; }
+  var name = els.lnName.value.trim();
+  if(!name){ setLnStatus('镜头名称不能为空', 'err'); return; }
+  setLnStatus('保存中…', 'loading');
+  try{
+    var photoFile = els.lnPhotofile.files && els.lnPhotofile.files[0];
+    var photo = '';
+    if(photoFile){ photo = await uploadLensPhoto(photoFile, owner, repo, token); }
+    var structure = parseJSONField(els.lnStructure);
+    var journal = parseJSONField(els.lnJournal);
+    var storyTitle = els.lnStoryTitle.value.trim();
+    var storyBody = els.lnStoryBody.value.trim();
+    var storyDate = els.lnStoryDate.value.trim();
+    var story = null;
+    if(storyTitle || storyBody){
+      story = {};
+      if(storyTitle) story.title = storyTitle;
+      if(storyBody) story.body = storyBody;
+      if(storyDate) story.date = storyDate;
+    }
+
+    var lens = {
+      name: name,
+      make: els.lnMake.value.trim() || 'Canon',
+      focal: els.lnFocal.value.trim(),
+      aperture: els.lnAperture.value.trim(),
+      type: els.lnType.value,
+      elements: parseInt(els.lnElements.value, 10) || 0,
+      groups: parseInt(els.lnGroups.value, 10) || 0,
+      blades: parseInt(els.lnBlades.value, 10) || 0,
+      special: (els.lnSpecial.value || '').split(/[,，]/).map(function(s){ return s.trim(); }).filter(Boolean)
+    };
+    if(photo) lens.photo = photo;
+    if(structure) lens.structure = structure;
+    if(story) lens.story = story;
+    if(journal) lens.journal = journal;
+
+    var lenses = await fetchLenses(owner, repo, token);
+    if(editingLensId){
+      var idx = -1;
+      for(var i = 0; i < lenses.length; i++){ if(String(lenses[i].id) === String(editingLensId)){ idx = i; break; } }
+      if(idx === -1){ throw new Error('未找到要编辑的镜头'); }
+      lens.id = lenses[idx].id;
+      if(!photo && lenses[idx].photo){ lens.photo = lenses[idx].photo; }
+      lenses[idx] = lens;
+    } else {
+      lens.id = String(Date.now());
+      lenses.push(lens);
+    }
+    var newContent = btoa(unescape(encodeURIComponent(JSON.stringify(lenses, null, 2))));
+
+    var getRes = await ghRequest('lenses.json', {}, owner, repo, token);
+    var sha = getRes.ok ? (await getRes.json()).sha : null;
+    var putBody = { message: editingLensId ? '编辑镜头' : ('新建镜头: ' + name), content: newContent };
+    if(sha) putBody.sha = sha;
+    var putRes = await ghRequest('lenses.json', { method:'PUT', body: JSON.stringify(putBody) }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('保存 lenses.json 失败'); }
+
+    setLnStatus(editingLensId ? '已保存' : '已新建', 'ok');
+    editingLensId = null;
+    els.lnBtn.textContent = '新建镜头';
+    resetLensForm();
+    loadLensManageList();
+  }catch(err){ setLnStatus('失败：' + err.message, 'err'); }
+});
+
+async function loadLensManageList(){
+  var owner = els.owner.value.trim(), repo = els.repo.value.trim(), token = els.token.value.trim();
+  if(!owner || !repo || !token){ lensListEl.innerHTML = '<div class="hint">先填好①的仓库信息</div>'; return; }
+  lensListEl.innerHTML = '<div class="hint">加载中…</div>';
+  try{
+    var lenses = await fetchLenses(owner, repo, token);
+    if(lenses.length === 0){ lensListEl.innerHTML = '<div class="hint">目前没有镜头</div>'; return; }
+    lensListEl.innerHTML = '';
+    lenses.forEach(function(l){
+      var row = document.createElement('div');
+      row.className = 'manage-item';
+      row.innerHTML =
+        '<div class="mi-info">' + escapeHtml(l.name) +
+          '<span class="mi-date">' + escapeHtml(l.make || '') + ' · ' + escapeHtml(l.focal || '') + ' ' + escapeHtml(l.aperture || '') + (l.photo ? ' · 有图' : '') + (l.structure ? ' · 有结构' : '') + (l.journal ? ' · 手账' + l.journal.length + '条' : '') + '</span>' +
+        '</div>' +
+        '<button class="mi-edit" type="button">编辑</button>' +
+        '<button class="mi-del" type="button">删除</button>';
+      row.querySelector('.mi-edit').addEventListener('click', function(){
+        fillLensForm(l);
+        editingLensId = l.id;
+        els.lnBtn.textContent = '保存修改';
+        window.scrollTo(0, 0);
+      });
+      row.querySelector('.mi-del').addEventListener('click', function(){ deleteLens(l.id); });
+      lensListEl.appendChild(row);
+    });
+  }catch(err){ lensListEl.innerHTML = '<div class="hint">加载失败：' + err.message + '</div>'; }
+}
+
+async function deleteLens(id){
+  if(!confirm('确定删除这个镜头？')) return;
+  var owner = els.owner.value.trim(), repo = els.repo.value.trim(), token = els.token.value.trim();
+  try{
+    var getRes = await ghRequest('lenses.json', {}, owner, repo, token);
+    if(!getRes.ok){ throw new Error('读取 lenses.json 失败'); }
+    var fd = await getRes.json();
+    var sha = fd.sha;
+    var lenses = JSON.parse(decodeURIComponent(escape(atob(fd.content))));
+    var remaining = lenses.filter(function(l){ return String(l.id) !== String(id); });
+    var newContent = btoa(unescape(encodeURIComponent(JSON.stringify(remaining, null, 2))));
+    var putRes = await ghRequest('lenses.json', { method:'PUT', body: JSON.stringify({ message:'删除镜头', content: newContent, sha: sha }) }, owner, repo, token);
+    if(!putRes.ok){ throw new Error('更新 lenses.json 失败'); }
+    setLnManageStatus('已删除', 'ok');
+    loadLensManageList();
+  }catch(err){ setLnManageStatus('删除失败：' + err.message, 'err'); }
+}
+
+document.getElementById('refresh-lens-btn').addEventListener('click', loadLensManageList);
 </script>
 
 </body>
