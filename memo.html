@@ -100,16 +100,25 @@
 </div>
 <footer>© 2026 水告示阳 · 保留所有权利</footer>
 <script>
+function safeLink(value){
+  var url = String(value == null ? '' : value).trim();
+  try{
+    var parsed = new URL(url, location.href);
+    return /^(https?:|mailto:)$/.test(parsed.protocol) ? url : '#';
+  }catch(err){ return '#'; }
+}
+
 (function(){
   var listEl = document.getElementById('memo-list');
   function escapeHtml(s){
     var d = document.createElement('div');
     d.textContent = String(s == null ? '' : s);
-    return d.innerHTML;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   fetch('memos.json?t=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(memos){
+      memos = (memos || []).filter(function(m){ return m.draft !== true; });
       if(!memos || memos.length === 0){
         listEl.innerHTML = '<div class="empty-state">还没有随记，敬请期待。</div>';
         return;
@@ -121,7 +130,7 @@
         var body = '';
         if(m.text){ body += '<div class="memo-text">' + escapeHtml(m.text) + '</div>'; }
         if(m.image){ body += '<img class="memo-img" src="' + escapeHtml(m.image) + '" alt="' + escapeHtml(m.text || '随记') + '">'; }
-        if(m.linkUrl){ body += '<a class="memo-link" href="' + escapeHtml(m.linkUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(m.linkTitle || m.linkUrl) + ' ↗</a>'; }
+        if(m.linkUrl){ body += '<a class="memo-link" href="' + escapeHtml(safeLink(m.linkUrl)) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(m.linkTitle || m.linkUrl) + ' ↗</a>'; }
         return '<div class="memo-item"><span class="memo-date">' + escapeHtml(m.date || '') + '</span><div class="memo-body">' + body + '</div></div>';
       }).join('');
     })

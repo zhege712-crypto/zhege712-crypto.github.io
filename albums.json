@@ -23,6 +23,7 @@
     "accent": "#c25a50",
     "music": "albums/1785687744397-The1999-.flac",
     "modules": [
+      "characters",
       "gacha",
       "gamebox"
     ]

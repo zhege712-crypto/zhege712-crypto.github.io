@@ -47,7 +47,7 @@
 .pl-more:hover{ border-color:var(--accent-red); color:var(--accent-red); }
 
 /* 档案：档案袋卡片（回归） */
-.album-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; padding-bottom:20px; }
+.album-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(300px,100%),1fr)); gap:16px; padding-bottom:20px; }
 .album-card{
   position:relative; display:flex; flex-direction:column;
   background:var(--white); border:1px solid var(--paper-2);
@@ -160,6 +160,65 @@
   .memo-item{ grid-template-columns:1fr; gap:8px; padding:24px 0; }
   .album-view-inner{ padding:34px 24px 46px; }
 }
+
+/* ===== 档案视图：独立页 ===== */
+.in-album .side-nav{ display:none; }
+
+.al-page{ --av-accent: var(--accent-cobalt); --av-head: var(--ink); position:relative; padding-bottom:40px; }
+
+.back-link{
+  font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.06em;
+  color:rgba(250,249,246,0.88);
+  display:inline-flex; align-items:center; gap:7px;
+  border:1px solid rgba(250,249,246,0.32); border-radius:999px; padding:7px 15px; margin-bottom:0;
+  width:max-content;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  transition:border-color 0.3s ease, color 0.3s ease;
+}
+.back-link:hover{ border-color:var(--av-accent, var(--accent-gold)); color:var(--av-accent, var(--accent-gold)); }
+
+.al-hero{
+  position:relative; overflow:hidden; border-radius:14px;
+  background:linear-gradient(160deg, #1a1f27 0%, #0d1016 100%);
+}
+.al-hero-bg{ position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; transform:scale(1.04); }
+.al-hero-tint{ position:absolute; inset:0; z-index:0; opacity:0.55; }
+.al-hero-scrim{ position:absolute; inset:0; z-index:0; background:linear-gradient(180deg, rgba(13,16,22,0.15) 0%, rgba(13,16,22,0.78) 100%); }
+.al-hero-inner{ position:relative; z-index:1; padding:34px 40px 44px; min-height:400px; display:flex; flex-direction:column; }
+.al-hero-body{ margin-top:auto; }
+.al-hero-kicker{ font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--av-accent, var(--accent-gold)); margin-bottom:16px; }
+.al-hero-title{ font-family:var(--font-display); font-weight:500; font-size:clamp(2.4rem,7vw,4.4rem); line-height:1.02; color:#faf9f6; letter-spacing:0.005em; max-width:18ch; }
+.al-hero-desc{ margin-top:16px; font-size:1rem; color:rgba(250,249,246,0.86); max-width:560px; line-height:1.7; }
+.al-hero-meta{ margin-top:24px; font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.1em; color:rgba(250,249,246,0.58); }
+
+.al-nav{
+  position:sticky; top:70px; z-index:80; margin-top:18px;
+  background:color-mix(in srgb, var(--white) 74%, transparent);
+  backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%);
+  border:1px solid var(--fog); border-radius:10px; padding:6px;
+  display:flex; gap:4px; overflow-x:auto; scrollbar-width:none;
+}
+.al-nav::-webkit-scrollbar{ display:none; }
+.al-nav a{
+  flex-shrink:0; padding:9px 18px; border-radius:7px;
+  font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.08em; color:var(--steel);
+  transition:background 0.25s ease, color 0.25s ease;
+}
+.al-nav a:hover{ color:var(--charcoal); }
+.al-nav a.on{ background:var(--paper-2); color:var(--ink); }
+
+.al-section{ padding-top:58px; scroll-margin-top:128px; }
+.as-head{ display:flex; align-items:baseline; gap:14px; padding-bottom:18px; }
+.as-num{ font-family:var(--font-mono); font-size:0.72rem; color:var(--av-accent, var(--accent-red)); letter-spacing:0.1em; }
+.as-head h2{ font-family:var(--font-display); font-weight:500; font-size:1.5rem; color:var(--ink); }
+.al-notfound{ padding:60px 0; }
+
+@media (max-width:640px){
+  .al-hero-inner{ padding:26px 22px 36px; min-height:340px; }
+  .al-nav{ top:64px; }
+  .al-nav a{ padding:8px 14px; }
+  .al-section{ padding-top:44px; scroll-margin-top:112px; }
+}
 </style>
 </head>
 <body>
@@ -241,7 +300,16 @@
     <span class="bars"><span></span><span></span><span></span></span>
   </button>
 </div>
+<script src="platform-modules.js"></script>
 <script>
+function safeLink(value){
+  var url = String(value == null ? '' : value).trim();
+  try{
+    var parsed = new URL(url, location.href);
+    return /^(https?:|mailto:)$/.test(parsed.protocol) ? url : '#';
+  }catch(err){ return '#'; }
+}
+
 (function(){
   var viewEl = document.getElementById('platform-view');
   var PAGE_SIZE = 10;
@@ -250,7 +318,7 @@
   function esc(s){
     var d = document.createElement('div');
     d.textContent = String(s == null ? '' : s);
-    return d.innerHTML;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function newest(a, b){ return String(b.date || '').localeCompare(String(a.date || '')); }
   function safeStyle(v){ return String(v == null ? '' : v).replace(/["']/g, ''); }
@@ -292,23 +360,33 @@
     }).sort(newest);
   }
 
+  function albumCount(albumId){
+    return state.memos.filter(function(m){
+      if(isDraft(m)) return false;
+      if(albumId === null){ return !m.album; }
+      return String(m.album || '') === String(albumId);
+    }).length;
+  }
+
   function memoRowBody(m){
     var body = '';
     if(m.text){ body += '<div class="memo-text">' + esc(m.text) + '</div>'; }
     if(m.image){ body += '<img class="memo-img" src="' + esc(m.image) + '" alt="' + esc(m.text || 'Platform') + '" loading="lazy">'; }
-    if(m.linkUrl){ body += '<a class="memo-link" href="' + esc(m.linkUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(m.linkTitle || m.linkUrl) + ' ↗</a>'; }
+    if(m.linkUrl){ body += '<a class="memo-link" href="' + esc(safeLink(m.linkUrl)) + '" target="_blank" rel="noopener noreferrer">' + esc(m.linkTitle || m.linkUrl) + ' ↗</a>'; }
     return body;
   }
 
   function memoCardHTML(m){
     var img = m.image ? '<img src="' + esc(m.image) + '" alt="" loading="lazy">' : '';
     var text = m.text ? '<div class="mc-text">' + esc(m.text) + '</div>' : '';
-    var link = m.linkUrl ? '<a class="mc-link" href="' + esc(m.linkUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(m.linkTitle || m.linkUrl) + ' ↗</a>' : '';
+    var link = m.linkUrl ? '<a class="mc-link" href="' + esc(safeLink(m.linkUrl)) + '" target="_blank" rel="noopener noreferrer">' + esc(m.linkTitle || m.linkUrl) + ' ↗</a>' : '';
     return '<div class="memo-card">' + img + '<div class="mc-body">' + text + link +
       '<span class="mc-meta">' + esc(m.date || '') + '</span></div></div>';
   }
 
   function renderOverview(){
+    document.body.classList.remove('in-album');
+    document.title = 'Platform / 伞';
     var memos = state.memos.filter(function(m){ return !isDraft(m); });
     var albumNameMap = {};
     state.albums.forEach(function(a){ albumNameMap[a.id] = a.name; });
@@ -403,10 +481,9 @@
       }
       if(!album){
         viewEl.innerHTML =
-          '<div class="album-view"><div class="album-view-inner">' +
+          '<div class="al-page"><div class="al-notfound">' +
             '<a class="back-link" href="platform.html">← Platform 总览</a>' +
-            '<div class="av-head"><h1>未找到</h1>' +
-            '<p class="page-note">该档案不存在或已被删除</p></div>' +
+            '<div class="empty-state" style="padding-top:44px;">该档案不存在或已被删除</div>' +
           '</div></div>';
         return;
       }
@@ -419,31 +496,12 @@
     var layout = (!unfiled && album.layout === 'grid') ? 'grid' : 'timeline';
     var accent = (!unfiled && album.accent) ? safeStyle(album.accent) : '';
     var albumMusic = (!unfiled && album.music) ? album.music : '';
-    var list = filteredMemos(unfiled ? null : albumKey);
-    var visible = list.slice(0, (state.page + 1) * PAGE_SIZE);
-    var hasMore = list.length > visible.length;
 
-    var listHtml;
-    if(list.length === 0){
-      listHtml = '<div class="empty-state">' + (state.q ? '没有匹配「' + esc(state.q) + '」的内容' : '这里还没有内容') + '</div>';
-    } else if(layout === 'grid'){
-      listHtml = '<div class="memo-grid">' + visible.map(memoCardHTML).join('') + '</div>';
-    } else {
-      listHtml = '<div class="memo-list">' + visible.map(function(m){
-        return '<div class="memo-item"><span class="memo-date">' + esc(m.date || '') + '</span><div class="memo-body">' + memoRowBody(m) + '</div></div>';
-      }).join('') + '</div>';
-    }
+    // 独立页身份
+    document.title = name + ' · 伞 umbrella';
+    document.body.classList.add('in-album');
 
-    var bgHTML = '';
-    if(bgImg && bgStyle){
-      bgHTML = '<div class="album-view-bg" style="background-image:url(\'' + bgImg + '\')"></div>' +
-               '<div class="album-view-tint" style="background:' + bgStyle + '"></div>';
-    } else if(bgImg){
-      bgHTML = '<div class="album-view-bg" style="background-image:url(\'' + bgImg + '\')"></div>';
-    } else if(bgStyle){
-      bgHTML = '<div class="album-view-bg" style="background:' + bgStyle + '"></div>';
-    }
-
+    // 解析模块
     var mods = [];
     if(album && album.modules && window.PLATFORM_MODULES){
       mods = album.modules.map(function(k){
@@ -451,30 +509,80 @@
         return m ? { def: m, key: k } : null;
       }).filter(Boolean);
     }
-    var modHtml = mods.map(function(m, i){
-      return '<section class="pm-block" data-module="' + m.key + '">' +
-        '<div class="pm-block-head"><span class="pm-num">' + String(i + 1).padStart(2, '0') + '</span><h2>' + esc(m.def.title) + '</h2></div>' +
-        '<div class="pm-body" id="pm-' + m.key + '"></div></section>';
-    }).join('');
+
+    // 构建 hero 背景层
+    var heroBg = '';
+    if(bgImg){ heroBg += '<div class="al-hero-bg" style="background-image:url(\'' + bgImg + '\')"></div>'; }
+    if(bgStyle){ heroBg += '<div class="al-hero-tint" style="background:' + bgStyle + '"></div>'; }
+    heroBg += '<div class="al-hero-scrim"></div>';
+
+    var navItems = [{ key: 'content', title: '内容' }].concat(mods.map(function(m){
+      return { key: m.key, title: m.def.title };
+    }));
 
     viewEl.innerHTML =
-      '<div class="album-view' + (bgImg ? ' has-img' : '') + '"' + (accent ? ' style="--av-accent:' + accent + ';--av-head:' + accent + '"' : '') + '>' + bgHTML +
-        '<div class="album-view-inner">' +
-          '<a class="back-link" href="platform.html">← Platform 总览</a>' +
-          '<div class="av-head"><h1>' + esc(name) + '</h1>' +
-          (desc ? '<p class="page-note">' + esc(desc) + '</p>' : '') + '</div>' +
-          modHtml +
-          '<input class="pl-search" id="pl-search" type="text" placeholder="搜索此档案…" value="' + esc(state.q) + '">' +
-          listHtml +
-          (hasMore ? '<button class="load-more" id="pl-load-more" type="button">加载更多（还有 ' + (list.length - visible.length) + ' 条）</button>' : '') +
+      '<div class="al-page"' + (accent ? ' style="--av-accent:' + accent + ';--av-head:' + accent + '"' : '') + '>' +
+        '<div class="al-hero">' + heroBg +
+          '<div class="al-hero-inner">' +
+            '<a class="back-link" href="platform.html">← Platform 总览</a>' +
+            '<div class="al-hero-body">' +
+              '<span class="al-hero-kicker">' + (unfiled ? 'Platform' : '档案 · ARCHIVE') + '</span>' +
+              '<h1 class="al-hero-title">' + esc(name) + '</h1>' +
+              (desc ? '<p class="al-hero-desc">' + esc(desc) + '</p>' : '') +
+              '<div class="al-hero-meta">' + albumCount(unfiled ? null : albumKey) + ' 条内容 · ' + (layout === 'grid' ? '网格' : '时间线') + '</div>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
+        '<nav class="al-nav" id="al-nav" aria-label="档案导航">' +
+          navItems.map(function(n){ return '<a href="#sec-' + n.key + '" data-sec="' + n.key + '">' + esc(n.title) + '</a>'; }).join('') +
+        '</nav>' +
+        '<section class="al-section" id="sec-content">' +
+          '<div class="as-head"><span class="as-num">01</span><h2>内容</h2></div>' +
+          '<input class="pl-search" id="pl-search" type="text" placeholder="搜索此档案…" value="' + esc(state.q) + '">' +
+          '<div id="album-list"></div>' +
+          '<button class="load-more" id="pl-load-more" type="button" style="display:none;">加载更多</button>' +
+        '</section>' +
+        mods.map(function(m, i){
+          return '<section class="al-section" id="sec-' + m.key + '">' +
+            '<div class="as-head"><span class="as-num">' + String(i + 2).padStart(2, '0') + '</span><h2>' + esc(m.def.title) + '</h2></div>' +
+            '<div class="pm-body" id="pm-' + m.key + '"></div></section>';
+        }).join('') +
       '</div>';
 
+    // 内容列表：只增量刷新，不重建 hero/导航/模块
+    var listEl = document.getElementById('album-list');
+    var moreBtn = document.getElementById('pl-load-more');
+    function refreshList(){
+      var list = filteredMemos(unfiled ? null : albumKey);
+      var visible = list.slice(0, (state.page + 1) * PAGE_SIZE);
+      var hasMore = list.length > visible.length;
+
+      if(list.length === 0){
+        listEl.innerHTML = '<div class="empty-state">' + (state.q ? '没有匹配「' + esc(state.q) + '」的内容' : '这里还没有内容') + '</div>';
+      } else if(layout === 'grid'){
+        listEl.innerHTML = '<div class="memo-grid">' + visible.map(memoCardHTML).join('') + '</div>';
+      } else {
+        listEl.innerHTML = '<div class="memo-list">' + visible.map(function(m){
+          return '<div class="memo-item"><span class="memo-date">' + esc(m.date || '') + '</span><div class="memo-body">' + memoRowBody(m) + '</div></div>';
+        }).join('') + '</div>';
+      }
+
+      if(hasMore){
+        moreBtn.style.display = 'block';
+        moreBtn.textContent = '加载更多（还有 ' + (list.length - visible.length) + ' 条）';
+      } else {
+        moreBtn.style.display = 'none';
+      }
+    }
+    refreshList();
+
+    // 模块只初始化一次
     mods.forEach(function(m){
       var node = document.getElementById('pm-' + m.key);
       if(node) m.def.init(node, album);
     });
 
+    // 搜索：只刷新列表，输入框不失焦
     var search = document.getElementById('pl-search');
     if(search){
       search.addEventListener('input', function(){
@@ -482,29 +590,50 @@
         state.page = 0;
         var url = 'platform.html?album=' + encodeURIComponent(albumKey) + (state.q ? '&q=' + encodeURIComponent(state.q) : '');
         if(window.history && window.history.replaceState){ window.history.replaceState(null, '', url); }
-        renderAlbumView();
+        refreshList();
       });
     }
-    var moreBtn = document.getElementById('pl-load-more');
     if(moreBtn){
       moreBtn.addEventListener('click', function(){
         state.page++;
-        renderAlbumView();
+        refreshList();
       });
     }
-    if(window.__musicWidget){
+
+    // 吸附导航滚动高亮
+    var navLinks = [].slice.call(document.querySelectorAll('#al-nav a'));
+    function spy(){
+      var top = 140;
+      var current = 'content';
+      navLinks.forEach(function(a){
+        var id = a.getAttribute('data-sec');
+        var sec = document.getElementById('sec-' + id);
+        if(sec && sec.getBoundingClientRect().top <= top) current = id;
+      });
+      navLinks.forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-sec') === current); });
+    }
+    var spyTick = false;
+    window.addEventListener('scroll', function(){
+      if(spyTick) return;
+      spyTick = true;
+      requestAnimationFrame(function(){ spy(); spyTick = false; });
+    }, { passive:true });
+    spy();
+
+    function syncAlbumMusic(){
       var session = null;
       try{ session = JSON.parse(sessionStorage.getItem('music_session') || 'null'); }catch(err){}
       var src = albumMusic || 'music/background.mp3';
       var auto = !state.albumAutoDone && !!(session && session.playing);
       var time = (session && session.src === src && typeof session.time === 'number' && isFinite(session.time)) ? session.time : null;
       state.albumAutoDone = true;
-      window.__musicWidget.setSrc(src, auto, time);
+      window.__musicWidget.setSrc(src, auto, time, albumMusic ? name + ' · 档案音乐' : '背景音乐');
     }
+    if(window.__musicWidget) syncAlbumMusic();
+    else window.addEventListener('music-ready', syncAlbumMusic, {once:true});
   }
 })();
 </script>
-<script src="platform-modules.js"></script>
 <script src="theme.js"></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c5f3dfcb5f9d4b40a886b16b5fea24af"}'></script><!-- End Cloudflare Web Analytics -->
 <script src="counter.js"></script>

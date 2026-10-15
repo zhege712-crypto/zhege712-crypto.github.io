@@ -9,7 +9,7 @@
   function esc(s){
     var d = document.createElement('div');
     d.textContent = String(s == null ? '' : s);
-    return d.innerHTML;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function storeKey(prefix, albumId){ return prefix + '_' + albumId; }
   function load(key, fallback){
@@ -113,7 +113,39 @@
     'font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); transition:color 0.2s ease; }' +
   '.gb-card .gb-edit:hover{ color:var(--av-accent, var(--accent-red)); }' +
   '.gb-card .gb-del:hover{ color:var(--accent-red); }' +
-  '.pm-empty{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); padding:26px 0; }';
+  '.pm-empty{ font-family:var(--font-mono); font-size:0.78rem; color:var(--steel); padding:26px 0; }' +
+
+  /* ---- 角色箱 ---- */
+  '.ch-tools{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }' +
+  '.ch-tools button{ padding:6px 14px; background:transparent; border:1px solid var(--fog); border-radius:16px; font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.06em; color:var(--steel); cursor:pointer; transition:border-color 0.25s ease, color 0.25s ease; }' +
+  '.ch-tools button.on{ border-color:var(--av-accent, var(--accent-red)); color:var(--av-accent, var(--accent-red)); }' +
+  '.ch-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:14px; }' +
+  '.ch-card{ display:flex; flex-direction:column; background:var(--white); border:1px solid var(--paper-2); border-radius:12px; overflow:hidden; padding:0; cursor:pointer; text-align:left; transition:transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease; }' +
+  '.ch-card:hover{ transform:translateY(-4px); box-shadow:0 14px 30px rgba(28,28,27,0.10); border-color:var(--fog); }' +
+  '.ch-img{ position:relative; display:flex; align-items:center; justify-content:center; aspect-ratio:1/1; background:var(--paper-2); overflow:hidden; }' +
+  '.ch-img img{ width:100%; height:100%; object-fit:cover; }' +
+  '.ch-img-empty{ font-family:var(--font-display); font-size:2.2rem; color:var(--steel); }' +
+  '.ch-info{ display:flex; flex-direction:column; gap:8px; padding:12px 14px 14px; }' +
+  '.ch-name{ font-family:var(--font-display); font-weight:500; font-size:1.02rem; color:var(--ink); line-height:1.15; }' +
+  '.ch-name i{ display:block; font-family:var(--font-body); font-style:normal; font-weight:400; font-size:0.7rem; color:var(--steel); letter-spacing:0.02em; margin-top:3px; }' +
+  '.ch-stars{ font-size:0.62rem; letter-spacing:1px; color:var(--fog); }' +
+  '.ch-star.on{ color:var(--accent-gold); }' +
+  '.ch-chips{ display:flex; gap:6px; flex-wrap:wrap; }' +
+  '.ch-aff{ font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.05em; color:#faf9f6; padding:2px 8px; border-radius:4px; }' +
+  '.ch-chip{ font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.05em; color:var(--steel); padding:2px 8px; border-radius:4px; background:var(--paper-2); }' +
+  '.ch-overlay{ position:fixed; inset:0; z-index:600; background:rgba(28,28,27,0.92); display:flex; align-items:center; justify-content:center; padding:24px; }' +
+  '.ch-ov-card{ position:relative; display:flex; flex-direction:row; max-width:760px; width:100%; max-height:88vh; background:var(--white); border-radius:14px; overflow:auto; }' +
+  '.ch-ov-img{ width:46%; max-width:360px; object-fit:cover; flex-shrink:0; }' +
+  '.ch-ov-body{ padding:30px 28px; display:flex; flex-direction:column; gap:12px; min-width:0; }' +
+  '.ch-ov-close{ position:absolute; top:14px; right:14px; z-index:1; font-family:var(--font-mono); font-size:0.72rem; color:var(--ink); background:color-mix(in srgb, var(--white) 80%, transparent); border:1px solid var(--fog); padding:7px 13px; border-radius:999px; cursor:pointer; }' +
+  '.ch-ov-name{ font-family:var(--font-display); font-weight:500; font-size:1.6rem; color:var(--ink); line-height:1.1; }' +
+  '.ch-ov-name i{ display:block; font-style:normal; font-weight:400; font-size:0.78rem; color:var(--steel); margin-top:4px; }' +
+  '.ch-ov-stars{ font-size:0.8rem; letter-spacing:2px; color:var(--fog); }' +
+  '.ch-ov-stars .ch-star.on{ color:var(--accent-gold); }' +
+  '.ch-ov-meta{ display:flex; gap:8px; flex-wrap:wrap; }' +
+  '.ch-ov-desc{ font-size:0.92rem; line-height:1.7; color:var(--charcoal); }' +
+  '.ch-ov-quote{ padding:14px 16px; border-left:2px solid var(--av-accent, var(--accent-red)); background:var(--paper); font-family:var(--font-display); font-style:italic; font-size:0.95rem; color:var(--charcoal); }' +
+  '@media (max-width:640px){ .ch-ov-card{ flex-direction:column; } .ch-ov-img{ width:100%; max-width:none; aspect-ratio:16/10; } }';
 
   injectCSS(MODULE_CSS);
 
@@ -470,6 +502,109 @@
         }
       }
         render();
+      }
+    }
+  };
+
+  /* ============================================================
+     角色箱模块（characters）
+     ============================================================ */
+  NS.characters = {
+    key: 'characters',
+    title: '角色',
+    init: function(el, album){
+      var key = storeKey('platform_characters', album.id);
+      var AFF_COLOR = { '兽':'#c25a50', '岩':'#8a7f6a', '木':'#7fa06a', '星':'#6a7fa0', '灵':'#a06a9c', '智':'#5f8ab8' };
+      var list = null;
+      var filterAff = 'all';
+
+      try{
+        var v = localStorage.getItem(key);
+        if(v){ list = JSON.parse(v); }
+      }catch(err){}
+
+      function stars(n){
+        var n2 = Math.max(0, Math.min(6, parseInt(n, 10) || 0));
+        var out = '';
+        for(var i = 0; i < 6; i++){ out += '<span class="ch-star' + (i < n2 ? ' on' : '') + '">★</span>'; }
+        return out;
+      }
+
+      function render(){
+        var rows = list.filter(function(c){ return filterAff === 'all' || c.afflatus === filterAff; });
+        var affs = [];
+        list.forEach(function(c){ if(c.afflatus && affs.indexOf(c.afflatus) === -1) affs.push(c.afflatus); });
+        var tabs = ['<button type="button" data-a="all"' + (filterAff === 'all' ? ' class="on"' : '') + '>全部</button>']
+          .concat(affs.map(function(a){ return '<button type="button" data-a="' + esc(a) + '"' + (filterAff === a ? ' class="on"' : '') + '>' + esc(a) + '</button>'; })).join('');
+
+        el.innerHTML =
+          '<div class="ch-tools">' + tabs + '</div>' +
+          '<div class="ch-grid">' +
+            (rows.length ? rows.map(function(c){
+              var badge = c.afflatus ? '<span class="ch-aff" style="background:' + (AFF_COLOR[c.afflatus] || '#888') + '">' + esc(c.afflatus) + '</span>' : '';
+              return '<button type="button" class="ch-card" data-name="' + esc(c.name) + '">' +
+                '<span class="ch-img">' + (c.portrait ? '<img src="' + esc(c.portrait) + '" alt="' + esc(c.name) + '" loading="lazy">' : '<span class="ch-img-empty">' + esc((c.name || '?').slice(0,1)) + '</span>') + '</span>' +
+                '<span class="ch-info">' +
+                  '<span class="ch-name">' + esc(c.name) + (c.nameEn ? '<i>' + esc(c.nameEn) + '</i>' : '') + '</span>' +
+                  '<span class="ch-stars">' + stars(c.rarity) + '</span>' +
+                  '<span class="ch-chips">' + badge + (c.damage ? '<span class="ch-chip">' + esc(c.damage) + '</span>' : '') + (c.role ? '<span class="ch-chip">' + esc(c.role) + '</span>' : '') + '</span>' +
+                '</span></button>';
+            }).join('') : '<div class="pm-empty">还没有角色数据</div>') +
+          '</div>';
+
+        el.querySelectorAll('.ch-tools button').forEach(function(b){
+          b.addEventListener('click', function(){ filterAff = b.getAttribute('data-a'); render(); });
+        });
+        el.querySelectorAll('.ch-card').forEach(function(card){
+          card.addEventListener('click', function(){
+            var n = card.getAttribute('data-name');
+            var ch = null;
+            for(var i = 0; i < list.length; i++){ if(list[i].name === n){ ch = list[i]; break; } }
+            if(ch) openChar(ch);
+          });
+        });
+      }
+
+      function openChar(c){
+        var ov = document.createElement('div');
+        ov.className = 'ch-overlay';
+        ov.innerHTML =
+          '<div class="ch-ov-card">' +
+            '<button class="ch-ov-close" type="button">关闭</button>' +
+            (c.portrait ? '<img class="ch-ov-img" src="' + esc(c.portrait) + '" alt="' + esc(c.name) + '">' : '') +
+            '<div class="ch-ov-body">' +
+              '<div class="ch-ov-name">' + esc(c.name) + (c.nameEn ? '<i>' + esc(c.nameEn) + '</i>' : '') + '</div>' +
+              '<div class="ch-ov-stars">' + stars(c.rarity) + '</div>' +
+              '<div class="ch-ov-meta">' +
+                (c.afflatus ? '<span class="ch-aff" style="background:' + (AFF_COLOR[c.afflatus] || '#888') + '">' + esc(c.afflatus) + '</span>' : '') +
+                (c.damage ? '<span class="ch-chip">' + esc(c.damage) + '</span>' : '') +
+                (c.role ? '<span class="ch-chip">' + esc(c.role) + '</span>' : '') +
+                (c.faction ? '<span class="ch-chip">' + esc(c.faction) + '</span>' : '') +
+              '</div>' +
+              (c.desc ? '<p class="ch-ov-desc">' + esc(c.desc) + '</p>' : '') +
+              (c.quote ? '<blockquote class="ch-ov-quote">' + esc(c.quote) + '</blockquote>' : '') +
+            '</div>' +
+          '</div>';
+        document.body.appendChild(ov);
+        document.body.style.overflow = 'hidden';
+        function closeChar(){ ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); }
+        function onKey(e){ if(e.key === 'Escape'){ closeChar(); } }
+        ov.querySelector('.ch-ov-close').addEventListener('click', closeChar);
+        ov.addEventListener('click', function(e){ if(e.target === ov) closeChar(); });
+        document.addEventListener('keydown', onKey);
+      }
+
+      function build(){ render(); }
+
+      if(list){ build(); }
+      else{
+        fetch('platform-data/characters_' + album.id + '.json', { cache: 'no-store' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .catch(function(){ return null; })
+          .then(function(data){
+            list = (data && data.characters) ? data.characters : [];
+            build();
+          });
       }
     }
   };

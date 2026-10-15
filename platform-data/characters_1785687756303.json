@@ -1,0 +1,204 @@
+{
+  "characters": [
+    {
+      "name": "星锑",
+      "nameEn": "Regulus",
+      "rarity": 6,
+      "afflatus": "星",
+      "damage": "精神",
+      "role": "输出",
+      "faction": "",
+      "desc": "热爱摇滚的海盗电台主持人，狂放不羁的星属性输出。"
+    },
+    {
+      "name": "红弩箭",
+      "nameEn": "Lilya",
+      "rarity": 6,
+      "afflatus": "星",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "来自芝诺军备的狙击手，后担任基地训练教官。"
+    },
+    {
+      "name": "未锈铠",
+      "nameEn": "A Knight",
+      "rarity": 6,
+      "afflatus": "星",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "追寻主人的无主骑士铠甲，沉默而忠诚的星属性输出。"
+    },
+    {
+      "name": "远旅",
+      "nameEn": "Voyager",
+      "rarity": 6,
+      "afflatus": "星",
+      "damage": "精神",
+      "role": "辅助",
+      "faction": "",
+      "desc": "来自深空的旅行者，优雅的小提琴演奏家。"
+    },
+    {
+      "name": "百夫长",
+      "nameEn": "Centurion",
+      "rarity": 6,
+      "afflatus": "兽",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "驰骋公路的神秘学家赛车手，追求速度与自由。"
+    },
+    {
+      "name": "槲寄生",
+      "nameEn": "Druvis III",
+      "rarity": 6,
+      "afflatus": "木",
+      "damage": "精神",
+      "role": "控制",
+      "faction": "",
+      "desc": "德鲁维斯家族继承人，掌控自然之力的木属性控制。"
+    },
+    {
+      "name": "苏芙比",
+      "nameEn": "Sotheby",
+      "rarity": 6,
+      "afflatus": "木",
+      "damage": "现实",
+      "role": "治疗",
+      "faction": "",
+      "desc": "制药世家出身的神秘学家少女，擅长治疗与毒剂。"
+    },
+    {
+      "name": "兔毛手袋",
+      "nameEn": "Medicine Pocket",
+      "rarity": 6,
+      "afflatus": "星",
+      "damage": "精神",
+      "role": "治疗",
+      "faction": "",
+      "desc": "随身携带缝合兔子的战地医生，可靠的星属性治疗者。"
+    },
+    {
+      "name": "新巴别塔",
+      "nameEn": "Ms. NewBabel",
+      "rarity": 6,
+      "afflatus": "岩",
+      "damage": "现实",
+      "role": "坦克",
+      "faction": "",
+      "desc": "沉默寡言的神秘学家，为同伴筑起守护之壁的岩属性坦克。"
+    },
+    {
+      "name": "泥鯭的士",
+      "nameEn": "An-an Lee",
+      "rarity": 6,
+      "afflatus": "木",
+      "damage": "现实",
+      "role": "辅助",
+      "faction": "",
+      "desc": "香港出租车司机安安，综合型强力辅助。"
+    },
+    {
+      "name": "温妮弗雷德",
+      "nameEn": "Eternity",
+      "rarity": 6,
+      "afflatus": "岩",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "岩属性六星输出，重伤与毒素体系的克星。"
+    },
+    {
+      "name": "梅兰妮",
+      "nameEn": "Melania",
+      "rarity": 6,
+      "afflatus": "星",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "擅长窃取灵光的怪盗，大招流输出核心。"
+    },
+    {
+      "name": "洁西卡",
+      "nameEn": "Jessica",
+      "rarity": 6,
+      "afflatus": "木",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "以小鹿姿态现世的换生灵，天真又危险的木属性输出。"
+    },
+    {
+      "name": "37",
+      "nameEn": "37",
+      "rarity": 6,
+      "afflatus": "灵",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "古希腊版本登场的灵属性六星，痴迷数学的智者。"
+    },
+    {
+      "name": "曲娘",
+      "nameEn": "Jiu Niangzi",
+      "rarity": 6,
+      "afflatus": "智",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "贺岁登场的智属性六星，豪爽洒脱的酒客。"
+    },
+    {
+      "name": "露西",
+      "nameEn": "Lucy",
+      "rarity": 6,
+      "afflatus": "智",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "周年庆限定智属性六星，超强现实伤害核心。"
+    },
+    {
+      "name": "伊索尔德",
+      "nameEn": "Isolde",
+      "rarity": 6,
+      "afflatus": "智",
+      "damage": "现实",
+      "role": "辅助",
+      "faction": "",
+      "desc": "2.0版本登场的智属性六星，以燃烧状态强化伤害。"
+    },
+    {
+      "name": "卡卡尼亚",
+      "nameEn": "Kakania",
+      "rarity": 6,
+      "afflatus": "灵",
+      "damage": "现实",
+      "role": "辅助",
+      "faction": "",
+      "desc": "温柔的精神分析师，灵属性强力辅助。"
+    },
+    {
+      "name": "塞梅尔维斯",
+      "nameEn": "Semmelweis",
+      "rarity": 6,
+      "afflatus": "灵",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "1.7「山麓的回音」版本登场的灵属性六星输出。"
+    },
+    {
+      "name": "可燃点",
+      "nameEn": "Spathodea",
+      "rarity": 6,
+      "afflatus": "兽",
+      "damage": "现实",
+      "role": "输出",
+      "faction": "",
+      "desc": "1.5「复兴！乌卢鲁运动会」登场的兽属性六星输出。"
+    }
+  ]
+}

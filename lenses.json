@@ -9,55 +9,53 @@
     "elements": 13,
     "groups": 11,
     "blades": 7,
-    "special": [
-      "非球面镜片",
-      "STM 步进马达"
-    ],
     "photo": "lenses/rf24105stm_line.png",
     "structure": [
       {
-        "label": "前组",
         "type": "convex",
         "elements": 3
       },
       {
-        "label": "变倍组",
         "type": "concave",
         "elements": 3
       },
       {
-        "label": "非球面",
         "type": "aspherical",
         "elements": 1
       },
       {
-        "label": "光圈",
         "type": "iris"
       },
       {
-        "label": "后组",
         "type": "convex",
         "elements": 5
       }
-    ],
-    "story": {
-      "title": "一支陪我走遍城市的镜头",
-      "body": "它是我入手的第一支 RF 变焦。24mm 端足够装下整条街，105mm 又能把远处的钟楼拉到眼前。\n\n白天扫街，夜晚拍建筑，f/4 的光圈不算大，却刚好够用。轻，是它最大的优点——背着它走了很多路，从不觉得累赘。\n\n后来镜头越来越多，但它始终是出门时的默认选择。",
-      "date": "2025-08"
-    },
-    "journal": [
+    ]
+  },
+  {
+    "id": "rf5018stm",
+    "name": "RF 50mm f/1.8 STM",
+    "make": "Canon",
+    "focal": "50mm",
+    "aperture": "f/1.8",
+    "type": "prime",
+    "elements": 6,
+    "groups": 5,
+    "blades": 7,
+    "photo": "lenses/rf5018stm_line.png",
+    "structure": [
       {
-        "photo": "photos/hklv.png",
-        "text": "香港街头，24mm 端扫街，快门轻快。",
-        "date": "2026-01-01"
+        "type": "convex",
+        "elements": 2
       },
       {
-        "photo": "photos/xianzhonglou.png",
-        "text": "西安钟楼，105mm 端长焦压缩，夜色温柔。",
-        "date": "2025-08-01"
+        "type": "iris"
+      },
+      {
+        "type": "convex",
+        "elements": 4
       }
-    ],
-    "photos": []
+    ]
   },
   {
     "id": "rf3518stm",
@@ -69,40 +67,20 @@
     "elements": 11,
     "groups": 9,
     "blades": 9,
-    "special": [
-      "非球面镜片",
-      "0.5× 微距"
-    ],
     "photo": "lenses/rf3518stm_line.png",
     "structure": [
       {
-        "label": "前组",
         "type": "convex",
         "elements": 3
       },
       {
-        "label": "光圈",
         "type": "iris"
       },
       {
-        "label": "后组",
         "type": "convex",
         "elements": 8
       }
-    ],
-    "story": {
-      "title": "会拍照的显微镜",
-      "body": "0.5 倍的放大倍率，让它不只是一支人文镜头。\n\n贴近一朵花、一根羽毛，会发现另一个世界——那些平时看不见的纹理，在取景器里纤毫毕现。",
-      "date": "2025-11"
-    },
-    "journal": [
-      {
-        "photo": "photos/hongshanbirds01.png",
-        "text": "35mm 微距，0.5× 放大拍羽毛的纹理。",
-        "date": "2025-11-30"
-      }
-    ],
-    "photos": []
+    ]
   },
   {
     "id": "rf852stm",
@@ -114,39 +92,19 @@
     "elements": 11,
     "groups": 9,
     "blades": 9,
-    "special": [
-      "0.5× 微距",
-      "STM 步进马达"
-    ],
     "photo": "lenses/rf852stm_line.png",
     "structure": [
       {
-        "label": "前组",
         "type": "convex",
         "elements": 3
       },
       {
-        "label": "光圈",
         "type": "iris"
       },
       {
-        "label": "后组",
         "type": "convex",
         "elements": 8
       }
-    ],
-    "story": {
-      "title": "人像与微距之间",
-      "body": "85mm 是经典的人像焦段，而它又多了 0.5 倍的微距。\n\n拍人时，f/2 的焦外像融化的奶油；拍物时，它又能凑得很近。一支镜头，两种性格。",
-      "date": "2025-11"
-    },
-    "journal": [
-      {
-        "photo": "photos/V4A9905-1.png",
-        "text": "85mm 人像，奶油般的前景虚化。",
-        "date": "2025-11-30"
-      }
-    ],
-    "photos": []
+    ]
   }
 ]

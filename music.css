@@ -97,6 +97,9 @@
 }
 
 /* 纸纹噪点（全站背景质感） */
+.music-caption{ position:absolute; right:0; bottom:calc(100% + 24px); width:max-content; max-width:min(220px,calc(100vw - 32px)); padding:10px 14px; background:var(--white); color:var(--ink); border:1px solid var(--fog); border-radius:6px; font-size:0.75rem; line-height:1.6; pointer-events:none; visibility:hidden; }
+.music-box:hover .music-caption, .music-box:focus-within .music-caption, .music-box.volume-open .music-caption{ visibility:visible; }
+
 body::after{
   content:'';
   position:fixed; inset:0; z-index:-1; pointer-events:none;

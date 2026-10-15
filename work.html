@@ -238,8 +238,8 @@
     </div>
   </div>
   <div class="gallery-wrap" id="gallery-wrap">
-    <div class="lens-section" id="lens-section"></div>
     <div class="photo-stage" id="photo-stage"></div>
+    <div class="lens-section" id="lens-section" role="region" aria-label="镜头图片" style="margin-top:80px;margin-bottom:0;"></div>
   </div>
 </div>
 <footer>
@@ -268,7 +268,7 @@
   var layouts = null;
   var state = { p: 0, raf: null, ready: false };
 
-  function esc(s){ var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML; }
+  function esc(s){ var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
   function lerp(a, b, t){ return a + (b - a) * t; }
 
   function colsFor(W){
@@ -341,6 +341,7 @@
 
   function setP(p){
     state.p = Math.max(0, Math.min(1, p));
+    try{ localStorage.setItem('workView', String(state.p)); }catch(err){}
     render(state.p);
     thumb.style.left = lerp(gridLabel.offsetLeft + gridLabel.offsetWidth / 2, wallLabel.offsetLeft + wallLabel.offsetWidth / 2, state.p) + 'px';
     toggle.setAttribute('aria-valuenow', Math.round(state.p * 100));
@@ -455,12 +456,13 @@
 
     window.__photos = { list: photos };
 
-    var saved = localStorage.getItem('workView');
+    var saved = null;
+    try{ saved = localStorage.getItem('workView'); }catch(err){}
     var q = new URLSearchParams(window.location.search).get('view');
     if(q !== null && !isNaN(parseFloat(q))){
       state.p = Math.max(0, Math.min(1, parseFloat(q)));
     } else {
-      state.p = saved === 'wall' ? 1 : 0;
+      state.p = saved === 'wall' ? 1 : Math.max(0, Math.min(1, parseFloat(saved) || 0));
     }
 
     computeLayouts();

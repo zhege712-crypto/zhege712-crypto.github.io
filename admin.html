@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -241,6 +241,65 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
   font-size: 0.75rem;
   margin-top: 12px;
   min-height: 1.5em;
+}
+
+/* ===== 现代化后台布局 ===== */
+.content-wrapper{ padding-left:276px; }
+.content-wrapper .wrap{ max-width:720px; margin:0; }
+
+.ad-sidebar{
+  position:fixed; left:24px; top:24px; width:224px; z-index:90;
+  max-height:calc(100vh - 220px); overflow-y:auto;
+  background:var(--white); border:1px solid var(--paper-2); border-radius:14px;
+  padding:18px 14px; display:flex; flex-direction:column; gap:14px;
+  box-shadow:0 10px 30px rgba(28,28,27,0.05);
+}
+.ad-brand{ font-family:var(--font-display); font-weight:500; font-size:1.05rem; padding:0 6px; }
+.ad-conn{
+  font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); line-height:1.5;
+  padding:8px 10px; border-radius:8px; background:var(--paper); border:1px solid var(--paper-2);
+  word-break:break-all;
+}
+.ad-conn.on{ color:#2b6b3a; background:#e6f2e8; border-color:#cfe6d2; }
+.ad-conn.err{ color:var(--accent-red); background:#f7e6e6; border-color:#f0cccc; }
+.ad-nav{ display:flex; flex-direction:column; gap:2px; }
+.ad-nav a{
+  display:block; padding:8px 10px; border-radius:8px;
+  font-size:0.82rem; color:var(--charcoal);
+  transition:background 0.2s ease, color 0.2s ease;
+}
+.ad-nav a:hover{ background:var(--paper-2); }
+.ad-nav a.active{ background:var(--paper-2); color:var(--ink); font-weight:600; }
+.ad-logout{
+  margin-top:auto; padding:9px; border:1px solid var(--accent-red); border-radius:8px;
+  background:transparent; color:var(--accent-red); font-family:var(--font-mono); font-size:0.72rem; cursor:pointer;
+  transition:background 0.2s ease, color 0.2s ease;
+}
+.ad-logout:hover{ background:var(--accent-red); color:var(--white); }
+
+.panel{ border-radius:12px; box-shadow:0 4px 14px rgba(28,28,27,0.03); scroll-margin-top:24px; }
+.panel h2{ padding-bottom:12px; border-bottom:1px solid var(--paper-2); }
+
+/* 角色管理 */
+.char-item{ display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--paper-2); }
+.char-item img{ width:48px; height:48px; object-fit:cover; border-radius:8px; background:var(--paper-2); flex-shrink:0; }
+.ci-ph{ width:48px; height:48px; border-radius:8px; background:var(--paper-2); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.2rem; color:var(--steel); flex-shrink:0; }
+.ci-name{ font-size:0.88rem; }
+.ci-meta{ font-family:var(--font-mono); font-size:0.66rem; color:var(--steel); display:block; margin-top:2px; }
+.char-form{ background:var(--paper); border:1px solid var(--paper-2); border-radius:10px; padding:18px 20px; margin-top:18px; }
+.char-form textarea{ min-height:90px; }
+.char-form .cf-actions{ display:flex; gap:10px; margin-top:18px; }
+.char-form .cf-actions button{ margin-top:0; flex:1; }
+.char-form .mi-f-cancel{ background:transparent; color:var(--charcoal); border:1px solid var(--fog); }
+.char-form .mi-f-cancel:hover{ background:var(--paper-2); }
+
+@media (max-width:960px){
+  .content-wrapper{ padding-left:0; }
+  .content-wrapper .wrap{ max-width:640px; margin:0 auto; }
+  .ad-sidebar{ position:static; width:auto; max-height:none; margin-bottom:20px; }
+  .ad-nav{ flex-direction:row; flex-wrap:wrap; gap:6px; }
+  .ad-nav a{ border:1px solid var(--paper-2); }
+  .ad-logout{ margin-top:6px; }
 }
 </style>
 </head>
@@ -518,20 +577,10 @@ button:disabled{ background:var(--fog); cursor:not-allowed; }
         <input type="number" id="ln-blades" min="1" placeholder="7">
       </div>
     </div>
-    <label>特殊镜片 / 技术（逗号分隔）</label>
-    <input type="text" id="ln-special" placeholder="非球面镜片, STM 步进马达">
-    <label>产品图（可选，上传后前端自动转线稿）</label>
+    <label>产品图（可选）</label>
     <input type="file" id="ln-photofile" accept="image/*">
     <label>镜片结构（JSON，可选；留空按类型自动生成）</label>
-    <textarea id="ln-structure" placeholder='[{"label":"前组","type":"convex","elements":3},{"label":"光圈","type":"iris"},{"label":"后组","type":"convex","elements":5}]'></textarea>
-    <label>镜头故事 · 标题（可选）</label>
-    <input type="text" id="ln-story-title" placeholder="一支陪我走遍城市的镜头">
-    <label>镜头故事 · 正文（可选，空行分段）</label>
-    <textarea id="ln-story-body" placeholder="第一段故事...&#10;&#10;第二段故事..."></textarea>
-    <label>镜头故事 · 日期（可选，如 2025-08）</label>
-    <input type="text" id="ln-story-date" placeholder="2025-08">
-    <label>手账条目（JSON，可选）</label>
-    <textarea id="ln-journal" placeholder='[{"photo":"photos/xx.png","text":"...","date":"2026-01-01"}]'></textarea>
+    <textarea id="ln-structure" placeholder='[{"type":"convex","elements":3},{"type":"iris"},{"type":"convex","elements":5}]'></textarea>
     <button id="lens-add-btn">新建镜头</button>
     <div class="status" id="lens-status"></div>
     <label style="margin-top:26px;">已有镜头</label>
@@ -670,13 +719,8 @@ var els = {
   lnElements: document.getElementById('ln-elements'),
   lnGroups: document.getElementById('ln-groups'),
   lnBlades: document.getElementById('ln-blades'),
-  lnSpecial: document.getElementById('ln-special'),
   lnPhotofile: document.getElementById('ln-photofile'),
   lnStructure: document.getElementById('ln-structure'),
-  lnJournal: document.getElementById('ln-journal'),
-  lnStoryTitle: document.getElementById('ln-story-title'),
-  lnStoryBody: document.getElementById('ln-story-body'),
-  lnStoryDate: document.getElementById('ln-story-date'),
   lnBtn: document.getElementById('lens-add-btn'),
   lnStatus: document.getElementById('lens-status')
 };
@@ -746,7 +790,7 @@ function ghRequest(path, options, owner, repo, token){
 function escapeHtml(s){
   var d = document.createElement('div');
   d.textContent = s;
-  return d.innerHTML;
+  return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 
@@ -1966,6 +2010,8 @@ async function deleteAlbum(id){
 
     var remaining = albums.filter(function(a){ return String(a.id) !== String(id); });
 
+    // 先迁移内容；失败时保留档案，避免内容指向已删除的档案。
+    await unassignMemos(id);
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(remaining, null, 2))));
     var putRes = await ghRequest('albums.json', {
       method: 'PUT',
@@ -1973,7 +2019,6 @@ async function deleteAlbum(id){
     }, owner, repo, token);
     if(!putRes.ok){ throw new Error('更新 albums.json 失败'); }
 
-    await unassignMemos(id);
     setAlManageStatus('已删除', 'ok');
     await loadAlbumManageList();
     await loadMemoManageList();
@@ -1988,9 +2033,9 @@ async function unassignMemos(albumId){
   var owner = els.owner.value.trim();
   var repo = els.repo.value.trim();
   var token = els.token.value.trim();
-  try{
     var getRes = await ghRequest('memos.json', {}, owner, repo, token);
-    if(!getRes.ok) return;
+    if(getRes.status === 404) return;
+    if(!getRes.ok) throw new Error('读取内容失败，档案尚未删除，请重试');
     var fileData = await getRes.json();
     var sha = fileData.sha;
     var memos = JSON.parse(decodeURIComponent(escape(atob(fileData.content))));
@@ -2002,11 +2047,11 @@ async function unassignMemos(albumId){
     if(!changed) return;
 
     var newContentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(memos, null, 2))));
-    await ghRequest('memos.json', {
+    var putRes = await ghRequest('memos.json', {
       method: 'PUT',
       body: JSON.stringify({ message: '内容移入未归类', content: newContentB64, sha: sha })
     }, owner, repo, token);
-  }catch(e){}
+    if(!putRes.ok) throw new Error('内容移入未归类失败，档案尚未删除，请重试');
 }
 
 // ============================================================
@@ -2145,7 +2190,7 @@ async function uploadLensPhoto(file, owner, repo, token){
 }
 
 function resetLensForm(){
-  ['ln-name','ln-focal','ln-aperture','ln-elements','ln-groups','ln-blades','ln-special','ln-structure','ln-story-title','ln-story-body','ln-story-date','ln-journal'].forEach(function(id){
+  ['ln-name','ln-focal','ln-aperture','ln-elements','ln-groups','ln-blades','ln-structure'].forEach(function(id){
     document.getElementById(id).value = '';
   });
   els.lnMake.value = 'Canon';
@@ -2162,12 +2207,7 @@ function fillLensForm(l){
   els.lnElements.value = l.elements || '';
   els.lnGroups.value = l.groups || '';
   els.lnBlades.value = l.blades || '';
-  els.lnSpecial.value = (l.special || []).join(', ');
   els.lnStructure.value = l.structure ? JSON.stringify(l.structure) : '';
-  els.lnStoryTitle.value = (l.story && l.story.title) || '';
-  els.lnStoryBody.value = (l.story && l.story.body) || '';
-  els.lnStoryDate.value = (l.story && l.story.date) || '';
-  els.lnJournal.value = l.journal ? JSON.stringify(l.journal) : '';
 }
 
 els.lnBtn.addEventListener('click', async function(){
@@ -2181,18 +2221,6 @@ els.lnBtn.addEventListener('click', async function(){
     var photo = '';
     if(photoFile){ photo = await uploadLensPhoto(photoFile, owner, repo, token); }
     var structure = parseJSONField(els.lnStructure);
-    var journal = parseJSONField(els.lnJournal);
-    var storyTitle = els.lnStoryTitle.value.trim();
-    var storyBody = els.lnStoryBody.value.trim();
-    var storyDate = els.lnStoryDate.value.trim();
-    var story = null;
-    if(storyTitle || storyBody){
-      story = {};
-      if(storyTitle) story.title = storyTitle;
-      if(storyBody) story.body = storyBody;
-      if(storyDate) story.date = storyDate;
-    }
-
     var lens = {
       name: name,
       make: els.lnMake.value.trim() || 'Canon',
@@ -2201,13 +2229,10 @@ els.lnBtn.addEventListener('click', async function(){
       type: els.lnType.value,
       elements: parseInt(els.lnElements.value, 10) || 0,
       groups: parseInt(els.lnGroups.value, 10) || 0,
-      blades: parseInt(els.lnBlades.value, 10) || 0,
-      special: (els.lnSpecial.value || '').split(/[,，]/).map(function(s){ return s.trim(); }).filter(Boolean)
+      blades: parseInt(els.lnBlades.value, 10) || 0
     };
     if(photo) lens.photo = photo;
     if(structure) lens.structure = structure;
-    if(story) lens.story = story;
-    if(journal) lens.journal = journal;
 
     var lenses = await fetchLenses(owner, repo, token);
     if(editingLensId){
@@ -2286,6 +2311,266 @@ async function deleteLens(id){
 }
 
 document.getElementById('refresh-lens-btn').addEventListener('click', loadLensManageList);
+
+// ============================================================
+// 现代化：侧边栏 · 连接状态 · 退出登录 · 角色管理（⑪）
+// ============================================================
+(function(){
+  function esc(s){ var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+  // ---------- ⑪ 角色管理面板 ----------
+  var wrap = document.querySelector('.content-wrapper .wrap');
+  if(wrap){
+    var p = document.createElement('div');
+    p.className = 'panel'; p.id = 'panel-11';
+    p.innerHTML =
+      '<h2>⑪ 管理角色</h2>' +
+      '<div class="hint" style="margin-top:0;">角色存于 platform-data/characters_&lt;档案id&gt;.json，前台由「角色箱」模块读取（在 ⑨ 管理档案里勾选启用）。</div>' +
+      '<label>档案</label>' +
+      '<div class="row" style="align-items:flex-end;">' +
+        '<div style="flex:2; min-width:180px;"><select id="char-album"></select></div>' +
+        '<div><button id="char-load" type="button" style="margin-top:0;">加载</button></div>' +
+        '<div><button id="char-seed" type="button" style="margin-top:0; background:var(--accent-cobalt);">导入种子数据</button></div>' +
+      '</div>' +
+      '<div class="status" id="char-status"></div>' +
+      '<div id="char-list" style="margin-top:18px;"></div>' +
+      '<button id="char-add" type="button" style="background:var(--accent-cobalt);">＋ 新增角色</button>' +
+      '<div id="char-form"></div>';
+    wrap.appendChild(p);
+  }
+
+  // ---------- 侧边栏 ----------
+  var cw = document.querySelector('.content-wrapper');
+  if(cw){
+    var aside = document.createElement('aside');
+    aside.className = 'ad-sidebar';
+    aside.innerHTML =
+      '<div class="ad-brand">伞 · 后台</div>' +
+      '<div class="ad-conn" id="ad-conn">未连接</div>' +
+      '<nav class="ad-nav" id="ad-nav"></nav>' +
+      '<button class="ad-logout" id="ad-logout" type="button">退出登录</button>';
+    cw.insertBefore(aside, cw.firstChild);
+    var nav = document.getElementById('ad-nav');
+    document.querySelectorAll('.content-wrapper .panel').forEach(function(panel, i){
+      var h = panel.querySelector('h2'); if(!h) return;
+      if(!panel.id) panel.id = 'panel-' + (i + 1);
+      var a = document.createElement('a');
+      a.href = '#' + panel.id; a.textContent = h.textContent.trim();
+      nav.appendChild(a);
+    });
+    document.getElementById('ad-logout').addEventListener('click', function(){
+      sessionStorage.removeItem('admin_authenticated');
+      location.reload();
+    });
+    var navLinks = [].slice.call(nav.children);
+    var spyTick = false;
+    window.addEventListener('scroll', function(){
+      if(spyTick) return; spyTick = true;
+      requestAnimationFrame(function(){
+        var cur = null;
+        navLinks.forEach(function(a){
+          var sec = document.getElementById(a.getAttribute('href').slice(1));
+          if(sec && sec.getBoundingClientRect().top <= 120) cur = a;
+        });
+        navLinks.forEach(function(a){ a.classList.toggle('active', a === cur); });
+        spyTick = false;
+      });
+    }, { passive:true });
+  }
+
+  // ---------- 连接状态 ----------
+  var connEl = document.getElementById('ad-conn');
+  function refreshConn(){
+    if(!connEl) return;
+    var o = els.owner.value.trim(), r = els.repo.value.trim(), t = els.token.value.trim();
+    if(!o || !r || !t){ connEl.textContent = '未连接'; connEl.className = 'ad-conn'; return; }
+    connEl.textContent = '检查中…';
+    ghRequest('', {}, o, r, t).then(function(res){
+      if(res.ok){ connEl.textContent = o + '/' + r; connEl.className = 'ad-conn on'; }
+      else { connEl.textContent = '连接失败'; connEl.className = 'ad-conn err'; }
+    }).catch(function(){ connEl.textContent = '连接失败'; connEl.className = 'ad-conn err'; });
+  }
+  ['gh-owner','gh-repo','gh-token'].forEach(function(id){
+    var inp = document.getElementById(id);
+    if(inp) inp.addEventListener('blur', refreshConn);
+  });
+  refreshConn();
+
+  // ---------- 角色 CRUD ----------
+  var CHAR_KEY = '__char_admin_album';
+  function creds(){ return [els.owner.value.trim(), els.repo.value.trim(), els.token.value.trim()]; }
+  function charPath(id){ return 'platform-data/characters_' + id + '.json'; }
+  function charStatus(t, type){ var s = document.getElementById('char-status'); if(!s) return; s.textContent = t; s.className = 'status show ' + type; }
+  var AFFS = ['兽','岩','木','星','灵','智'];
+  var DMGS = ['现实','精神'];
+  var ROLES = ['输出','治疗','辅助','控制','支援'];
+
+  async function charFetch(id){
+    var c = creds();
+    var res = await ghRequest(charPath(id), {}, c[0], c[1], c[2]);
+    if(res.ok){ var fd = await res.json(); return { sha: fd.sha, chars: (JSON.parse(decodeURIComponent(escape(atob(fd.content)))).characters) || [] }; }
+    if(res.status === 404) return { sha: null, chars: [] };
+    throw new Error('读取角色失败');
+  }
+  async function charSave(id, chars, sha, msg){
+    var c = creds();
+    var body = { message: msg, content: btoa(unescape(encodeURIComponent(JSON.stringify({ characters: chars }, null, 2)))) };
+    if(sha) body.sha = sha;
+    var res = await ghRequest(charPath(id), { method: 'PUT', body: JSON.stringify(body) }, c[0], c[1], c[2]);
+    if(!res.ok) throw new Error('保存角色失败：' + (await res.text()));
+  }
+
+  async function loadCharAlbums(){
+    var sel = document.getElementById('char-album'); if(!sel) return;
+    var c = creds();
+    if(!c[0]||!c[1]||!c[2]){ sel.innerHTML = '<option value="">先填①仓库信息</option>'; return; }
+    try{
+      var albums = await fetchAlbums(c[0], c[1], c[2]);
+      sel.innerHTML = '<option value="">选择档案…</option>' + albums.map(function(a){ return '<option value="' + esc(a.id) + '">' + esc(a.name) + '</option>'; }).join('');
+      var saved = localStorage.getItem(CHAR_KEY);
+      var withChar = null;
+      albums.forEach(function(a){ if(!withChar && a.modules && a.modules.indexOf('characters') !== -1) withChar = a; });
+      if(saved && albums.some(function(a){ return String(a.id) === saved; })) sel.value = saved;
+      else if(withChar) sel.value = withChar.id;
+    }catch(e){ sel.innerHTML = '<option value="">加载档案失败</option>'; }
+  }
+
+  async function loadCharList(){
+    var c = creds(); var sel = document.getElementById('char-album'); var listEl = document.getElementById('char-list');
+    if(!c[0]||!c[1]||!c[2]){ listEl.innerHTML = '<div class="hint">先填好①的仓库信息</div>'; return; }
+    var id = sel.value;
+    if(!id){ listEl.innerHTML = '<div class="hint">请选择档案</div>'; return; }
+    localStorage.setItem(CHAR_KEY, id);
+    listEl.innerHTML = '<div class="hint">加载中…</div>';
+    try{
+      var data = await charFetch(id);
+      window.__charCache = data;
+      var chars = data.chars;
+      if(!chars.length){ listEl.innerHTML = '<div class="hint">还没有角色，点「导入种子数据」或「＋ 新增角色」。</div>'; return; }
+      listEl.innerHTML = '';
+      chars.forEach(function(ch, i){
+        var row = document.createElement('div');
+        row.className = 'char-item';
+        row.innerHTML =
+          (ch.portrait ? '<img src="' + esc(ch.portrait) + '" alt="">' : '<span class="ci-ph">' + esc((ch.name || '?').slice(0,1)) + '</span>') +
+          '<div style="flex:1; min-width:0;"><div class="ci-name">' + esc(ch.name) + (ch.nameEn ? ' · ' + esc(ch.nameEn) : '') + '</div>' +
+          '<span class="ci-meta">' + esc(ch.rarity) + '★ · ' + esc(ch.afflatus || '') + ' · ' + esc(ch.damage || '') + (ch.role ? ' · ' + esc(ch.role) : '') + '</span></div>' +
+          '<button class="mi-edit" type="button" data-i="' + i + '" style="margin-top:0;">编辑</button>' +
+          '<button class="mi-del" type="button" data-i="' + i + '" style="margin-top:0;">删除</button>';
+        row.querySelector('.mi-edit').addEventListener('click', function(){ openCharForm(ch, i); });
+        row.querySelector('.mi-del').addEventListener('click', function(){ deleteChar(i); });
+        listEl.appendChild(row);
+      });
+    }catch(e){ listEl.innerHTML = '<div class="hint">加载失败：' + esc(e.message) + '</div>'; }
+  }
+
+  function openCharForm(ch, i){
+    var formEl = document.getElementById('char-form');
+    var isEdit = (ch != null);
+    ch = ch || { name:'', nameEn:'', rarity:'5', afflatus:'', damage:'', role:'', faction:'', desc:'', quote:'', portrait:'' };
+    formEl.innerHTML =
+      '<div class="char-form">' +
+        '<label>名称（必填）</label><input type="text" id="cf-name" value="' + esc(ch.name) + '">' +
+        '<label>英文名</label><input type="text" id="cf-nameen" value="' + esc(ch.nameEn || '') + '">' +
+        '<div class="row">' +
+          '<div><label>稀有度</label><select id="cf-rarity">' + [6,5,4,3].map(function(n){ return '<option value="' + n + '"' + (String(ch.rarity) === String(n) ? ' selected' : '') + '>' + n + '★</option>'; }).join('') + '</select></div>' +
+          '<div><label>属性</label><select id="cf-aff">' + AFFS.map(function(a){ return '<option value="' + a + '"' + (ch.afflatus === a ? ' selected' : '') + '>' + a + '</option>'; }).join('') + '</select></div>' +
+          '<div><label>伤害</label><select id="cf-dmg">' + DMGS.map(function(d){ return '<option value="' + d + '"' + (ch.damage === d ? ' selected' : '') + '>' + d + '</option>'; }).join('') + '</select></div>' +
+        '</div>' +
+        '<div class="row">' +
+          '<div><label>定位</label><input type="text" id="cf-role" list="cf-roles" value="' + esc(ch.role || '') + '"><datalist id="cf-roles">' + ROLES.map(function(r){ return '<option value="' + r + '">'; }).join('') + '</datalist></div>' +
+          '<div><label>阵营（可选）</label><input type="text" id="cf-faction" value="' + esc(ch.faction || '') + '"></div>' +
+        '</div>' +
+        '<label>简介（可选）</label><textarea id="cf-desc">' + esc(ch.desc || '') + '</textarea>' +
+        '<label>台词（可选）</label><textarea id="cf-quote">' + esc(ch.quote || '') + '</textarea>' +
+        '<label>画像（可选，上传后自动写入）</label><input type="file" id="cf-portrait" accept="image/*">' +
+        '<div class="cf-actions"><button id="cf-save" type="button">' + (isEdit ? '保存' : '新增') + '</button><button class="mi-f-cancel" id="cf-cancel" type="button">取消</button></div>' +
+      '</div>';
+    formEl.style.display = 'block';
+    document.getElementById('cf-cancel').addEventListener('click', function(){ formEl.style.display = 'none'; formEl.innerHTML = ''; });
+    document.getElementById('cf-save').addEventListener('click', async function(){
+      var name = document.getElementById('cf-name').value.trim();
+      if(!name){ charStatus('名称不能为空', 'err'); return; }
+      var c = creds();
+      if(!c[0]||!c[1]||!c[2]){ charStatus('请先填①仓库信息', 'err'); return; }
+      var id = document.getElementById('char-album').value;
+      if(!id){ charStatus('请选择档案', 'err'); return; }
+      charStatus('保存中…', 'loading');
+      try{
+        var data = await charFetch(id);
+        var obj = {
+          name: name,
+          nameEn: document.getElementById('cf-nameen').value.trim(),
+          rarity: parseInt(document.getElementById('cf-rarity').value, 10),
+          afflatus: document.getElementById('cf-aff').value,
+          damage: document.getElementById('cf-dmg').value,
+          role: document.getElementById('cf-role').value.trim(),
+          faction: document.getElementById('cf-faction').value.trim(),
+          desc: document.getElementById('cf-desc').value.trim(),
+          quote: document.getElementById('cf-quote').value.trim()
+        };
+        var file = document.getElementById('cf-portrait').files && document.getElementById('cf-portrait').files[0];
+        if(file){
+          var b64 = await fileToBase64(file);
+          var safe = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+          var imgPath = 'platform-data/img/' + safe;
+          var ir = await ghRequest(imgPath, { method:'PUT', body: JSON.stringify({ message:'上传角色画像', content: b64 }) }, c[0], c[1], c[2]);
+          if(!ir.ok) throw new Error('画像上传失败');
+          obj.portrait = imgPath;
+        } else if(isEdit && ch.portrait){ obj.portrait = ch.portrait; }
+
+        var chars = data.chars.slice();
+        if(isEdit){ chars[i] = obj; } else { chars.push(obj); }
+        await charSave(id, chars, data.sha, (isEdit ? '编辑角色: ' : '新增角色: ') + name);
+        formEl.style.display = 'none'; formEl.innerHTML = '';
+        charStatus('已保存', 'ok');
+        loadCharList();
+      }catch(e){ charStatus('出错：' + e.message, 'err'); }
+    });
+  }
+
+  async function deleteChar(i){
+    var c = creds(); var id = document.getElementById('char-album').value;
+    if(!c[0]||!c[1]||!c[2]){ charStatus('请先填①仓库信息', 'err'); return; }
+    if(!id){ charStatus('请选择档案', 'err'); return; }
+    var cached = window.__charCache;
+    var name = (cached && cached.chars[i]) ? cached.chars[i].name : '';
+    if(!confirm('删除角色「' + name + '」？')) return;
+    charStatus('删除中…', 'loading');
+    try{
+      var d = await charFetch(id);
+      var chars = d.chars.slice();
+      chars.splice(i, 1);
+      await charSave(id, chars, d.sha, '删除角色: ' + name);
+      charStatus('已删除', 'ok');
+      loadCharList();
+    }catch(e){ charStatus('出错：' + e.message, 'err'); }
+  }
+
+  document.getElementById('char-load').addEventListener('click', loadCharList);
+  document.getElementById('char-add').addEventListener('click', function(){ openCharForm(null, -1); });
+  document.getElementById('char-album').addEventListener('change', loadCharList);
+  document.getElementById('char-seed').addEventListener('click', async function(){
+    var c = creds(); var id = document.getElementById('char-album').value;
+    if(!c[0]||!c[1]||!c[2]){ charStatus('请先填①仓库信息', 'err'); return; }
+    if(!id){ charStatus('请选择档案', 'err'); return; }
+    charStatus('导入种子数据…', 'loading');
+    try{
+      var seedRes = await fetch('platform-data/characters_seed.json', { cache:'no-store' });
+      if(!seedRes.ok) throw new Error('找不到种子文件 characters_seed.json');
+      var seed = await seedRes.json();
+      var chars = (seed && seed.characters) || [];
+      if(!chars.length) throw new Error('种子为空');
+      var d = await charFetch(id);
+      await charSave(id, chars, d.sha, '导入角色种子数据 (' + chars.length + ' 个)');
+      charStatus('已导入 ' + chars.length + ' 个角色', 'ok');
+      loadCharList();
+    }catch(e){ charStatus('出错：' + e.message, 'err'); }
+  });
+
+  loadCharAlbums();
+})();
+
 </script>
 
 </body>

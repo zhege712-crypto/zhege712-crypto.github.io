@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "description": "伞 / 视觉作品集 — 静态个人站(GitHub Pages)",
   "scripts": {
-    "dev": "vite --port 7100 --host"
+    "dev": "vite --port 7100 --host",
+    "test": "node --test tests/*.test.cjs"
   },
   "devDependencies": {
     "vite": "^5.4.0"

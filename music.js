@@ -4,12 +4,34 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   var box = btn ? btn.closest('.music-box') : null;
   if(!box || !audio) return null;
 
-  var stored = localStorage.getItem(storageKey);
+  var stored = null;
+  try{ stored = localStorage.getItem(storageKey); }catch(err){}
   var volVal = stored !== null ? parseFloat(stored) : 0.35;
   if(isNaN(volVal)) volVal = 0.35;
+  volVal = Math.max(0, Math.min(1, volVal));
   audio.volume = volVal;
 
   var playing = false;
+  var consent = false;
+  try{ consent = sessionStorage.getItem('music_opt_in') === '1'; }catch(err){}
+  var trackName = '背景音乐';
+  var caption = document.createElement('div');
+  caption.className = 'music-caption';
+  caption.setAttribute('role', 'status');
+  box.appendChild(caption);
+  function updateStatus(message){
+    var action = playing ? '暂停音乐' : '播放音乐';
+    btn.setAttribute('aria-label', action + ' · ' + trackName);
+    btn.setAttribute('aria-pressed', String(playing));
+    btn.title = action + ' · ' + trackName;
+    caption.textContent = trackName + ' · ' + (message || (playing ? '正在播放' : '点击播放'));
+    var rect = box.getBoundingClientRect();
+    caption.style.right = rect.left < innerWidth / 2 ? 'auto' : '0';
+    caption.style.left = rect.left < innerWidth / 2 ? '0' : 'auto';
+    caption.style.top = rect.top < 100 ? 'calc(100% + 24px)' : 'auto';
+    caption.style.bottom = rect.top < 100 ? 'auto' : 'calc(100% + 24px)';
+  }
+  updateStatus();
   var suppressAuto = false;
   window.__musicWidgets = window.__musicWidgets || [];
 
@@ -54,7 +76,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   function setVol(v){
     v = renderVol(v);
     audio.volume = v;
-    localStorage.setItem(storageKey, String(v));
+    try{ localStorage.setItem(storageKey, String(v)); }catch(err){}
   }
   svg.addEventListener('pointerdown', function(e){
     e.preventDefault();
@@ -167,6 +189,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
 
   // ---- 播放控制（可反复暂停/继续，同页音乐互斥） ----
   function start(){
+    if(!consent) return;
     if(!audio.paused) return;
     pauseOthers();
     if(onStart){ onStart(); }
@@ -175,7 +198,8 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
       playing = true;
       btn.classList.add('playing');
       showChip(true);
-    }).catch(function(){});
+      updateStatus();
+    }).catch(function(){ updateStatus('点击重试播放'); });
   }
   // 手势自动播放：仅在用户未主动暂停时生效
   function startAuto(){
@@ -188,6 +212,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     btn.classList.remove('playing');
     setOpen(false);
     showChip(false);
+    updateStatus('已暂停');
   }
   function stop(){
     suppressAuto = true;
@@ -197,6 +222,8 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     if(playing){
       stop();
     } else {
+      consent = true;
+      try{ sessionStorage.setItem('music_opt_in', '1'); }catch(err){}
       suppressAuto = false;
       start();
       setOpen(true);
@@ -222,8 +249,10 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     if(t !== null && t !== undefined && isFinite(t)){ pendingSeek = t; }
     start();
   }
-  function setSrc(url, autoPlay, restoreTime){
+  function setSrc(url, autoPlay, restoreTime, title){
     if(!url) return;
+    trackName = title || (url === 'music/background.mp3' ? '背景音乐' : '档案音乐');
+    updateStatus();
     if(url === audio.getAttribute('data-src')){
       if(autoPlay && !playing && audio.paused){ startWithTime(restoreTime); }
       return;
@@ -232,6 +261,7 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     doStop();
     audio.setAttribute('data-src', url);
     audio.src = url;
+    pendingSeek = null;
     try{ audio.load(); }catch(err){}
     if(autoPlay || wasPlaying){ startWithTime(restoreTime); }
   }
@@ -290,7 +320,18 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
   }
   btn.addEventListener('pointerup', moveEnd);
   btn.addEventListener('pointercancel', moveEnd);
-  btn.addEventListener('click', function(e){ e.stopPropagation(); });
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(e.detail === 0) toggle();
+  });
+
+  function clampPosition(){
+    if(!isFixed || !box.style.left) return;
+    var rect = box.getBoundingClientRect();
+    box.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - rect.width - 8)) + 'px';
+    box.style.top = Math.max(8, Math.min(rect.top, window.innerHeight - rect.height - 8)) + 'px';
+    updateStatus();
+  }
 
   if(isFixed && opts.persistPos){
     try{
@@ -302,19 +343,21 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
         box.style.bottom = 'auto';
       }
     }catch(err){}
+    clampPosition();
+    window.addEventListener('resize', clampPosition);
   }
 
   return api;
 };
 
-// 全站音乐实例（唯一播放器：位置/音量记忆 + 首次手势自动播放 + 视频页避让 + 跨页续播）
+// 全站音乐实例：主动开启、位置/音量记忆、视频页避让与跨页续播。
 (function(){
   var btn = document.getElementById('music-toggle');
   var audio = document.getElementById('bg-music');
   if(!btn || !audio) return;
 
   audio.setAttribute('data-src', 'music/background.mp3');
-  audio.preload = 'auto';
+  audio.preload = 'none';
 
   var widget = window.__createMusicWidget(btn, audio, 'music_volume', null, { persistPos: true });
   window.__pauseMusic = widget.stop;
@@ -351,16 +394,8 @@ window.__createMusicWidget = function(btn, audio, storageKey, onStart, opts){
     if(document.visibilityState === 'hidden') saveSession();
   });
 
-  // 每次激活手势（点击/触摸/按键）都尝试自动播放；已播放时自动跳过
-  // 注意：不使用一次性标志，避免"首次滚动吃掉自动播放机会"的问题
-  function maybeStart(e){
-    if(e.type === 'click' && window.__musicExclude && e.target &&
-       e.target.closest && e.target.closest(window.__musicExclude)) return;
-    widget.startAuto();
-  }
-  ['click','touchstart','keydown'].forEach(function(evt){
-    window.addEventListener(evt, maybeStart, { passive:true });
-  });
-
-  if(wantResume){ widget.start(); }
+  // 只有主动开启过音乐的会话才尝试续播；被浏览器阻止时等待音乐按钮。
+  var inAlbum = /platform\.html$/.test(location.pathname) && new URLSearchParams(location.search).has('album');
+  if(wantResume && !inAlbum){ widget.start(); }
+  window.dispatchEvent(new Event('music-ready'));
 })();

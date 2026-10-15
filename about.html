@@ -150,7 +150,7 @@
       <ul>
         <li><a href="platform.html">Platform</a></li>
         <li><a href="work.html">作品</a></li>
-        <li><a href="video.html">视频</a></li> 
+        <li><a href="video.html">视频</a></li>
         <li><a href="writing.html">文章</a></li>
         <li><a href="about.html">关于</a></li>
       </ul>
@@ -264,6 +264,14 @@
   <div>© 2026 水告示阳 · 保留所有权利</div>
 </footer>
 <script>
+function safeLink(value){
+  var url = String(value == null ? '' : value).trim();
+  try{
+    var parsed = new URL(url, location.href);
+    return /^(https?:|mailto:)$/.test(parsed.protocol) ? url : '#';
+  }catch(err){ return '#'; }
+}
+
 // 文件夹左边缘与标题 "the end" 的 t 对齐（精确测量字体位置）
 (function(){
   var h1 = document.querySelector('.page-head h1');
@@ -302,7 +310,7 @@
   function escapeHtml(s){
     var d = document.createElement('div');
     d.textContent = String(s == null ? '' : s);
-    return d.innerHTML;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   fetch('links.json?t=' + Date.now())
     .then(function(r){ return r.json(); })
@@ -314,7 +322,7 @@
         return;
       }
       grid.innerHTML = links.map(function(l, i){
-        return '<a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer" style="--i:' + i + '">' +
+        return '<a href="' + escapeHtml(safeLink(l.url)) + '" target="_blank" rel="noopener noreferrer" style="--i:' + i + '">' +
           '<div class="al-name">' + escapeHtml(l.name) + '<span class="al-arrow">↗</span></div>' +
           (l.desc ? '<div class="al-desc">' + escapeHtml(l.desc) + '</div>' : '') +
           '</a>';
@@ -340,4 +348,3 @@
 <script src="music.js"></script>
 </body>
 </html>
-

@@ -10,248 +10,20 @@
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="music.css">
 <style>
-
-/* ============================================================
-   开幕动画遮罩（夜间模式）
-   ============================================================ */
-
-#intro-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: radial-gradient(ellipse at 50% 60%, #1e1e1f, #151516);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-              visibility 0.8s ease;
-  opacity: 1;
-  visibility: visible;
-  pointer-events: none;
-  transform: scale(1);
+.hero{ min-height:78vh; display:flex; flex-direction:column; justify-content:center; position:relative; padding:120px 0 100px; background:var(--paper); }
+.hero-layout{ width:100%; }
+.hero-copy{ max-width:850px; }
+.hero .hero-layout h1{ font-size:clamp(2rem,3.4vw,3.4rem); line-height:1.35; }
+.hero-work-link{ display:inline-flex; align-items:center; gap:24px; min-height:44px; margin-top:24px; font-size:0.85rem; border-bottom:1px solid var(--fog); }
+.hero-work-link:hover{ color:var(--accent-red); }
+@media(max-width:760px){
+  .hero{ min-height:auto; padding:140px 0 64px; }
+  .hero .hero-layout h1{ font-size:clamp(1.7rem,5.7vw,2.5rem); }
+  .hero-copy .hero-olive, .hero-copy .hero-divider{ display:none; }
+  .hero-copy .hero-desc{ margin-top:16px; }
+  .hero-work-link{ margin-top:12px; }
+  .hero .hero-scroll{ display:none; }
 }
-#intro-overlay.hidden {
-  opacity: 0;
-  visibility: hidden;
-  transform: scale(0.92);
-}
-#intro-overlay.skip {
-  display: none;
-}
-
-/* ---- 背景柔光（回归网站原本的柔和感） ---- */
-.intro-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  pointer-events: none;
-}
-.intro-glow.g1 { width: 46%; height: 42%; top: 18%; left: 8%; background: var(--accent-gold); opacity: 0; }
-.intro-glow.g2 { width: 50%; height: 38%; bottom: 6%; right: 4%; background: var(--accent-cobalt); opacity: 0; }
-.intro-glow.g3 { width: 34%; height: 30%; top: 40%; right: 30%; background: var(--accent-red); opacity: 0; }
-.intro-glow.show { opacity: 0.04; transition: opacity 1.6s ease; }
-.intro-glow.g2.show, .intro-glow.g3.show { opacity: 0.03; }
-
-/* ---- 希腊回纹边框（顶部+底部） ---- */
-.intro-meander {
-  position: absolute;
-  left: 0; width: 100%; height: 14px;
-  color: var(--accent-gold);
-  opacity: 0;
-  transition: opacity 1s ease 0.3s;
-}
-.intro-meander.top { top: 28px; }
-.intro-meander.bottom { bottom: 28px; }
-.intro-meander.show { opacity: 0.5; }
-
-/* ---- 斜切排版文字带（构成主义手法） ---- */
-.intro-diagonal {
-  position: absolute;
-  left: -10%;
-  width: 120%;
-  top: 78%;
-  transform: rotate(-4deg) translateY(-50%) scaleX(1.02);
-  background: rgba(224, 57, 62, 0.28);
-  backdrop-filter: blur(2px);
-  padding: 7px 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.2,0.8,0.2,1);
-}
-.intro-diagonal.show { opacity: 1; }
-.intro-diagonal span {
-  display: block;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: clamp(0.7rem, 1.4vw, 0.95rem);
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: rgba(250, 247, 240, 0.75);
-  text-align: center;
-  white-space: nowrap;
-}
-
-/* ---- Canvas ---- */
-#wave-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* ---- 品牌浮现（精致缩小版） ---- */
-#brand-container {
-  position: absolute;
-  z-index: 3;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-#brand-container.show {
-  opacity: 1;
-}
-
-#brand-char {
-  font-family: 'Fraunces', serif;
-  font-weight: 600;
-  font-size: clamp(2.6rem, 6vw, 4.4rem);
-  color: #faf7f0;
-  letter-spacing: 0.02em;
-  opacity: 0;
-  transform: scale(0.85);
-  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
-}
-#brand-char.show {
-  opacity: 1;
-  transform: scale(1);
-}
-
-#brand-sub {
-  font-family: var(--font-mono);
-  font-size: clamp(0.55rem, 1.1vw, 0.75rem);
-  font-weight: 700;
-  letter-spacing: 0.5em;
-  text-transform: uppercase;
-  color: var(--accent-gold);
-  margin-top: 8px;
-  opacity: 0;
-  transition: opacity 0.6s ease 0.15s;
-}
-#brand-sub.show {
-  opacity: 1;
-}
-
-/* ---- 底部文字 ---- */
-#intro-caption {
-  position: absolute;
-  bottom: 56px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: rgba(250, 247, 240, 0.55);
-  z-index: 4;
-  pointer-events: none;
-  opacity: 0;
-  animation: captionFade 1s ease 2.4s forwards;
-}
-@keyframes captionFade {
-  0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-@media (max-width: 640px) {
-  #intro-caption { font-size: 0.55rem; bottom: 40px; }
-  #brand-char { font-size: clamp(2.2rem, 8vw, 3rem); }
-  }
-
-/* ============================================================
-   首页内容
-   ============================================================ */
-
-.page-content {
-  opacity: 0;
-  transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.page-content.visible {
-  opacity: 1;
-}
-
-.hero h1 .char {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
-}
-.hero h1 .char.reveal {
-  opacity: 1;
-  transform: translateY(0);
-}
-.hero h1 .char.delay-1 { transition-delay: 0.04s; }
-.hero h1 .char.delay-2 { transition-delay: 0.08s; }
-.hero h1 .char.delay-3 { transition-delay: 0.12s; }
-.hero h1 .char.delay-4 { transition-delay: 0.16s; }
-.hero h1 .char.delay-5 { transition-delay: 0.20s; }
-.hero h1 .char.delay-6 { transition-delay: 0.24s; }
-.hero h1 .char.delay-7 { transition-delay: 0.28s; }
-.hero h1 .char.delay-8 { transition-delay: 0.32s; }
-.hero h1 .char.delay-9 { transition-delay: 0.36s; }
-.hero h1 .char.delay-10 { transition-delay: 0.40s; }
-.hero h1 .char.delay-11 { transition-delay: 0.44s; }
-.hero h1 .char.delay-12 { transition-delay: 0.48s; }
-.hero h1 .char.delay-13 { transition-delay: 0.52s; }
-.hero h1 .char.delay-14 { transition-delay: 0.56s; }
-.hero h1 .char.delay-15 { transition-delay: 0.60s; }
-.hero h1 .char.delay-16 { transition-delay: 0.64s; }
-.hero h1 .char.delay-17 { transition-delay: 0.68s; }
-.hero h1 .char.delay-18 { transition-delay: 0.72s; }
-.hero h1 .char.delay-19 { transition-delay: 0.76s; }
-.hero h1 .char.delay-20 { transition-delay: 0.80s; }
-
-.falling-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 40;
-  overflow: hidden;
-}
-.falling-item {
-  position: absolute;
-  top: -60px;
-  opacity: 0.15;
-  will-change: transform;
-  pointer-events: none;
-  animation: fall linear infinite;
-}
-.falling-item svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-@keyframes fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0.15; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.01; }
-}
-
-/* ============================================================
-   原有样式
-   ============================================================ */
-
-.hero{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; position:relative; padding-top:100px; background:var(--paper); }
 .hero-eyebrow{ font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--steel); margin-bottom:18px; display:flex; align-items:center; gap:10px; }
 .hero-eyebrow::before{ content:''; width:22px; height:1px; background:var(--accent-red); }
 .hero h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(2.6rem, 7vw, 5.4rem); line-height:1.05; letter-spacing:-0.01em; max-width:820px; }
@@ -353,10 +125,35 @@
 .recent-row:hover .rr-title{ color:var(--accent-red); }
 .recent-row .rr-arrow{ font-family:var(--font-mono); font-size:0.75rem; color:var(--steel); }
 .rp-empty{ font-family:var(--font-mono); font-size:0.8rem; color:var(--steel); padding:20px; }
+.home-portfolio{ padding:0 0 110px; }
+.home-portfolio-heading{ display:flex; align-items:baseline; justify-content:space-between; gap:24px; margin-bottom:26px; }
+.home-portfolio-heading h2{ font-family:var(--font-display); font-size:1.5rem; font-weight:500; }
+.home-portfolio-heading a{ min-height:44px; display:inline-flex; align-items:center; gap:12px; font-size:0.8rem; color:var(--charcoal); }
+.home-portfolio-heading a:hover{ color:var(--accent-red); }
+.home-gallery{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:32px; }
+.home-print{ min-width:0; }
+.home-photo-open{ display:block; width:100%; padding:0; border:0; background:var(--paper-2); cursor:zoom-in; overflow:hidden; }
+.home-photo-open img{ display:block; width:100%; aspect-ratio:1.52; object-fit:cover; transition:transform .35s ease; }
+.home-photo-open:hover img,.home-photo-open:focus-visible img{ transform:scale(1.03); }
+.home-print figcaption{ display:flex; justify-content:space-between; gap:12px; margin-top:12px; font-size:.8rem; color:var(--charcoal); }
+.home-print figcaption span:last-child{ font-size:.72rem; color:var(--steel); }
+.home-viewer{ position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; padding:64px 7vw 40px; margin:0; border:0; background:var(--paper); color:var(--ink); }
+.home-viewer::backdrop{ background:rgba(20,20,20,.7); }
+.home-viewer[open]{ display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.home-viewer img{ max-width:100%; max-height:calc(100dvh - 150px); width:auto; height:auto; object-fit:contain; }
+.home-viewer p{ margin-top:18px; font-size:.85rem; }
+.home-viewer-close{ position:absolute; right:28px; top:18px; min-height:44px; padding:0 16px; background:var(--white); border:1px solid var(--fog); border-radius:3px; color:var(--ink); cursor:pointer; }
 @media (max-width:820px){
   .recent-grid{ grid-template-columns:1fr; gap:24px; }
   .recent-photo{ max-width:320px; }
 }
+@media (max-width:640px){
+  .home-gallery{ gap:18px; }
+  .home-photo-open img{ aspect-ratio:.94; }
+  .home-print figcaption{ flex-direction:column; gap:2px; }
+  .home-viewer{ padding:64px 20px 32px; }
+}
+@media (prefers-reduced-motion:reduce){ .home-photo-open img{ transition:none; } }
 
 footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-size:0.68rem; color:var(--steel); background:var(--ink); }
 .footer-links{ display:flex; justify-content:center; gap:18px; margin-bottom:16px; }
@@ -368,30 +165,6 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 </style>
 </head>
 <body>
-
-<!-- ============================================================
-   开幕动画：浮世绘·夜潮（收缩过渡版）
-   ============================================================ -->
-
-<div id="intro-overlay">
-  <div class="intro-glow g1" id="glow-1"></div>
-  <div class="intro-glow g2" id="glow-2"></div>
-  <div class="intro-glow g3" id="glow-3"></div>
-
-  <canvas id="wave-canvas"></canvas>
-
-  <!-- 品牌浮现 -->
-  <div id="brand-container">
-    <div id="brand-char">伞</div>
-    <div id="brand-sub">umbrella</div>
-  </div>
-
-  <div id="intro-caption">—— to be · not to be ——</div>
-</div>
-
-<!-- ============================================================
-   首页内容
-   ============================================================ -->
 
 <div class="page-content" id="page-content">
 
@@ -452,7 +225,8 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 </div>
 
 <section class="hero">
-  <div class="wrap">
+  <div class="wrap hero-layout">
+    <div class="hero-copy">
     <svg class="hero-olive" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.3">
       <path d="M20 34C14 26 12 16 17 6" stroke-linecap="round"/>
       <ellipse cx="15.5" cy="10" rx="3" ry="1.6" transform="rotate(-40 15.5 10)"/>
@@ -467,9 +241,19 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
       <path d="M0 5.5 H9 V0 H18 V11 H27 V0 H36 V11 H45 V0 H54 V11 H63 V0 H72 V11 H81 V0 H90 V11 H99 V0 H110"/>
     </svg>
     <p class="hero-desc">to remember</p>
+    <a class="hero-work-link" href="work.html">浏览摄影作品 <span aria-hidden="true">→</span></a>
+    </div>
+
   </div>
   <div class="hero-scroll"><div class="line"></div>向下滚动</div>
 </section>
+<section class="wrap" aria-labelledby="home-portfolio-title">
+  <div class="home-portfolio">
+    <div class="home-portfolio-heading"><h2 id="home-portfolio-title">摄影作品</h2><a href="work.html">查看全部 <span aria-hidden="true">→</span></a></div>
+    <div class="home-gallery" id="home-gallery"><p>照片加载中…</p></div>
+  </div>
+</section>
+
 
 <div class="wrap">
   <div class="stats">
@@ -567,7 +351,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
    持续飘落物
    ============================================================ -->
 
-<div class="falling-container" id="falling-container"></div>
+
 
 <audio id="bg-music" loop preload="none">
   <source src="music/background.mp3" type="audio/mpeg">
@@ -580,370 +364,13 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 </div>
 
 <script>
-// ============================================================
-// 浮世绘·夜潮（收缩过渡版）
-// ============================================================
-
-(function() {
-  var overlay = document.getElementById('intro-overlay');
-  var canvas = document.getElementById('wave-canvas');
-  var ctx = canvas.getContext('2d');
-  var pageContent = document.getElementById('page-content');
-  var brandContainer = document.getElementById('brand-container');
-  var brandChar = document.getElementById('brand-char');
-  var brandSub = document.getElementById('brand-sub');
-  var glow1 = document.getElementById('glow-1');
-  var glow2 = document.getElementById('glow-2');
-  var glow3 = document.getElementById('glow-3');
-  // ===== 尺寸 =====
-  var W, H, cx, cy;
-
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    cx = W / 2;
-    cy = H * 0.55;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // ===== 波浪配置（减淡饱和度，柔光版，5层） =====
-  var NUM_WAVES = 5;
-  var waves = [];
-  var startTime = null;
-  var animId = null;
-  var brandRevealed = false;
-  var decorRevealed = false;
-  var pageShown = false;
-
-  function rand(min, max) { return min + Math.random() * (max - min); }
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-
-  // 与网站主色调一致的低饱和配色：灰调为主，红/金作为极淡点缀
-  var WAVE_COLORS = [
-    { fill: '#5c5b57', glow: '#8a8a85' },  // 远景：石墨灰
-    { fill: '#8a6b5f', glow: '#c9a37e' },  // 灰调赭红
-    { fill: '#6d6459', glow: '#b9b7b0' },  // 雾灰
-    { fill: '#9c7a52', glow: '#e8a33d' },  // 灰调金
-    { fill: '#7a5457', glow: '#e0393e' }   // 前景：灰调朱红
-  ];
-
-  function initWaves() {
-    waves = [];
-    for (var i = 0; i < NUM_WAVES; i++) {
-      waves.push({
-        progress: -0.22 - i * 0.11,
-        speed: 0.007 + i * 0.0015,
-        amplitude: 30 + i * 5 + rand(-4, 4),
-        frequency: 0.009 + i * 0.0015,
-        phase: rand(0, Math.PI * 2),
-        color: WAVE_COLORS[i % WAVE_COLORS.length].fill,
-        glow: WAVE_COLORS[i % WAVE_COLORS.length].glow,
-        baseY: 0.92 - i * 0.07,
-        triggered: false
-      });
-    }
-  }
-  initWaves();
-
-  // ===== 绘制单层波浪（低饱和 + 柔光晕染） =====
-  function drawWave(ctx, wave, time) {
-    var p = wave.progress;
-    if (p < -0.15 || p > 1.15) return;
-
-    var progressY = clamp(p, 0, 1);
-    var eased = 1 - Math.pow(1 - progressY, 1.2);
-    var baseY = wave.baseY * H;
-    var targetY = H * 0.34;
-    var currentY = lerp(baseY, targetY, eased);
-
-    var amp = wave.amplitude * (0.55 + 0.45 * (1 - progressY));
-    var freq = wave.frequency;
-    var phase = wave.phase + time * 0.00022;
-    var fadeOut = progressY > 0.85 ? clamp(1 - (progressY - 0.85) / 0.15, 0, 1) : 1;
-
-    var steps = 40;
-    var points = [];
-    for (var i = 0; i <= steps; i++) {
-      var t = i / steps;
-      var x = t * W;
-      var raw = Math.sin(t * W * freq + phase);
-      var y = currentY + raw * amp * (1 - t * 0.15);
-      points.push({ x: x, y: y });
-    }
-
-    ctx.save();
-    ctx.globalAlpha = 0.4 * fadeOut;
-
-    // ---- 柔光晕染（每层波浪自带的模糊光晕，呼应网站柔和感） ----
-    ctx.shadowColor = wave.glow;
-    ctx.shadowBlur = 38;
-
-    // ---- 主体（半透明平涂，低饱和） ----
-    ctx.beginPath();
-    ctx.moveTo(0, H);
-    for (var i = 0; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
-    ctx.lineTo(W, H);
-    ctx.closePath();
-    ctx.fillStyle = wave.color;
-    ctx.fill();
-
-    // ---- 细柔边缘线（比之前的粗黑墨线更柔和） ----
-    ctx.shadowBlur = 0;
-    ctx.globalAlpha = 0.3 * fadeOut;
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (var i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
-    ctx.lineWidth = 1.4;
-    ctx.strokeStyle = wave.glow;
-    ctx.stroke();
-
-    // ---- 柔和浪尖高光（弱化的浪爪，不再是硬边三角） ----
-    ctx.globalAlpha = 0.22 * fadeOut;
-    var clawCount = 4;
-    for (var c = 0; c < clawCount; c++) {
-      var t = (c + 0.5) / clawCount;
-      var idx = Math.min(Math.floor(t * steps), points.length - 1);
-      var base = points[idx];
-      if (!base) continue;
-      var clawH = amp * (0.28 + 0.14 * Math.sin(c * 2.1 + wave.progress * 6));
-      if (clawH < 6) continue;
-
-      ctx.beginPath();
-      ctx.moveTo(base.x - 10, base.y + 4);
-      ctx.quadraticCurveTo(base.x - 3, base.y - clawH * 0.6, base.x, base.y - clawH);
-      ctx.quadraticCurveTo(base.x + 3, base.y - clawH * 0.6, base.x + 10, base.y + 4);
-      ctx.closePath();
-      ctx.fillStyle = '#faf7f0';
-      ctx.shadowColor = wave.glow;
-      ctx.shadowBlur = 16;
-      ctx.fill();
-    }
-
-    ctx.restore();
-  }
-
-  // ===== 动画循环 =====
-  function animate(time) {
-    if (!startTime) startTime = time;
-    var elapsed = time - startTime;
-
-    if (!decorRevealed && elapsed > 120) {
-      decorRevealed = true;
-      glow1.classList.add('show');
-      setTimeout(function(){ glow2.classList.add('show'); }, 300);
-      setTimeout(function(){ glow3.classList.add('show'); }, 600);
-    }
-
-    ctx.clearRect(0, 0, W, H);
-
-    var allDone = true;
-    for (var i = 0; i < waves.length; i++) {
-      var wave = waves[i];
-      wave.progress += wave.speed * 0.7;
-
-      if (!wave.triggered && wave.progress > 0.45) {
-        wave.triggered = true;
-        if (!brandRevealed) {
-          brandRevealed = true;
-          revealBrand();
-        }
-      }
-
-      drawWave(ctx, wave, elapsed);
-      if (wave.progress < 1.0) allDone = false;
-    }
-
-    // ---- 收缩过渡 ----
-    if (allDone && !pageShown && elapsed > 2500) {
-      pageShown = true;
-      // 触发遮罩收缩
-      overlay.classList.add('hidden');
-      // 首页内容淡入
-      setTimeout(function() {
-        pageContent.classList.add('visible');
-        setTimeout(function() {
-          overlay.style.display = 'none';
-          if (canvas) { canvas.width = 0; canvas.height = 0; }
-        }, 800);
-      }, 200);
-      // 标题显现
-      setTimeout(triggerTitleReveal, 300);
-    }
-
-    animId = requestAnimationFrame(animate);
-  }
-
-  // ===== 品牌浮现 =====
-  function revealBrand() {
-    brandContainer.classList.add('show');
-    setTimeout(function() {
-      brandChar.classList.add('show');
-    }, 150);
-    setTimeout(function() {
-      brandSub.classList.add('show');
-    }, 400);
-  }
-
-  // ===== 标题逐字显现 =====
-  function triggerTitleReveal() {
-    var titleEl = document.getElementById('hero-title');
-    if (!titleEl || titleEl.dataset.split) return;
-
-    var parts = [];
-    var emContent = titleEl.querySelector('em');
-    var fullText = titleEl.textContent;
-    var emText = emContent ? emContent.textContent : '';
-
-    if (emContent) {
-      var before = fullText.split(emText)[0] || '';
-      var after = fullText.split(emText)[1] || '';
-      parts.push({ type: 'text', content: before });
-      parts.push({ type: 'em', content: emText });
-      parts.push({ type: 'text', content: after });
-    } else {
-      parts.push({ type: 'text', content: fullText });
-    }
-
-    var finalHtml = '';
-    var charIdx = 0;
-    parts.forEach(function(part) {
-      if (part.type === 'text') {
-        for (var i = 0; i < part.content.length; i++) {
-          var ch = part.content[i];
-          if (ch === ' ' || ch === '\n' || ch === '\r') {
-            finalHtml += ch;
-          } else {
-            var cls = 'char delay-' + Math.min(charIdx + 1, 20);
-            finalHtml += '<span class="' + cls + '">' + ch + '</span>';
-            charIdx++;
-          }
-        }
-      } else if (part.type === 'em') {
-        finalHtml += '<em>';
-        for (var i = 0; i < part.content.length; i++) {
-          var ch = part.content[i];
-          var cls = 'char delay-' + Math.min(charIdx + 1, 20);
-          finalHtml += '<span class="' + cls + '">' + ch + '</span>';
-          charIdx++;
-        }
-        finalHtml += '</em>';
-      }
-    });
-
-    titleEl.innerHTML = finalHtml;
-    titleEl.dataset.split = '1';
-
-    var chars = titleEl.querySelectorAll('.char');
-    chars.forEach(function(el, index) {
-      setTimeout(function() {
-        el.classList.add('reveal');
-      }, index * 35);
-    });
-  }
-
-  // ===== 启动 =====
-  if (sessionStorage.getItem('intro_wave_shown')) {
-    overlay.classList.add('skip');
-    pageContent.classList.add('visible');
-    return;
-  }
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    overlay.classList.add('skip');
-    pageContent.classList.add('visible');
-    return;
-  }
-
-  sessionStorage.setItem('intro_wave_shown', '1');
-
-  requestAnimationFrame(function() {
-    setTimeout(function() {
-      startTime = null;
-      animId = requestAnimationFrame(animate);
-    }, 80);
-  });
-
-})();
-
-// ============================================================
-// 持续飘落物
-// ============================================================
-
-(function() {
-  var container = document.getElementById('falling-container');
-  if (!container) return;
-
-  var count = 8;
-  var types = ['feather', 'olive'];
-
-  function createFeatherSVG(theme) {
-    var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
-    var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
-    return '<svg viewBox="0 0 20 60" fill="none" stroke="' + stroke + '" stroke-width="0.5">' +
-      '<path d="M10,2 Q16,12 14,22 Q12,32 10,42 Q8,32 6,22 Q4,12 10,2" fill="' + color + '"/>' +
-      '<path d="M10,2 L10,42" stroke="' + stroke + '" stroke-width="0.3"/>' +
-      '<path d="M10,8 L6,12 M10,14 L5,18 M10,20 L4,24 M10,26 L5,30 M10,32 L6,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
-      '<path d="M10,8 L14,12 M10,14 L15,18 M10,20 L16,24 M10,26 L15,30 M10,32 L14,36" stroke="' + stroke + '" stroke-width="0.25"/>' +
-      '</svg>';
-  }
-
-  function createOliveSVG() {
-    return '<svg viewBox="0 0 30 16" fill="none">' +
-      '<ellipse cx="15" cy="8" rx="13" ry="5.5" fill="#7a9a6a" stroke="#5a7a4a" stroke-width="0.7"/>' +
-      '<path d="M15,2.5 L15,13.5" stroke="#5a7a4a" stroke-width="0.5"/>' +
-      '<path d="M15,5 L10,8 M15,8 L10,11 M15,5 L20,8 M15,8 L20,11" stroke="#5a7a4a" stroke-width="0.35" opacity="0.5"/>' +
-      '</svg>';
-  }
-
-  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  var isEye = document.documentElement.getAttribute('data-theme') === 'eye-care';
-  var theme = isDark ? 'dark' : (isEye ? 'eye-care' : 'light');
-
-  for (var i = 0; i < count; i++) {
-    var type = types[Math.floor(Math.random() * types.length)];
-    var size = type === 'feather' ? 14 + Math.random() * 14 : 18 + Math.random() * 16;
-    var el = document.createElement('div');
-    el.className = 'falling-item';
-    var svgContent = type === 'feather' ? createFeatherSVG(theme) : createOliveSVG();
-    el.innerHTML = svgContent;
-    el.style.width = size + 'px';
-    el.style.height = (type === 'feather' ? size * 2.8 : size * 0.55) + 'px';
-    el.style.left = (Math.random() * 100) + '%';
-    el.style.top = (-20 - Math.random() * 80) + '%';
-    el.style.opacity = 0.3 + Math.random() * 0.4;
-    var duration = 12 + Math.random() * 18;
-    el.style.animationDuration = duration + 's';
-    el.style.animationDelay = (Math.random() * 5) + 's';
-    container.appendChild(el);
-  }
-
-  var themeObserver = new MutationObserver(function() {
-    var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-    var isEyeNow = document.documentElement.getAttribute('data-theme') === 'eye-care';
-    var newTheme = isDarkNow ? 'dark' : (isEyeNow ? 'eye-care' : 'light');
-    if (newTheme !== theme) {
-      theme = newTheme;
-      var items = container.querySelectorAll('.falling-item');
-      items.forEach(function(el) {
-        var svg = el.querySelector('svg');
-        if (!svg) return;
-        var paths = svg.querySelectorAll('path');
-        if (paths.length > 0 && paths[0].getAttribute('fill')) {
-          var color = theme === 'dark' ? '#d4cfc8' : (theme === 'eye-care' ? '#f0ebe0' : '#f5f0eb');
-          var stroke = theme === 'dark' ? '#8a8a85' : (theme === 'eye-care' ? '#d5c8b8' : '#c9c0b8');
-          paths[0].setAttribute('fill', color);
-          paths[0].setAttribute('stroke', stroke);
-          for (var i = 1; i < paths.length; i++) {
-            paths[i].setAttribute('stroke', stroke);
-          }
-        }
-      });
-    }
-  });
-  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-})();
+function safeLink(value){
+  var url = String(value == null ? '' : value).trim();
+  try{
+    var parsed = new URL(url, location.href);
+    return /^(https?:|mailto:)$/.test(parsed.protocol) ? url : '#';
+  }catch(err){ return '#'; }
+}
 
 // ============================================================
 // 统计 + 最近更新
@@ -952,7 +379,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
   function esc(s){
     var d = document.createElement('div');
     d.textContent = String(s == null ? '' : s);
-    return d.innerHTML;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   function sortNewest(arr){
     return (arr || []).slice().sort(function(a,b){
@@ -964,6 +391,8 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
     .then(function(r){ return r.json(); })
     .then(function(photos){
       var n = photos ? photos.length : 0;
+      window.__homepagePhotos = photos || [];
+      window.dispatchEvent(new CustomEvent('portfolio-photos', {detail: window.__homepagePhotos}));
       var numEl = document.getElementById('stat-photos');
       if(numEl) numEl.textContent = n;
       var box = document.getElementById('recent-photo');
@@ -979,11 +408,13 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
       if(numEl) numEl.textContent = '–';
       var box = document.getElementById('recent-photo');
       if(box) box.innerHTML = '<div class="rp-empty">照片加载失败</div>';
+      window.dispatchEvent(new Event('portfolio-photos-error'));
     });
 
   fetch('memos.json?t=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(memos){
+      memos = (memos || []).filter(function(m){ return m.draft !== true; });
       var n = memos ? memos.length : 0;
       var numEl = document.getElementById('stat-memos');
       if(numEl) numEl.textContent = n;
@@ -1036,7 +467,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
   function escapeHtml(s){
     var d = document.createElement('div');
     d.textContent = String(s == null ? '' : s);
-    return d.innerHTML;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   fetch('links.json?t=' + Date.now())
     .then(function(r){ return r.json(); })
@@ -1046,7 +477,7 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
         return;
       }
       listEl.innerHTML = links.map(function(l){
-        return '<a class="link-row" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener noreferrer">' +
+        return '<a class="link-row" href="' + escapeHtml(safeLink(l.url)) + '" target="_blank" rel="noopener noreferrer">' +
           '<span class="link-name">' + escapeHtml(l.name) + '</span>' +
           '<span class="link-desc">' + escapeHtml(l.desc || '') + '</span>' +
           '<span class="link-arrow">↗</span></a>';
@@ -1062,11 +493,14 @@ footer{ padding:42px 0; text-align:center; font-family:var(--font-mono); font-si
 // ============================================================
 
 // 音乐播放（共享组件，见 music.js）
-
+</script>
 
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c5f3dfcb5f9d4b40a886b16b5fea24af"}'></script><!-- End Cloudflare Web Analytics -->
 <script src="theme.js"></script>
 <script src="counter.js"></script>
 <script src="music.js"></script>
+<dialog class="home-viewer" id="home-viewer" aria-label="摄影作品大图"><button class="home-viewer-close" type="button">关闭</button><div class="home-viewer-image"></div><p></p></dialog>
+<script src="home-gallery.js"></script>
+
 </body>
 </html>
